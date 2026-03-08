@@ -38,7 +38,7 @@ export default function RegisterScreen() {
 
   const handleRegister = () => {
     // TODO: Add real authentication
-    router.replace('/'); // Go to tabs after login
+    router.replace('/(auth)/team_confirmation');
   };
 
   return (
@@ -182,7 +182,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: '#388087',
-    fontWeight: '600',
+    fontWeight: '500',
+    fontFamily: "Nunito_700Bold",
   },
   loginContainer: {
     flexDirection: 'row',

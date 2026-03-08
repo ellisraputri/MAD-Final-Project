@@ -3,7 +3,7 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { useEffect } from 'react';
 
 export default function Index() {
-  const isLoggedIn = false; // replace later
+  const isLoggedIn = true; // replace later
 
   useEffect(() => {
     NavigationBar.setBehaviorAsync("overlay-swipe");

@@ -1,0 +1,314 @@
+import { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Image, Modal,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import Svg, { Polygon } from 'react-native-svg';
+import CustomDropdown from '@/components/ui/dropdown';
+
+const gradeDropdown = [
+  {label: "1 (SD Kelas 1)", value: "1"},
+  {label: "2 (SD Kelas 2)", value: "2"},
+  {label: "3 (SD Kelas 3)", value: "3"},
+  {label: "4 (SD Kelas 4)", value: "4"},
+  {label: "5 (SD Kelas 5)", value: "5"},
+  {label: "6 (SD Kelas 6)", value: "6"},
+  {label: "7 (SMP Kelas 1)", value: "7"},
+  {label: "8 (SMP Kelas 2)", value: "8"},
+  {label: "9 (SMP Kelas 3)", value: "9"},
+  {label: "10 (SMA Kelas 1)", value: "10"},
+  {label: "11 (SMA Kelas 2)", value: "11"},
+  {label: "12 (SMA Kelas 3)", value: "12"},
+]
+
+export default function TeamConfirmationScreen() {
+  const router = useRouter();
+  const [teamName, setTeamName] = useState("");
+  const [grade, setGrade] = useState("");
+  const [teamId, setTeamId] = useState("");
+  const [newTeamModalVisible, setNewTeamModalVisible] = useState(false);
+  const [joinTeamModalVisible, setJoinTeamModalVisible] = useState(false);
+
+  const handleLogin = () => {
+    // TODO: Add real authentication
+    router.replace('/team_confirmation'); // Go to tabs after login
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+    >
+      {/* Header Image */}
+      <ImageBackground
+        source={require('../../assets/images/header.png')}
+        style={styles.header}
+        resizeMode="cover"
+      >
+        <Image
+          source={require("../../assets/images/logo.png")}
+          style={styles.logo}
+        >
+        </Image>
+
+        <Image
+          source={require("../../assets/images/text_logo.png")}
+          style={styles.textLogo}
+        >
+        </Image>
+
+        <View style={styles.overlay}>
+          <Text style={styles.subtitle}>
+            Simulate Reality. Sense the Science
+          </Text>
+        </View>
+
+        <Svg
+          height="80"
+          width="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={styles.diagonal}
+        >
+          <Polygon
+            points="0,60 0,65 0,70 0,75 2,79 3,80 4,79 100,0 100,100 0,100"
+            fill="#ededed"
+          />
+        </Svg>
+
+      </ImageBackground>
+
+      {/* Form */}
+      <View style={styles.form}>
+        <Text style={styles.text}>Looks like you’re not part of a team yet!</Text>
+        <Text style={styles.text}>Create one or join a team to jump into the fun 🚀✨</Text>
+        
+        <View style={[styles.buttonContainer, {marginTop: 40}]}>
+          <TouchableOpacity style={styles.button} onPress={() => setNewTeamModalVisible(true)}>
+            <Text style={styles.buttonText}>Create New Team</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => setJoinTeamModalVisible(true)}>
+            <Text style={styles.buttonText}>Join a Team</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <Modal
+        visible={newTeamModalVisible}
+        transparent
+        animationType="fade"
+      >
+        <View style={styles.overlayPopup}>
+          <View style={styles.popup}>
+            
+            {/* Header */}
+            <View style={styles.headerPopup}>
+              <Text style={styles.title}>Create New Team</Text>
+
+              <TouchableOpacity onPress={() => setNewTeamModalVisible(false)}>
+                <Text style={styles.close}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Team Name */}
+            <Text style={styles.label}>Team Name</Text>
+            <TextInput
+                placeholder="Enter your team name"
+                placeholderTextColor="#888"
+                value={teamName}
+                onChangeText={setTeamName}
+                style={styles.input}
+            />
+
+            {/* Grade dropdown placeholder */}
+            <Text style={styles.label}>Grade</Text>
+            <CustomDropdown data={gradeDropdown} value={grade} placeholder='Select grade' onSelect={setGrade}/>
+
+            {/* OK Button */}
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonPopup}>
+                    <Text style={styles.buttonText}>OK</Text>
+                </TouchableOpacity>
+            </View>
+
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={joinTeamModalVisible}
+        transparent
+        animationType="fade"
+      >
+        <View style={styles.overlayPopup}>
+          <View style={styles.popup}>
+            
+            {/* Header */}
+            <View style={styles.headerPopup}>
+              <Text style={styles.title}>Join Team</Text>
+
+              <TouchableOpacity onPress={() => setJoinTeamModalVisible(false)}>
+                <Text style={styles.close}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.label}>Team ID</Text>
+            <TextInput
+                placeholder="Enter your team ID"
+                placeholderTextColor="#888"
+                value={teamId}
+                onChangeText={setTeamId}
+                style={styles.input}
+            />
+
+            {/* OK Button */}
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonPopup}>
+                    <Text style={styles.buttonText}>OK</Text>
+                </TouchableOpacity>
+            </View>
+
+          </View>
+        </View>
+      </Modal>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#EDEDED',
+  },
+  header: {
+    height: 300,
+    justifyContent: 'flex-end',
+  },
+  form: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: '#EDEDED',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    marginTop: -18,
+  },
+  label: {
+    fontSize: 16,
+    color: '#388087',
+    fontFamily: 'Nunito_700Bold',
+    marginTop: 20,
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#388087',
+    fontSize: 16,
+    paddingVertical: 8,
+    fontFamily: 'Lato_400Regular',
+    marginTop: 2,
+  },
+  button: {
+    marginTop: 20,
+    borderWidth: 2,
+    borderColor: '#388087',
+    borderRadius: 50,
+    paddingVertical: 10,
+    alignItems: 'center',
+    width: 300,
+  },
+  buttonPopup: {
+    marginTop: 30,
+    borderWidth: 2,
+    borderColor: '#388087',
+    borderRadius: 50,
+    paddingVertical: 8,
+    alignItems: 'center',
+    width: 150,
+  },
+  buttonText: {
+    fontSize: 20,
+    color: '#388087',
+    fontWeight: '500',
+    fontFamily: "Nunito_700Bold",
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  text: {
+    fontSize: 20,
+    color: '#388087',
+    lineHeight: 32,
+    fontFamily: "Lato_400Regular",
+  },
+  diagonal: {
+    position: 'absolute',
+    bottom: -1,
+    width: '100%',
+  },
+  logo: {
+    position: 'absolute',
+    top: 60,
+    left: 15,
+    width: 60,
+    height: 80,
+    resizeMode: 'contain',
+  },
+  textLogo: {
+    position: 'absolute',
+    top: 150,
+    left: 20,
+    width: 180,
+    height: 50,
+    resizeMode: 'contain',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 20,
+    padding: 20,
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  subtitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontFamily: "Lato_700Bold",
+  },
+  popup: {
+    width: "85%",
+    backgroundColor: "#EDEDED",
+    borderRadius: 25,
+    padding: 24,
+    elevation: 6
+  },
+  headerPopup: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    color: "#4F7C7E",
+    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
+  },
+  close: {
+    fontSize: 28
+  },
+  overlayPopup: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
