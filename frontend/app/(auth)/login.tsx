@@ -7,9 +7,10 @@ import {
   ImageBackground,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Svg, { Polygon } from 'react-native-svg';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -28,16 +29,41 @@ export default function LoginScreen() {
     >
       {/* Header Image */}
       <ImageBackground
-        source={require('../../assets/images/header.png')} // replace with your image
+        source={require('../../assets/images/header.png')}
         style={styles.header}
         resizeMode="cover"
       >
+        <Image
+          source={require("../../assets/images/logo.png")}
+          style={styles.logo}
+        >
+        </Image>
+
+        <Image
+          source={require("../../assets/images/text_logo.png")}
+          style={styles.textLogo}
+        >
+        </Image>
+
         <View style={styles.overlay}>
-          <Text style={styles.title}>STEMM LAB</Text>
           <Text style={styles.subtitle}>
             Simulate Reality. Sense the Science
           </Text>
         </View>
+
+        <Svg
+          height="80"
+          width="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={styles.diagonal}
+        >
+          <Polygon
+            points="0,60 0,65 0,70 0,75 2,79 3,80 4,79 100,0 100,100 0,100"
+            fill="#ededed"
+          />
+        </Svg>
+
       </ImageBackground>
 
       {/* Form */}
@@ -62,16 +88,18 @@ export default function LoginScreen() {
         />
 
         {/* Login Button */}
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
+        <View style={styles.registerContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Register */}
         <View style={styles.registerContainer}>
           <Text style={styles.registerText}>
             Don’t have an account?{' '}
           </Text>
-          <TouchableOpacity onPress={() => router.push('/register')}>
+          <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
             <Text style={styles.registerLink}>Register here</Text>
           </TouchableOpacity>
         </View>
@@ -89,30 +117,16 @@ const styles = StyleSheet.create({
     height: 300,
     justifyContent: 'flex-end',
   },
-  overlay: {
-    padding: 24,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  title: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    color: '#fff',
-    fontSize: 16,
-  },
   form: {
     flex: 1,
     padding: 24,
     backgroundColor: '#EDEDED',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    marginTop: -30,
+    marginTop: -18,
   },
   label: {
-    fontSize: 22,
+    fontSize: 20,
     color: '#388087',
     fontFamily: 'Nunito_700Bold',
     marginTop: 24,
@@ -120,18 +134,19 @@ const styles = StyleSheet.create({
   input: {
     borderBottomWidth: 1,
     borderBottomColor: '#388087',
-    fontSize: 18,
+    fontSize: 16,
     paddingVertical: 8,
     fontFamily: 'Lato_400Regular',
     marginTop: 8,
   },
   button: {
-    marginTop: 50,
+    marginTop: 20,
     borderWidth: 2,
     borderColor: '#388087',
     borderRadius: 50,
-    paddingVertical: 16,
+    paddingVertical: 10,
     alignItems: 'center',
+    width: 200,
   },
   buttonText: {
     fontSize: 20,
@@ -152,5 +167,39 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: '#388087',
     textDecorationLine: 'underline',
+  },
+  diagonal: {
+    position: 'absolute',
+    bottom: -1,
+    width: '100%',
+  },
+  logo: {
+    position: 'absolute',
+    top: 60,
+    left: 15,
+    width: 60,
+    height: 80,
+    resizeMode: 'contain',
+  },
+  textLogo: {
+    position: 'absolute',
+    top: 150,
+    left: 20,
+    width: 180,
+    height: 50,
+    resizeMode: 'contain',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 20,
+    padding: 20,
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  subtitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontFamily: "Lato_700Bold",
   },
 });
