@@ -1,6 +1,7 @@
 import { Redirect } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useEffect } from 'react';
+import { StatusBar } from 'react-native';
 
 export default function Index() {
   const isLoggedIn = true; // replace later
@@ -14,5 +15,10 @@ export default function Index() {
     return <Redirect href="/(auth)/login" />;
   }
 
-  return <Redirect href="/(tabs)" />;
+  return (
+    <>
+      <StatusBar hidden={true} />
+      <Redirect href="/(tabs)" />
+    </>
+  );
 }

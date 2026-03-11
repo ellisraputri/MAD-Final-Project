@@ -1,98 +1,387 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Image, ScrollView, TouchableOpacity, Animated, TextInput, Modal } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import RankingCard from "@/components/ui/ranking-card";
+import { useEffect, useRef, useState } from "react";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const rankings = [1,2,3,4,5,6,7];
+  const scrollRef = useRef<ScrollView>(null);
+  const members = ["Ellis","Ella","Ello","Ellu"];
+  const carouselMembers = [...members, ...members];
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const [teamName, setTeamName] = useState("Kita Menang Yey");
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    let position = 0;
+
+    const itemWidth = 30; // width of avatar + margin
+    const loopWidth = members.length * itemWidth;
+
+    const interval = setInterval(() => {
+      position += 1;
+
+      if (position >= loopWidth) {
+        position = 0;
+        scrollRef.current?.scrollTo({ x: 0, animated: false });
+      } else {
+        scrollRef.current?.scrollTo({
+          x: position,
+          animated: false,
+        });
+      }
+    }, 16);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      
+      {/* HEADER */}
+      <ImageBackground
+        source={require("../../assets/images/header2.jpg")}
+        style={styles.header}
+        imageStyle={{opacity: 1.0}}
+      >
+        <Image
+          source={require("../../assets/images/logo.png")}
+          style={styles.logoApp}
+        >
+        </Image>
+
+        <View style={styles.headerContent}>
+          <Text style={styles.welcome}>Welcome, Ellis!</Text>
+
+          <Text style={styles.subtitle}>Online team members:</Text>
+
+          <ScrollView
+            ref={scrollRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            scrollEnabled={false}
+            contentContainerStyle={styles.members}
+          >
+            {carouselMembers.map((name, i) => (
+              <View key={i} style={styles.avatarContainer}>
+                <View style={[styles.avatar, {backgroundColor: colors[i % colors.length]}]}>
+                  <Text style={styles.avatarText}>{name[0]}</Text>
+                </View>
+                <Text style={styles.memberName}>{name}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      </ImageBackground>
+
+      {/* CONTENT */}
+      <ScrollView style={styles.content}  contentContainerStyle={{ paddingBottom: 150 }}>
+        
+        {/* TEAM INFO */}
+        <Text style={styles.label}>Team ID: gyh6fg</Text>
+
+        <View style={styles.row}>
+          <Text style={styles.label}>Team Name:</Text>
+
+          <View style={styles.editRow}>
+            <>
+              <Text style={styles.teamName}>{teamName}</Text>
+
+              <Ionicons
+                name="pencil"
+                size={18}
+                color="#388087"
+                onPress={() => setEditing(true)}
+              />
+            </>
+          </View>
+        </View>
+
+        <View style={styles.logoContainer}>
+          <Text style={styles.label}>Team Logo:</Text>
+
+          <TouchableOpacity style={styles.logoWrapper}>
+            <Image
+              source={{
+                uri: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+              }}
+              style={styles.logo}
+            />
+
+            <Ionicons
+              name="pencil"
+              size={20}
+              style={styles.editIcon}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* GLOBAL RANKING */}
+        <Text style={styles.section}>Global Ranking:</Text>
+        <RankingCard 
+          rank="1"
+          score="100%"
+          teamName="Kita Menang Yey"
+          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+        />
+
+        {rankings.map((item) => (
+          <View key={item}>
+            <Text style={styles.section}>
+              Highest Ranking Activity {item}:
+            </Text>
+
+            <RankingCard 
+              rank="1"
+              score="100%"
+              teamName="Kita Menang Yey"
+              imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+            />
+          </View>
+        ))}
+
+
+        <Modal
+          visible={editing}
+          transparent
+          animationType="fade"
+        >
+          <View style={styles.overlayPopup}>
+            <View style={styles.popup}>
+              
+              {/* Header */}
+              <View style={styles.headerPopup}>
+                <Text style={styles.title}>Team Name</Text>
+  
+                <TouchableOpacity onPress={() => setEditing(false)}>
+                  <Text style={styles.close}>✕</Text>
+                </TouchableOpacity>
+              </View>
+  
+              <TextInput
+                  placeholder="Enter your team ID"
+                  placeholderTextColor="#888"
+                  value={teamName}
+                  onChangeText={setTeamName}
+                  style={styles.input}
+              />
+  
+              {/* OK Button */}
+              <View style={styles.buttonContainer}>
+                  <TouchableOpacity style={styles.buttonPopup}>
+                      <Text style={styles.buttonText}>OK</Text>
+                  </TouchableOpacity>
+              </View>
+  
+            </View>
+          </View>
+        </Modal>
+
+      </ScrollView>
+
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+
+  header: {
+    height: 250,
+    padding: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
+
+  headerContent: {
+    marginBottom: 10,
+  },
+
+  welcome: {
+    fontSize: 28,
+    color: "white",
+    marginTop: 40,
+    fontFamily: "Nunito_700Bold"
+  },
+
+  subtitle: {
+    color: "white",
+    marginTop: 10,
+    fontSize: 18,
+    fontFamily: "Lato_400Regular"
+  },
+
+  members: {
+    marginTop: 15,
+    paddingRight: 20,
+  },
+
+  avatarContainer: {
+    alignItems: "center",
+    marginRight: 20,
+  },
+
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  avatarText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  memberName: {
+    color: "white",
+    fontFamily: "Lato_400Regular",
+    marginTop: 5,
+    fontSize: 12,
+  },
+
+  content: {
+    flex: 1,
+    backgroundColor: "#f3f3f3",
+    padding: 20,
+    marginTop: -20,
+  },
+
+  label: {
+    fontSize: 18,
+    fontFamily: "Lato_400Regular", 
+    marginBottom: 20,
+  },
+
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  editRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10,
+    marginTop: -20
+  },
+
+  teamName: {
+    fontSize: 18,
+    marginRight: 5,
+    borderBottomWidth: 2,
+    borderBottomColor: "#388087",
+  },
+
+  logoContainer: {
+    marginTop: 10,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  logoWrapper: {
+    marginLeft: 10,
+    position: "relative",
+  },
+
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+
+  editIcon: {
+    position: "absolute",
     bottom: 0,
-    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 2,
+    elevation: 3,
+    color: "#388087"
+  },
+
+  section: {
+    fontFamily: "Lato_400Regular",
+    fontSize: 18,
+    marginTop: 30,
+    marginBottom: 10,
+  },
+
+  logoApp: {
     position: 'absolute',
+    top: 10,
+    right: 25,
+    width: 40,
+    height: 60,
+    resizeMode: 'contain',
+  },
+
+  teamInput: {
+    borderBottomWidth: 2,
+    borderColor: "#388087",
+    minWidth: 120,
+    marginRight: 10,
+    fontSize: 16,
+    fontFamily: "Lato_400Regular",
+  },
+  popup: {
+    width: "85%",
+    backgroundColor: "#EDEDED",
+    borderRadius: 25,
+    padding: 24,
+    elevation: 6
+  },
+  headerPopup: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 22,
+    color: "#4F7C7E",
+    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
+  },
+  close: {
+    fontSize: 28
+  },
+  overlayPopup: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonPopup: {
+    marginTop: 20,
+    borderWidth: 2,
+    borderColor: '#388087',
+    borderRadius: 50,
+    paddingVertical: 6,
+    alignItems: 'center',
+    width: 150,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: '#388087',
+    fontWeight: '500',
+    fontFamily: "Nunito_700Bold",
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#388087',
+    fontSize: 16,
+    paddingVertical: 8,
+    fontFamily: 'Lato_400Regular',
+    marginTop: 2,
   },
 });
