@@ -1,112 +1,234 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRef, useState } from "react";
+import CustomDropdown from "@/components/ui/dropdown";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+const dropdownValue = [
+  {label: "Light", value: "light"},
+  {label: "Dark", value: "dark"}
+]
 
-export default function TabTwoScreen() {
+export default function SettingsScreen() {
+  const [name, setName] = useState("Ellis");
+  const [mode, setMode] = useState("light");
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempName, setTempName] = useState(name);
+  const inputRef = useRef<TextInput>(null);
+
+  const saveName = () => {
+    setName(tempName);
+    setIsEditing(false);
+  };
+
+  const cancelEdit = () => {
+    setTempName(name);
+    setIsEditing(false);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Settings
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={{ paddingBottom: 150 }}
+      showsVerticalScrollIndicator={false}
+    >
+      
+      {/* Title */}
+      <Text style={styles.title}>Settings</Text>
+
+      {/* Avatar */}
+      <View style={styles.avatar}>
+        <Text style={styles.avatarText}>{name[0]}</Text>
+      </View>
+
+      {/* First Name */}
+      <View style={styles.section}>
+        <Text style={styles.label}>First Name</Text>
+
+        <View style={styles.inputRow}>
+          <TextInput
+            ref={inputRef}
+            value={tempName}
+            onChangeText={setTempName}
+            editable={isEditing}
+            style={styles.input}
+            underlineColorAndroid="transparent"
+          />
+
+          {!isEditing ? (
+            <TouchableOpacity
+              onPress={() => {
+                setIsEditing(true);
+                setTimeout(() => {
+                  inputRef.current?.focus();
+                }, 50);
+              }}
+            >
+              <Ionicons name="pencil" size={20} color="#000" />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.iconContainer}>
+              <TouchableOpacity onPress={saveName}>
+                <Ionicons name="checkmark" size={24} color="green" />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={cancelEdit}>
+                <Ionicons name="close" size={24} color="red" />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+
+      {/* Mode */}
+      <View style={styles.section}>
+        <Text style={styles.label}>Mode</Text>
+
+        <CustomDropdown data={dropdownValue} value={mode} placeholder='Select mode' onSelect={setMode}/>
+      </View>
+
+      {/* General Info */}
+      <Text style={styles.sectionTitle}>General Info</Text>
+
+      <TouchableOpacity style={styles.listItem}>
+        <Text style={styles.listText}>Terms & Conditions</Text>
+        <Ionicons name="chevron-forward" size={20} color="#000" />
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.listItem, {marginTop: 10}]}>
+        <Text style={styles.listText}>Help Center</Text>
+        <Ionicons name="chevron-forward" size={20} color="#000" />
+      </TouchableOpacity>
+
+      {/* Logout */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: "#F3F3F3",
+    padding: 24,
   },
-  titleContainer: {
+
+  title: {
+    fontSize: 28,
+    fontFamily: "Nunito_700Bold",
+    fontWeight: "600",
+    color: "#4f7c82",
+  },
+
+  avatar: {
+    alignSelf: "center",
+    width: 120,
+    height: 120,
+    borderRadius: 80,
+    backgroundColor: "#6FB3B8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+    marginTop: 10,
+  },
+
+  avatarText: {
+    fontSize: 60,
+    color: "white",
+    fontFamily: "Lato_400Regular"
+  },
+
+  section: {
+    marginBottom: 30,
+  },
+
+  label: {
+    fontSize: 20,
+    color: '#388087',
+    fontFamily: 'Nunito_700Bold',
+  },
+
+  inputRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderColor: "#388087",
+  },
+
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: "#222",
+    fontFamily: "Lato_400Regular"
+  },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#388087",
+    fontFamily: "Nunito_700Bold",
+    marginBottom: 5,
+  },
+
+  listItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderColor: "#388087",
+    paddingVertical: 12,
+  },
+
+  listText: {
+    fontSize: 18,
+    fontFamily: "Lato_400Regular",
+  },
+
+  logoutBtn: {
+    marginTop: "auto",
+    borderWidth: 2,
+    borderColor: "#4F7C82",
+    borderRadius: 40,
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+
+  logoutText: {
+    fontSize: 20,
+    color: "#4F7C82",
+    fontWeight: "600",
+  },
+
+  button: {
+    marginTop: 20,
+    borderWidth: 2,
+    borderColor: '#388087',
+    borderRadius: 50,
+    paddingVertical: 10,
+    alignItems: 'center',
+    width: 300,
+  },
+  buttonText: {
+    fontSize: 20,
+    color: '#388087',
+    fontWeight: '500',
+    fontFamily: "Nunito_700Bold",
+  },
+  buttonContainer: {
     flexDirection: 'row',
-    gap: 8,
+    justifyContent: 'center',
+    marginTop: 40,
+  },
+
+  iconContainer: {
+    flexDirection: "row",
+    width: 60,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
