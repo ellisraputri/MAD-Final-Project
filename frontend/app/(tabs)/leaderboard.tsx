@@ -1,112 +1,185 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import PodiumCard from "@/components/ui/podium-card";
+import RankingCard from "@/components/ui/ranking-card";
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+const dropdownData = [
+  { label: "Global", value: "global" },
+  { label: "Activity 1", value: "activity1" },
+  { label: "Activity 2", value: "activity2" },
+  { label: "Activity 3", value: "activity3" },
+  { label: "Activity 4", value: "activity4" },
+  { label: "Activity 5", value: "activity5" },
+  { label: "Activity 6", value: "activity6" },
+  { label: "Activity 7", value: "activity7" },
+];
 
-export default function TabTwoScreen() {
+export default function LeaderboardScreen() {
+  const [dropdownValue, setDropdownValue] = useState("global");
+  const [results, setResult] = useState([
+    {rank: "4", teamName: "hehe1", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
+    {rank: "5", teamName: "ooopp", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
+    {rank: "6", teamName: "coba lihat", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
+    {rank: "7", teamName: "wink", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
+    {rank: "8", teamName: "fffff", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
+    {rank: "9", teamName: "askaks", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
+    {rank: "10", teamName: "fasaffff", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
+  
+  ])
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={{ paddingBottom: 150 }}
+      showsVerticalScrollIndicator={false}
+    >
+      
+      {/* header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Leaderboard</Text>
+
+        <Dropdown
+          style={styles.dropdown}
+          data={dropdownData}
+          labelField="label"
+          valueField="value"
+          value={dropdownValue}
+          onChange={item => setDropdownValue(item.value)}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Leaderboard
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
+      </View>
+
+      <View style={styles.podiumContainer}>
+        <PodiumCard
+          rank={3}
+          name="Ayam"
+          score="95%"
+          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
         />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+        <View style={{ marginBottom: 30 }}>
+          <PodiumCard
+            rank={1}
+            name="Kita Menang Yey"
+            score="100%"
+            imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+          />
+        </View>
+        <PodiumCard
+          rank={2}
+          name="Api"
+          score="98%"
+          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+        />
+      </View>
+
+      {/* Your ranking list below */}
+      <View style={styles.rankingList}>
+          {results.map((item, i) => (
+              <RankingCard 
+              key={i}
+                rank={item.rank}
+                score={item.score}
+                teamName={item.teamName}
+                imageUrl={item.imageUrl}
+              />
+          ))}
+      </View>
+
+      <View style={{marginTop: 10}}>
+        <Text style={styles.section}>
+          My Team Best:
+        </Text>
+
+        <RankingCard 
+          rank="1"
+          score="100%"
+          teamName="Kita Menang Yey"
+          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+        />
+      </View>
+
+      {dropdownValue !== "global" && 
+        <View>
+          <Text style={styles.section}>
+            My Team Latest Attempt:
+          </Text>
+
+          <RankingCard 
+            rank="1"
+            score="100%"
+            teamName="Kita Menang Yey"
+            imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+          />
+        </View>
+      }
+      
+      
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#f4f4f4",
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+
+  header: {
+    marginTop: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  title: {
+    fontSize: 28,
+    fontFamily: "Nunito_700Bold",
+    fontWeight: "600",
+    color: "#4f7c82",
+  },
+
+  dropdown: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    height: 40,
+    width: 150,
+    padding: 10,
+    elevation: 3,
+    fontFamily: "Lato_400Regular",
+  },
+
+  dropdownText: {
+    fontSize: 18,
+  },
+
+  podiumContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    marginTop: 35,
+  },
+
+  firstCard: {
+    alignItems: "center",
+    marginHorizontal: 10,
+  },
+
+  sideCard: {
+    alignItems: "center",
+  },
+
+  rankingList: {
+    gap: 15,
+    marginTop: 20,
+  },
+
+  section: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 18,
+    marginTop: 40,
+    marginBottom: 10,
   },
 });
