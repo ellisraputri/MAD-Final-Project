@@ -90,7 +90,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="activity/instructions"
+        name="activity/[id]"
         options={{ href: null }}
       />
 

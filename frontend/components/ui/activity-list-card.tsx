@@ -39,7 +39,12 @@ export default function ActivityListCard(props: ActivityProps) {
           {props.description}
         </Text>
 
-        <Link href="/activity/instructions">
+        <Link
+          href={{
+            pathname: "/(tabs)/activity/[id]/instructions",
+            params: { id: props.index.toString() }
+          }}
+        >
             <Text style={styles.link}>Find out more...</Text>
         </Link>
         
