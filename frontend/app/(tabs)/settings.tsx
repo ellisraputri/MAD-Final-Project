@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F3F3F3",
-    padding: 24,
+    padding: 20,
   },
 
   title: {
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontWeight: "600",
     color: "#4f7c82",
+    marginTop: 15,
   },
 
   avatar: {

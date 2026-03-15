@@ -1,0 +1,120 @@
+import { Link, useRouter } from "expo-router";
+import React from "react";
+import { View, Text, StyleSheet, ImageBackground } from "react-native";
+
+type ActivityProps = {
+  name: string;
+  description: string;
+  image: any;
+  type: string;
+  index: number;
+};
+
+export default function ActivityListCard(props: ActivityProps) {
+  const router = useRouter();
+
+  return (
+    <View style={styles.container}>
+      
+      {/* Top Image Section */}
+      <ImageBackground
+        source={props.image}
+        style={styles.image}
+        imageStyle={styles.imageStyle}
+      >
+        <View style={[styles.badge, 
+            props.type === "Engineering"? {backgroundColor: "#BADFE7"} : {backgroundColor: "#C2EDCE"}]
+        }>
+          <Text style={styles.badgeText}>{props.type}</Text>
+        </View>
+      </ImageBackground>
+
+      {/* Bottom Caption */}
+      <View style={styles.card}>
+        <Text style={styles.title}>
+          Activity {props.index}: {props.name}
+        </Text>
+
+        <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
+          {props.description}
+        </Text>
+
+        <Link href="/activity/instructions">
+            <Text style={styles.link}>Find out more...</Text>
+        </Link>
+        
+      </View>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 25,
+    marginHorizontal: 30,
+    marginBottom: 40,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4
+  },
+
+  image: {
+    height: 160,
+    justifyContent: "flex-start",
+  },
+
+  imageStyle: {
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+
+  badge: {
+    position: "absolute",
+    top: 15,
+    right: 15,
+    backgroundColor: "#A9C5CC",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+
+  badgeText: {
+    color: "#295F6B",
+    fontWeight: "600",
+  },
+
+  card: {
+    backgroundColor: "#EFEFEF",
+    padding: 20,
+  },
+
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 10,
+    color: "#143336",
+    fontFamily: "Lato_700Bold",
+  },
+
+  description: {
+    fontSize: 15,
+    color: "#143336",
+    marginBottom: 15,
+    fontFamily: "Lato_400Regular",
+    textAlign: "justify",
+    lineHeight: 20,
+  },
+
+  link: {
+    textAlign: "right",
+    color: "#357D89",
+    fontWeight: "500",
+    fontSize: 16,
+    fontFamily: "Lato_700Bold",
+  },
+});

@@ -1,10 +1,12 @@
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname } from 'expo-router';
 import { Ionicons } from "@expo/vector-icons";
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useEffect } from 'react';
 
 export default function TabLayout() {
+  const pathname = usePathname();
+
   useEffect(() => {
       NavigationBar.setBehaviorAsync("overlay-swipe");
       NavigationBar.setVisibilityAsync("hidden");
@@ -53,11 +55,19 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="activity"
+        name="activity/index"
         options={{
-          tabBarIcon: ({color, focused}) => (
-            <Ionicons name={focused ? "compass" : "compass-outline"} size={30} color={color} />
-          ),
+          tabBarIcon: ({ color }) => {
+            const active = pathname.startsWith("/activity");
+
+            return (
+              <Ionicons
+                name={active ? "compass" : "compass-outline"}
+                size={30}
+                color={active ? "#3AA6A6" : "white"}
+              />
+            );
+          },
         }}
       />
 
@@ -77,6 +87,11 @@ export default function TabLayout() {
             <Ionicons name={focused ? "settings" : "settings-outline"} size={30} color={color} />
           ),
         }}
+      />
+
+      <Tabs.Screen
+        name="activity/instructions"
+        options={{ href: null }}
       />
 
     </Tabs>
