@@ -1,10 +1,20 @@
+import ActivityOneScreen from '@/components/ui/activity1'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
-function activity() {
+export default function ActivityScreen() {
   return (
-    <View><Text>activity </Text></View>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
+      <Text>Hi mega </Text>
+      <ActivityOneScreen/>
+    </ScrollView>
   )
 }
 
-export default activity
+const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    backgroundColor:"#fff",
+    paddingHorizontal: 30,
+  }
+})

@@ -1,0 +1,25 @@
+{
+    "overview": "Students measure reaction time, coordination, and improvement through repeated digital and physical challenges.",
+    "equipments": [
+        {
+            "image": "https://static.wikia.nocookie.net/gensin-impact/images/5/52/NPC_Aragaru.png/revision/latest?cb=20240419203104",
+            "caption": "Mobile phone with STEMM Lab App"
+        },
+        {
+            "image": "https://static.wikia.nocookie.net/gensin-impact/images/5/52/NPC_Aragaru.png/revision/latest?cb=20240419203104",
+            "caption": "Clear working space"
+        }
+    ],
+    "tutorial": [
+        "Tap the screen as soon as the hidden button appears.",
+        "Record reaction time.",
+        "Rotate through each team member",
+        "Repeat using the non-dominant hand.",
+        "Compare results.",
+        "Rotate through each team member",
+        "Trace a moving shape on the screen.",
+        "Review accuracy and delay.",
+        "Rotate through each team member"
+    ],
+    "video": "https://youtu.be/Z4NNFrQdLR4?si=snuny87gBPLGRYvY"
+}

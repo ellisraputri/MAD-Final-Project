@@ -33,7 +33,7 @@ export default function Layout() {
             color: "#295F6B",
           },
           tabBarStyle: {
-            backgroundColor: "#F6F6F2"
+            backgroundColor: "#fff"
           }
         }}
       >

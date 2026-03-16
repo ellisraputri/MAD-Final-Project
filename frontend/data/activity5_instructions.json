@@ -1,0 +1,21 @@
+{
+    "overview": "Students investigate how the human body moves by measuring speed, smoothness, and coordination during controlled stretching activities.",
+    "equipments": [
+        {
+            "image": "https://static.wikia.nocookie.net/gensin-impact/images/3/32/NPC_Arabalika.png/revision/latest?cb=20230728042416",
+            "caption": "Mobile phone with STEMM Lab App"
+        },
+        {
+            "image": "https://static.wikia.nocookie.net/gensin-impact/images/3/32/NPC_Arabalika.png/revision/latest?cb=20230728042416",
+            "caption": "Open space to move freely"
+        }
+    ],
+    "tutorial": [
+        "Hold the phone firmly in one hand. Activate the App vibration sensor.",
+        "Perform guided movement slowly as shown in the app. Record the vibration.",
+        "Repeat the activity with vibration feedback enabled.",
+        "Review speed, smoothness, and range-of-motion data.",
+        "Upload results and reflect as a group."
+    ],
+    "video": "https://youtu.be/Z4NNFrQdLR4?si=snuny87gBPLGRYvY"
+}
