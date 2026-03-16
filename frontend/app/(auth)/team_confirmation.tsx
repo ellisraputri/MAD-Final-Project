@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
+import Button from '@/components/ui/button';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -89,17 +90,21 @@ export default function TeamConfirmationScreen() {
         <Text style={styles.text}>Looks like you’re not part of a team yet!</Text>
         <Text style={styles.text}>Create one or join a team to jump into the fun 🚀✨</Text>
         
-        <View style={[styles.buttonContainer, {marginTop: 40}]}>
-          <TouchableOpacity style={styles.button} onPress={() => setNewTeamModalVisible(true)}>
-            <Text style={styles.buttonText}>Create New Team</Text>
-          </TouchableOpacity>
-        </View>
+        <Button
+          onPress={() => setNewTeamModalVisible(true)}
+          text='Create New Team'
+          width={300}
+          fontSize={20}
+          marginTop={50}
+        />
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => setJoinTeamModalVisible(true)}>
-            <Text style={styles.buttonText}>Join a Team</Text>
-          </TouchableOpacity>
-        </View>
+        <Button
+          onPress={() => setJoinTeamModalVisible(true)}
+          text='Join a Team'
+          width={300}
+          fontSize={20}
+          marginTop={10}
+        />
       </View>
 
       <Modal
@@ -134,11 +139,13 @@ export default function TeamConfirmationScreen() {
             <CustomDropdown data={gradeDropdown} value={grade} placeholder='Select grade' onSelect={setGrade}/>
 
             {/* OK Button */}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.buttonPopup}>
-                    <Text style={styles.buttonText}>OK</Text>
-                </TouchableOpacity>
-            </View>
+            <Button
+              onPress={() => setNewTeamModalVisible(false)}
+              text='OK'
+              width={150}
+              fontSize={20}
+              marginTop={30}
+            />
 
           </View>
         </View>
@@ -171,11 +178,13 @@ export default function TeamConfirmationScreen() {
             />
 
             {/* OK Button */}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.buttonPopup}>
-                    <Text style={styles.buttonText}>OK</Text>
-                </TouchableOpacity>
-            </View>
+            <Button
+              onPress={() => setJoinTeamModalVisible(false)}
+              text='OK'
+              width={150}
+              fontSize={20}
+              marginTop={30}
+            />
 
           </View>
         </View>
@@ -214,35 +223,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontFamily: 'Lato_400Regular',
     marginTop: 2,
-  },
-  button: {
-    marginTop: 20,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 10,
-    alignItems: 'center',
-    width: 300,
-  },
-  buttonPopup: {
-    marginTop: 30,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 8,
-    alignItems: 'center',
-    width: 150,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
   },
   text: {
     fontSize: 20,
