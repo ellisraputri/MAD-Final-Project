@@ -87,12 +87,8 @@ export default function InstructionScreen() {
 
       {/* Tutorial */}
       <Section title="Tutorial">
-        <View style={styles.videoBox}>
-          <Text style={{fontSize:40}}>▶</Text>
-        </View>
+        <VideoPlayer link={data.video}/>
       </Section>
-
-      <VideoPlayer link={data.video}/>
 
     </ScrollView>
   );
