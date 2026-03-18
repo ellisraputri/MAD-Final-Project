@@ -1,9 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import VideoPlayer from "./video-player";
+import { useState } from "react";
 
 
-export default function ActivityOneSubmissionCard(props: {item: number; videoUri: string | null}){
+export default function ActivityOneSubmissionCard(props: {
+    item: number; 
+    videoUri: string | null;
+    isInModal?: boolean
+}){
+    const [showVideoModal, setShowVideoModal] = useState(false);
+
     return(
         <View key={props.item} style={submissionStyles.card}>
           <View style={submissionStyles.titleRow}>
@@ -19,7 +26,33 @@ export default function ActivityOneSubmissionCard(props: {item: number; videoUri
             <View style={submissionStyles.subsContainer}>
                 <View style={submissionStyles.videoPlaceholder}>
                     {props.videoUri ? (
-                        <VideoPlayer link={props.videoUri} vidHeight={400} vidWidth={250}/>
+                        props.isInModal ? (
+                        // In modal: show thumbnail + tap to play in a separate Modal
+                        <>
+                            <TouchableOpacity
+                            style={submissionStyles.playOverlay}
+                            onPress={() => setShowVideoModal(true)}
+                            >
+                            <Ionicons name="play-circle" size={60} color="#357D89" />
+                            <Text style={submissionStyles.tapText}>Tap to play</Text>
+                            </TouchableOpacity>
+
+                            {/* Fullscreen video modal - renders outside scroll context */}
+                            <Modal visible={showVideoModal} animationType="slide" transparent={false}>
+                            <View style={submissionStyles.fullscreenModal}>
+                                <VideoPlayer link={props.videoUri} vidHeight={400} vidWidth={320} />
+                                <TouchableOpacity
+                                style={submissionStyles.closeVideoBtn}
+                                onPress={() => setShowVideoModal(false)}
+                                >
+                                <Text style={submissionStyles.editBtnText}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
+                            </Modal>
+                        </>
+                        ) : (
+                        <VideoPlayer link={props.videoUri} vidHeight={220} vidWidth={250} />
+                        )
                     ) : (
                         <Text style={submissionStyles.descText}>No video</Text>
                     )}
@@ -43,6 +76,32 @@ export default function ActivityOneSubmissionCard(props: {item: number; videoUri
 
 
 const submissionStyles = StyleSheet.create({
+    playOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    tapText: {
+        marginTop: 8,
+        color: '#357D89',
+        fontFamily: "Lato_400Regular",
+        fontSize: 14,
+    },
+    fullscreenModal: {
+        flex: 1,
+        backgroundColor: '#000',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    closeVideoBtn: {
+        marginTop: 20,
+        backgroundColor: "#388087",
+        padding: 10,
+        borderRadius: 8,
+        width: 120,
+        alignItems: 'center',
+    },
     subsContainer:{
         marginLeft: 20,
     },
@@ -52,7 +111,7 @@ const submissionStyles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     card: {
-        width: 300,
+        width: '90%',
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 25,
@@ -67,12 +126,14 @@ const submissionStyles = StyleSheet.create({
     },
     videoPlaceholder: {
         height: 400,
+        width: '100%',
         borderWidth: 2,
         borderColor: '#357D89',
         backgroundColor: "#d9d9d9",
         justifyContent: "center",
         alignItems: "center",
         marginBottom: 10,
+        overflow: 'hidden'
     },
     prediction: {
         marginTop: 15,

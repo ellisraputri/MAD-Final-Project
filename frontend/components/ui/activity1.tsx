@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from "rea
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import VideoPlayer from "./video-player";
 import ActivityOneSubmissionCard from "./activity1-submission-card";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);
@@ -157,10 +158,14 @@ export default function ActivityOneScreen() {
       )}
 
       <Modal visible={showModal} animationType="slide">
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={styles.modalContainer}>
-          <Text style={styles.titleText}>Your Submissions</Text>
+          <Text style={styles.titleModalText}>Your Sudbmissions</Text>
 
-          <ScrollView>
+          <ScrollView
+            style={{ flex: 1, width: '90%' }}
+            contentContainerStyle={styles.scrollView}
+          >
             {videos.length === 0 ? (
               <Text>No submissions yet</Text>
             ) : (
@@ -169,6 +174,7 @@ export default function ActivityOneScreen() {
                   key={index}
                   item={index + 1}
                   videoUri={uri}
+                  isInModal={true}
                 />
               ))
             )}
@@ -181,6 +187,7 @@ export default function ActivityOneScreen() {
             <Text style={styles.btnText}>Close</Text>
           </TouchableOpacity>
         </View>
+        </SafeAreaView>
       </Modal>
     </View>
   );
@@ -257,10 +264,25 @@ const styles = StyleSheet.create({
 
    modalContainer: {
     flex: 1,
-    padding: 20,
+    paddingTop: 30,
+    paddingHorizontal: 5,
     alignItems: "center",
+    justifyContent: 'flex-start',
+    backgroundColor: 'green',
   },
-
+  scrollView: {
+    alignItems: 'center',
+    paddingBottom: 40,
+    backgroundColor: 'red'
+  },
+  titleModalText: {
+    marginTop: 20,
+    marginBottom: 20,
+    fontSize: 20,
+    color: '#357D89',
+    fontWeight: '500',
+    fontFamily: "Lato_700Bold",
+  },
   titleText: {
     marginTop: 100,
     marginBottom: 20,
