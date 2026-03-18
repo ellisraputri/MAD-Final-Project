@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import VideoPlayer from "./video-player";
 import { useState } from "react";
 
@@ -7,6 +7,10 @@ import { useState } from "react";
 export default function ActivityOneSubmissionCard(props: {
     item: number; 
     videoUri: string | null;
+    mass: string;
+    time: string;
+    onChangeMass: (text: string) => void;
+    onChangeTime: (text: string) => void;
     onDelete: () => void;
     onRerecord: () => void;
 }){
@@ -54,12 +58,22 @@ export default function ActivityOneSubmissionCard(props: {
                 </View>
 
                 <Text style={submissionStyles.descText}>Mass of toy (gram)</Text>
-                <View style={submissionStyles.inputBox} />
+                <TextInput
+                    style={submissionStyles.inputBox}
+                    value={props.mass}
+                    onChangeText={props.onChangeMass}
+                    keyboardType="numeric"
+                />
 
                 <Text style={submissionStyles.prediction}>Prediction</Text>
 
                 <Text style={submissionStyles.descText}>Time to hit ground (seconds)</Text>
-                <View style={submissionStyles.inputBox} />
+                <TextInput
+                    style={submissionStyles.inputBox}
+                    value={props.time}
+                    onChangeText={props.onChangeTime}
+                    keyboardType="numeric"
+                />
 
                 <TouchableOpacity style={submissionStyles.editBtn} onPress={props.onRerecord}>
                     <Text style={submissionStyles.editBtnText}>Edit</Text>
@@ -144,7 +158,7 @@ const submissionStyles = StyleSheet.create({
     },
     inputBox: {
         borderWidth: 0.8,
-        height: 30,
+        height: 40,
         marginVertical: 10,
         marginBottom: 20,
     },

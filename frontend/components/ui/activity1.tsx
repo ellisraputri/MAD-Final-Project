@@ -9,7 +9,13 @@ import { Ionicons } from "@expo/vector-icons";
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);
   const [screen, setScreen] = useState<"record" | "submission">("record");
-  const [videos, setVideos] = useState<string[]>([]);
+  
+  const [videos, setVideos] = useState<{
+    uri: string;
+    mass: string;
+    time: string;
+  }[]>([]);
+
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -73,14 +79,20 @@ export default function ActivityOneScreen() {
     if (rerecordIndex !== null) {
       setVideos((prev) => {
         const updated = [...prev];
-        updated[rerecordIndex] = videoUri;
+        updated[rerecordIndex] = {
+          ...updated[rerecordIndex],
+          uri: videoUri,
+        };
         return updated;
       });
       setRerecordIndex(null);
     } 
     else {
       if (videos.length >= 3) return;
-      setVideos((prev) => [...prev, videoUri]);
+      setVideos((prev) => [
+        ...prev,
+        { uri: videoUri, mass: "", time: "" },
+      ]);
     }
 
     setVideoUri(null);
@@ -98,13 +110,28 @@ export default function ActivityOneScreen() {
     setScreen("record");
   };
 
-  const handleSubmit = () => {
-    const currLength = videos.length;
+  const handleFieldChange = (value: string, index: number, type: string) => {
+    setVideos((prev) => {
+      const updated = [...prev];
+      if(type === 'mass') updated[index].mass = value;
+      else if(type === 'time') updated[index].time = value;
+      return updated;
+    });
+  }
 
+  const handleSubmit = () => {
+    const invalid = videos.some(v => !v.mass || !v.time);
+    if (invalid) {
+      alert("Please fill all mass and prediction fields.");
+      return;
+    }
+
+    const currLength = videos.length;
     if(currLength < 3){
       alert(`You can only submit when there are 3 videos. Please continue to record ${3-currLength} more videos.`)
-    }else{
-      alert('Successfully submitted the videos!')
+    }
+    else{
+      alert(`Successfully submitted the videos! \n ${videos[0].mass} ${videos[0].time}`)
     }
   }
 
@@ -174,11 +201,15 @@ export default function ActivityOneScreen() {
         <>
           {/* === SUBMISSION SCREEN === */}
             <View style={{ width: "100%", alignItems: "center" }}>
-            {videos.map((uri, index) => (
+            {videos.map((item, index) => (
               <ActivityOneSubmissionCard
                 key={index}
                 item={index + 1}
-                videoUri={uri}
+                videoUri={item.uri}
+                mass={item.mass}
+                time={item.time}
+                onChangeMass={(value) => handleFieldChange(value, index, 'mass')}
+                onChangeTime={(value) => handleFieldChange(value, index, 'time')}
                 onDelete={() => handleDelete(index)}
                 onRerecord={() => handleRerecord(index)}
               />
@@ -224,11 +255,15 @@ export default function ActivityOneScreen() {
             {videos.length === 0 ? (
               <Text>No submissions yet</Text>
             ) : (
-              videos.map((uri, index) => (
+              videos.map((item, index) => (
                 <ActivityOneSubmissionCard
                   key={index}
                   item={index + 1}
-                  videoUri={uri}
+                  videoUri={item.uri}
+                  mass={item.mass}
+                  time={item.time}
+                  onChangeMass={(value) => handleFieldChange(value, index, 'mass')}
+                  onChangeTime={(value) => handleFieldChange(value, index, 'time')}
                   onDelete={() => {
                     handleDelete(index);
                     if (videos.length === 1) setShowModal(false);
