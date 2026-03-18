@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
-import { VideoView, useVideoPlayer } from "expo-video";
+import VideoPlayer from "./video-player";
 
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);
@@ -10,15 +10,8 @@ export default function ActivityOneScreen() {
   const [permissionMic, requestPermissionMic] = useMicrophonePermissions();
   const [recording, setRecording] = useState(false);
   const [videoUri, setVideoUri] = useState<string | null>(null);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
-  const player = useVideoPlayer(videoUri ? { uri: videoUri } : null);
-
-  useEffect(() => {
-    if (videoUri && player) {
-      player.loop = true;
-      player.play();
-    }
-  }, [videoUri, player]);
 
   if (!permissionCamera || !permissionMic) return <View />;
 
@@ -43,12 +36,21 @@ export default function ActivityOneScreen() {
   }
 
   const startRecording = async () => {
+    if (!isCameraReady || recording) return;
+
     if (videoUri) setVideoUri(null);
 
-    if (cameraRef.current) {
+    try {
       setRecording(true);
-      const video = await cameraRef.current.recordAsync();
+
+      const video = await cameraRef.current?.recordAsync({
+        maxDuration: 60,
+      });
+
       setVideoUri(video?.uri ?? null);
+    } catch (e) {
+      console.error("Recording failed:", e);
+    } finally {
       setRecording(false);
     }
   };
@@ -63,6 +65,7 @@ export default function ActivityOneScreen() {
           ref={cameraRef}
           style={styles.videoScreen}
           mode="video"
+          onCameraReady={() => setIsCameraReady(true)}
         />
 
         <View style={styles.recordBtnArea}>
@@ -80,27 +83,21 @@ export default function ActivityOneScreen() {
         </View>
         
 
-        <Text style={styles.currText}>Current Recording:</Text>
+        <Text style={styles.titleText}>Current Recording:</Text>
 
         {!videoUri ? (
-            <Text>No video available!</Text>
+            <Text style={styles.subtitleText}>No video available!</Text>
         ) : (
-            <VideoView
-            player={player!}
-            style={styles.videoScreen}
-            nativeControls
-            />
+              <VideoPlayer link={videoUri} vidHeight={500}></VideoPlayer>
         )}
 
-        {/* view submissions btn */}
         <View style={styles.buttonContainer}>
+            {/* view submissions btn */}
             <TouchableOpacity style={styles.buttonPopup}>
                 <Text style={styles.buttonText}>View Submissions</Text>
             </TouchableOpacity>
-        </View>
 
-        {/* confirm submission btn */}
-        <View style={styles.buttonContainer}>
+            {/* confirm submission btn */}
             <TouchableOpacity style={styles.buttonPopup}>
                 <Text style={styles.buttonText}>Confirm Submission</Text>
             </TouchableOpacity>
@@ -119,7 +116,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingVertical: 8,
     alignItems: 'center',
-    width: 150,
+    width: 250,
+    height: 53,
   },
   buttonText: {
     fontSize: 20,
@@ -128,9 +126,9 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: 60,
   },
 
   recordButtonOuter: {
@@ -175,12 +173,17 @@ const styles = StyleSheet.create({
     justifyContent: "center" 
   }, 
 
-  currText: {
+  titleText: {
     marginTop: 100,
     marginBottom: 20,
     fontSize: 20,
     color: '#357D89',
     fontWeight: '500',
     fontFamily: "Lato_700Bold",
+  },
+  subtitleText: {
+    fontFamily: "Lato_400Regular",
+    fontSize: 16,
+    marginBottom: 60,
   }
 });
