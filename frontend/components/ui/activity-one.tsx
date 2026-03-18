@@ -58,35 +58,36 @@ export default function ActivityOneScreen() {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View style={styles.mainView}>
         <CameraView
           ref={cameraRef}
-          style={{ width: 320, height: 500 }}
+          style={styles.videoScreen}
           mode="video"
         />
 
-        <TouchableOpacity
+        <View style={styles.recordBtnArea}>
+          <TouchableOpacity
             onPress={recording ? stopRecording : startRecording}
-            style={{
-                marginTop: 20,
-                padding: 15,
-                backgroundColor: "red",
-                borderRadius: 50,
-            }}
-        >
-            <Text style={{ color: "white" }}>
-            {recording ? "Stop Recording" : "Record"}
-            </Text>
-        </TouchableOpacity>
+            style={styles.recordButtonOuter}
+          >
+            <View
+              style={[
+                styles.recordButtonInner,
+                recording && styles.recordingInner,
+              ]}
+            />
+          </TouchableOpacity>
+        </View>
+        
 
-        <Text>Current Recording</Text>
+        <Text style={styles.currText}>Current Recording:</Text>
 
         {!videoUri ? (
             <Text>No video available!</Text>
         ) : (
             <VideoView
             player={player!}
-            style={{ width: 320, height: 500 }}
+            style={styles.videoScreen}
             nativeControls
             />
         )}
@@ -130,5 +131,56 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 10,
+  },
+
+  recordButtonOuter: {
+    width: 60,
+    height: 60,
+    borderRadius: 40,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+
+  recordButtonInner: {
+    width: 35,
+    height: 35,
+    borderRadius: 25,
+    backgroundColor: "#c50000",
+  },
+
+  recordingInner: {
+    width: 25,
+    height: 25,
+    borderRadius: 6, 
+    backgroundColor: "#c50000",
+  },
+
+  recordBtnArea:{
+    backgroundColor: '#d9d9d9',
+    width: 320,
+    alignItems: 'center',
+    paddingBottom: 15
+  },
+
+  videoScreen: { 
+    width: 320, 
+    height: 500 
+  },
+
+  mainView: { 
+    flex: 1, 
+    alignItems: "center", 
+    justifyContent: "center" 
+  }, 
+
+  currText: {
+    marginTop: 100,
+    marginBottom: 20,
+    fontSize: 20,
+    color: '#357D89',
+    fontWeight: '500',
+    fontFamily: "Lato_700Bold",
   }
 });
