@@ -32,17 +32,17 @@ export default function ActivityOneScreen() {
   if (!permissionCamera.granted || !permissionMic.granted) {
     return (
       <View>
-        <Text>Camera & microphone permission required</Text>
+        <Text style={styles.titleText}>Camera & microphone permission required</Text>
 
         {!permissionCamera.granted && (
-          <TouchableOpacity onPress={requestPermissionCamera}>
-            <Text>Grant Camera</Text>
+          <TouchableOpacity onPress={requestPermissionCamera} style={styles.buttonPopup}>
+            <Text style={styles.buttonText}>Grant Camera</Text>
           </TouchableOpacity>
         )}
 
         {!permissionMic.granted && (
-          <TouchableOpacity onPress={requestPermissionMic}>
-            <Text>Grant Microphone</Text>
+          <TouchableOpacity onPress={requestPermissionMic} style={styles.buttonPopup}>
+            <Text style={styles.buttonText}>Grant Microphone</Text>
           </TouchableOpacity>
         )}
       </View>
