@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
+import Button from '@/components/ui/button';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -88,11 +89,13 @@ export default function LoginScreen() {
         />
 
         {/* Login Button */}
-        <View style={styles.registerContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-        </View>
+        <Button
+          onPress={handleLogin}
+          text='Login'
+          width={200}
+          fontSize={20}
+          marginTop={60}
+        />
 
         {/* Register */}
         <View style={styles.registerContainer}>
@@ -139,29 +142,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato_400Regular',
     marginTop: 8,
   },
-  button: {
-    marginTop: 20,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 10,
-    alignItems: 'center',
-    width: 200,
-  },
-  buttonText: {
-    fontSize: 20,
+  registerText: {
+    fontSize: 16,
     color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
   },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 40,
-  },
-  registerText: {
-    fontSize: 16,
-    color: '#388087',
   },
   registerLink: {
     fontSize: 16,

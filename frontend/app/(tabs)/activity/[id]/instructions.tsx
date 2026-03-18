@@ -8,6 +8,7 @@ import activity5Instructions from '@/data/activity5_instructions.json';
 import activity6Instructions from '@/data/activity6_instructions.json';
 import activity7Instructions from '@/data/activity7_instructions.json';
 import { useLocalSearchParams } from 'expo-router';
+import VideoPlayer from '@/components/ui/video-player';
 
 type InstructionImage = {
   image: string,
@@ -86,9 +87,7 @@ export default function InstructionScreen() {
 
       {/* Tutorial */}
       <Section title="Tutorial">
-        <View style={styles.videoBox}>
-          <Text style={{fontSize:40}}>▶</Text>
-        </View>
+        <VideoPlayer link={data.video}/>
       </Section>
 
     </ScrollView>

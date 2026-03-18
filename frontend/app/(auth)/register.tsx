@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
+import Button from '@/components/ui/button';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -117,14 +118,14 @@ export default function RegisterScreen() {
         <Text style={styles.label}>Grade</Text>
         <CustomDropdown data={gradeDropdown} value={grade} placeholder='Select grade' onSelect={setGrade}/>
 
-        {/* Login Button */}
-        <View style={styles.loginContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.buttonText}>Register</Text>
-          </TouchableOpacity>
-        </View>
+        <Button
+          onPress={handleRegister}
+          text='Register'
+          width={200}
+          fontSize={20}
+          marginTop={30}
+        />
 
-        {/* Register */}
         <View style={styles.loginContainer}>
           <Text style={styles.loginText}>
             Already have an account?{' '}
@@ -169,21 +170,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontFamily: 'Lato_400Regular',
     marginTop: 0,
-  },
-  button: {
-    marginTop: 10,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 8,
-    alignItems: 'center',
-    width: 200,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
   },
   loginContainer: {
     flexDirection: 'row',

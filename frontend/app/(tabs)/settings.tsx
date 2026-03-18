@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 
 import { Ionicons } from "@expo/vector-icons";
 import { useRef, useState } from "react";
 import CustomDropdown from "@/components/ui/dropdown";
+import Button from "@/components/ui/button";
 
 const dropdownValue = [
   {label: "Light", value: "light"},
@@ -24,6 +25,8 @@ export default function SettingsScreen() {
     setTempName(name);
     setIsEditing(false);
   };
+
+  const handleLogout = () => {}
 
   return (
     <ScrollView 
@@ -100,11 +103,13 @@ export default function SettingsScreen() {
       </TouchableOpacity>
 
       {/* Logout */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+      <Button
+        onPress={() => handleLogout()}
+        text='Logout'
+        width={300}
+        fontSize={20}
+        marginTop={60}
+      />
 
     </ScrollView>
   );
@@ -204,28 +209,6 @@ const styles = StyleSheet.create({
     color: "#4F7C82",
     fontWeight: "600",
   },
-
-  button: {
-    marginTop: 20,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 10,
-    alignItems: 'center',
-    width: 300,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 40,
-  },
-
   iconContainer: {
     flexDirection: "row",
     width: 60,
