@@ -22,6 +22,7 @@ export default function Layout() {
 
       <TopTabs
         screenOptions={{
+          swipeEnabled: false,
           tabBarActiveTintColor: "#BADFE7",
           tabBarIndicatorStyle: {
             backgroundColor: "#BADFE7",
