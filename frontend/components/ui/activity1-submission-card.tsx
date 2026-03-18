@@ -7,7 +7,8 @@ import { useState } from "react";
 export default function ActivityOneSubmissionCard(props: {
     item: number; 
     videoUri: string | null;
-    isInModal?: boolean
+    onDelete: () => void;
+    onRerecord: () => void;
 }){
     const [showVideoModal, setShowVideoModal] = useState(false);
 
@@ -18,7 +19,7 @@ export default function ActivityOneSubmissionCard(props: {
                 {props.item}. Submission {props.item}
             </Text>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={props.onDelete}>
                 <Ionicons name="trash-outline" size={22} color="#357D89" />
             </TouchableOpacity>
         </View>
@@ -26,8 +27,6 @@ export default function ActivityOneSubmissionCard(props: {
             <View style={submissionStyles.subsContainer}>
                 <View style={submissionStyles.videoPlaceholder}>
                     {props.videoUri ? (
-                        props.isInModal ? (
-                        // In modal: show thumbnail + tap to play in a separate Modal
                         <>
                             <TouchableOpacity
                             style={submissionStyles.playOverlay}
@@ -37,22 +36,18 @@ export default function ActivityOneSubmissionCard(props: {
                             <Text style={submissionStyles.tapText}>Tap to play</Text>
                             </TouchableOpacity>
 
-                            {/* Fullscreen video modal - renders outside scroll context */}
                             <Modal visible={showVideoModal} animationType="slide" transparent={false}>
-                            <View style={submissionStyles.fullscreenModal}>
-                                <VideoPlayer link={props.videoUri} vidHeight={400} vidWidth={320} />
-                                <TouchableOpacity
-                                style={submissionStyles.closeVideoBtn}
-                                onPress={() => setShowVideoModal(false)}
-                                >
-                                <Text style={submissionStyles.editBtnText}>Close</Text>
-                                </TouchableOpacity>
-                            </View>
+                                <View style={submissionStyles.fullscreenModal}>
+                                    <VideoPlayer link={props.videoUri} vidHeight={400} vidWidth={320} />
+                                    <TouchableOpacity
+                                    style={submissionStyles.closeVideoBtn}
+                                    onPress={() => setShowVideoModal(false)}
+                                    >
+                                    <Text style={submissionStyles.editBtnText}>Close</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </Modal>
                         </>
-                        ) : (
-                        <VideoPlayer link={props.videoUri} vidHeight={220} vidWidth={250} />
-                        )
                     ) : (
                         <Text style={submissionStyles.descText}>No video</Text>
                     )}
@@ -66,7 +61,7 @@ export default function ActivityOneSubmissionCard(props: {
                 <Text style={submissionStyles.descText}>Time to hit ground (seconds)</Text>
                 <View style={submissionStyles.inputBox} />
 
-                <TouchableOpacity style={submissionStyles.editBtn}>
+                <TouchableOpacity style={submissionStyles.editBtn} onPress={props.onRerecord}>
                     <Text style={submissionStyles.editBtnText}>Edit</Text>
                 </TouchableOpacity>
             </View>
@@ -86,7 +81,7 @@ const submissionStyles = StyleSheet.create({
         marginTop: 8,
         color: '#357D89',
         fontFamily: "Lato_400Regular",
-        fontSize: 14,
+        fontSize: 20,
     },
     fullscreenModal: {
         flex: 1,

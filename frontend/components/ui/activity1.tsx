@@ -4,6 +4,7 @@ import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo
 import VideoPlayer from "./video-player";
 import ActivityOneSubmissionCard from "./activity1-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);
@@ -11,6 +12,8 @@ export default function ActivityOneScreen() {
   const [videos, setVideos] = useState<string[]>([]);
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  const [rerecordIndex, setRerecordIndex] = useState<number | null>(null);
 
   const [permissionCamera, requestPermissionCamera] = useCameraPermissions();
   const [permissionMic, requestPermissionMic] = useMicrophonePermissions();
@@ -66,10 +69,46 @@ export default function ActivityOneScreen() {
 
   const handleConfirmSubmission = () => {
     if (!videoUri || videos.length >= 3) return;
-    setVideos((prev) => [...prev, videoUri]);
+
+    if (rerecordIndex !== null) {
+      setVideos((prev) => {
+        const updated = [...prev];
+        updated[rerecordIndex] = videoUri;
+        return updated;
+      });
+      setRerecordIndex(null);
+    } 
+    else {
+      if (videos.length >= 3) return;
+      setVideos((prev) => [...prev, videoUri]);
+    }
+
     setVideoUri(null);
-    setScreen("submission"); 
+    setScreen("submission");
   };
+
+  const handleDelete = (index: number) => {
+    setVideos((prev) => prev.filter((_, i) => i !== index));
+    alert(`Deleted submission ${index+1}`)
+  };
+
+  const handleRerecord = (index: number) => {
+    setRerecordIndex(index);
+    setVideoUri(null);
+    setScreen("record");
+  };
+
+  const handleSubmit = () => {
+    const currLength = videos.length;
+
+    if(currLength < 3){
+      alert(`You can only submit when there are 3 videos. Please continue to record ${3-currLength} more videos.`)
+    }else{
+      alert('Successfully submitted the videos!')
+    }
+  }
+
+  const confirmDisabled = !videoUri || (rerecordIndex === null && videos.length >= 3);
 
   return (
     <View style={styles.mainView}>
@@ -97,7 +136,11 @@ export default function ActivityOneScreen() {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.titleText}>Current Recording:</Text>
+          <Text style={styles.titleText}>
+            {rerecordIndex !== null
+              ? `Re-record Submission ${rerecordIndex + 1}`
+              : "Current Recording:"}
+          </Text>
 
           {!videoUri ? (
             <Text style={styles.subtitleText}>No video available!</Text>
@@ -118,10 +161,10 @@ export default function ActivityOneScreen() {
             <TouchableOpacity
               style={[
                 styles.buttonPopup,
-                (!videoUri || videos.length >= 3) && styles.disabledBtn,
+                confirmDisabled && styles.disabledBtn,
               ]}
               onPress={handleConfirmSubmission}
-              disabled={!videoUri || videos.length >= 3}
+              disabled={confirmDisabled}
             >
               <Text style={styles.buttonText}>Confirm Submission</Text>
             </TouchableOpacity>
@@ -136,13 +179,18 @@ export default function ActivityOneScreen() {
                 key={index}
                 item={index + 1}
                 videoUri={uri}
+                onDelete={() => handleDelete(index)}
+                onRerecord={() => handleRerecord(index)}
               />
             ))}
       
             {videos.length < 3 && (
               <TouchableOpacity
                 style={styles.backBtn}
-                onPress={() => setScreen("record")}
+                onPress={() => {
+                  setRerecordIndex(null);
+                  setScreen("record");
+                }}
               >
                 <Text style={styles.btnText}>
                   Add Another Submission
@@ -150,7 +198,7 @@ export default function ActivityOneScreen() {
               </TouchableOpacity>
             )}
       
-            <TouchableOpacity style={styles.submitBtn}>
+            <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
               <Text style={styles.btnText}>Submit</Text>
             </TouchableOpacity>
           </View>
@@ -160,7 +208,14 @@ export default function ActivityOneScreen() {
       <Modal visible={showModal} animationType="slide">
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={styles.modalContainer}>
-          <Text style={styles.titleModalText}>Your Sudbmissions</Text>
+          <Text style={styles.titleModalText}>Your Submissions</Text>
+
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setShowModal(false)}
+          >
+            <Ionicons name="close" size={35} color="#357D89" />
+          </TouchableOpacity>
 
           <ScrollView
             style={{ flex: 1, width: '90%' }}
@@ -174,18 +229,18 @@ export default function ActivityOneScreen() {
                   key={index}
                   item={index + 1}
                   videoUri={uri}
-                  isInModal={true}
+                  onDelete={() => {
+                    handleDelete(index);
+                    if (videos.length === 1) setShowModal(false);
+                  }}
+                  onRerecord={() => {
+                    setShowModal(false);
+                    handleRerecord(index);
+                  }}
                 />
               ))
             )}
           </ScrollView>
-
-          <TouchableOpacity
-            style={styles.backBtn}
-            onPress={() => setShowModal(false)}
-          >
-            <Text style={styles.btnText}>Close</Text>
-          </TouchableOpacity>
         </View>
         </SafeAreaView>
       </Modal>
@@ -195,6 +250,13 @@ export default function ActivityOneScreen() {
 
 
 const styles = StyleSheet.create({
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 15,
+    zIndex: 10,
+    padding: 8,
+  },
   buttonPopup: {
     marginTop: 30,
     borderWidth: 2,
@@ -217,7 +279,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    marginTop: 60,
+    marginTop: 40,
   },
 
   recordButtonOuter: {
@@ -268,12 +330,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     alignItems: "center",
     justifyContent: 'flex-start',
-    backgroundColor: 'green',
   },
   scrollView: {
     alignItems: 'center',
     paddingBottom: 40,
-    backgroundColor: 'red'
   },
   titleModalText: {
     marginTop: 20,
@@ -297,30 +357,32 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   backBtn: {
-        padding: 10,
-        marginTop: 30,
-        borderWidth: 2,
-        borderColor: '#388087',
-        borderRadius: 50,
-        paddingVertical: 8,
-        alignItems: 'center',
-        width: 260,
-        height: 53,
-    },
-    btnText:{
-        fontSize: 18,
-        color: '#388087',
-        fontWeight: '500',
-        fontFamily: "Nunito_700Bold",
-    },
-    submitBtn: {
-        marginTop: 30,
-        marginBottom: 50,
-        borderWidth: 2,
-        padding: 10,
-        borderRadius: 50,
-        borderColor: '#388087',
-        width: 150,
-        alignItems: 'center'
-    },
+    padding: 10,
+    marginTop: 30,
+    borderWidth: 2,
+    borderColor: '#388087',
+    borderRadius: 50,
+    paddingVertical: 8,
+    alignItems: 'center',
+    width: 260,
+    height: 53,
+  },
+
+  btnText:{
+    fontSize: 18,
+    color: '#388087',
+    fontWeight: '500',
+    fontFamily: "Nunito_700Bold",
+  },
+
+  submitBtn: {
+    marginTop: 30,
+    marginBottom: 50,
+    borderWidth: 2,
+    padding: 10,
+    borderRadius: 50,
+    borderColor: '#388087',
+    width: 150,
+    alignItems: 'center'
+  },
 });
