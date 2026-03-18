@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import VideoPlayer from "./video-player";
 
 
-export default function ActivityOneSubmissionCard(props: {item: number}){
+export default function ActivityOneSubmissionCard(props: {item: number; videoUri: string | null}){
     return(
         <View key={props.item} style={submissionStyles.card}>
           <View style={submissionStyles.titleRow}>
@@ -17,7 +18,11 @@ export default function ActivityOneSubmissionCard(props: {item: number}){
 
             <View style={submissionStyles.subsContainer}>
                 <View style={submissionStyles.videoPlaceholder}>
-                    <Text>▶</Text>
+                    {props.videoUri ? (
+                        <VideoPlayer link={props.videoUri} vidHeight={400} vidWidth={250}/>
+                    ) : (
+                        <Text style={submissionStyles.descText}>No video</Text>
+                    )}
                 </View>
 
                 <Text style={submissionStyles.descText}>Mass of toy (gram)</Text>
@@ -61,8 +66,10 @@ const submissionStyles = StyleSheet.create({
         fontSize: 20
     },
     videoPlaceholder: {
-        height: 300,
-        backgroundColor: "#ccc",
+        height: 400,
+        borderWidth: 2,
+        borderColor: '#357D89',
+        backgroundColor: "#d9d9d9",
         justifyContent: "center",
         alignItems: "center",
         marginBottom: 10,

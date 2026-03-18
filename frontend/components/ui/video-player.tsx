@@ -4,10 +4,11 @@ import { useEffect } from "react";
 
 type Props = {
   link: string;
+  vidWidth?: number;
   vidHeight?: number;
 };
 
-export default function VideoPlayer({link, vidHeight=250}: Props) {
+export default function VideoPlayer({link, vidWidth=320, vidHeight=250}: Props) {
   const player = useVideoPlayer(
     link ? { uri: link } : null,
     (player) => {
@@ -27,7 +28,7 @@ export default function VideoPlayer({link, vidHeight=250}: Props) {
     <View style={{ justifyContent: "center" }}>
       <VideoView
         player={player}
-        style={{ width: 320, height: vidHeight }}
+        style={{ width: vidWidth, height: vidHeight }}
         fullscreenOptions={{enable: true}}
         allowsPictureInPicture
       />

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from "react-native";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import VideoPlayer from "./video-player";
 import ActivityOneSubmissionCard from "./activity1-submission-card";
@@ -7,11 +7,13 @@ import ActivityOneSubmissionCard from "./activity1-submission-card";
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);
   const [screen, setScreen] = useState<"record" | "submission">("record");
+  const [videos, setVideos] = useState<string[]>([]);
+  const [videoUri, setVideoUri] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const [permissionCamera, requestPermissionCamera] = useCameraPermissions();
   const [permissionMic, requestPermissionMic] = useMicrophonePermissions();
   const [recording, setRecording] = useState(false);
-  const [videoUri, setVideoUri] = useState<string | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
 
@@ -61,6 +63,13 @@ export default function ActivityOneScreen() {
     cameraRef.current?.stopRecording();
   };
 
+  const handleConfirmSubmission = () => {
+    if (!videoUri || videos.length >= 3) return;
+    setVideos((prev) => [...prev, videoUri]);
+    setVideoUri(null);
+    setScreen("submission"); 
+  };
+
   return (
     <View style={styles.mainView}>
       {screen === "record" ? (
@@ -96,13 +105,22 @@ export default function ActivityOneScreen() {
           )}
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonPopup}>
-              <Text style={styles.buttonText}>View Submissions</Text>
+            <TouchableOpacity
+              style={styles.buttonPopup}
+              onPress={() => setShowModal(true)}
+            >
+              <Text style={styles.buttonText}>
+                View Submissions ({videos.length}/3)
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.buttonPopup}
-              onPress={() => setScreen("submission")}
+              style={[
+                styles.buttonPopup,
+                (!videoUri || videos.length >= 3) && styles.disabledBtn,
+              ]}
+              onPress={handleConfirmSubmission}
+              disabled={!videoUri || videos.length >= 3}
             >
               <Text style={styles.buttonText}>Confirm Submission</Text>
             </TouchableOpacity>
@@ -112,13 +130,24 @@ export default function ActivityOneScreen() {
         <>
           {/* === SUBMISSION SCREEN === */}
             <View style={{ width: "100%", alignItems: "center" }}>
-            {[2,8,6].map((item) => (
-              <ActivityOneSubmissionCard key={item} item={item}/>
+            {videos.map((uri, index) => (
+              <ActivityOneSubmissionCard
+                key={index}
+                item={index + 1}
+                videoUri={uri}
+              />
             ))}
       
-            <TouchableOpacity style={styles.backBtn} onPress={() => setScreen("record")}>
-              <Text style={styles.btnText}>Back To Recording Page</Text>
-            </TouchableOpacity>
+            {videos.length < 3 && (
+              <TouchableOpacity
+                style={styles.backBtn}
+                onPress={() => setScreen("record")}
+              >
+                <Text style={styles.btnText}>
+                  Add Another Submission
+                </Text>
+              </TouchableOpacity>
+            )}
       
             <TouchableOpacity style={styles.submitBtn}>
               <Text style={styles.btnText}>Submit</Text>
@@ -126,6 +155,33 @@ export default function ActivityOneScreen() {
           </View>
         </>
       )}
+
+      <Modal visible={showModal} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text style={styles.titleText}>Your Submissions</Text>
+
+          <ScrollView>
+            {videos.length === 0 ? (
+              <Text>No submissions yet</Text>
+            ) : (
+              videos.map((uri, index) => (
+                <ActivityOneSubmissionCard
+                  key={index}
+                  item={index + 1}
+                  videoUri={uri}
+                />
+              ))
+            )}
+          </ScrollView>
+
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => setShowModal(false)}
+          >
+            <Text style={styles.btnText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -139,8 +195,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingVertical: 8,
     alignItems: 'center',
-    width: 250,
+    width: 300,
     height: 53,
+  },
+  disabledBtn: {
+    opacity: 0.4,
   },
   buttonText: {
     fontSize: 20,
@@ -195,6 +254,12 @@ const styles = StyleSheet.create({
     alignItems: "center", 
     justifyContent: "center" 
   }, 
+
+   modalContainer: {
+    flex: 1,
+    padding: 20,
+    alignItems: "center",
+  },
 
   titleText: {
     marginTop: 100,
