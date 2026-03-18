@@ -2,9 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import VideoPlayer from "./video-player";
+import ActivityOneSubmissionCard from "./activity1-submission-card";
 
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);
+  const [screen, setScreen] = useState<"record" | "submission">("record");
 
   const [permissionCamera, requestPermissionCamera] = useCameraPermissions();
   const [permissionMic, requestPermissionMic] = useMicrophonePermissions();
@@ -61,48 +63,69 @@ export default function ActivityOneScreen() {
 
   return (
     <View style={styles.mainView}>
-        <CameraView
-          ref={cameraRef}
-          style={styles.videoScreen}
-          mode="video"
-          onCameraReady={() => setIsCameraReady(true)}
-        />
+      {screen === "record" ? (
+        <>
+          {/* === RECORDING UI === */}
+          <CameraView
+            ref={cameraRef}
+            style={styles.videoScreen}
+            mode="video"
+            onCameraReady={() => setIsCameraReady(true)}
+          />
 
-        <View style={styles.recordBtnArea}>
-          <TouchableOpacity
-            onPress={recording ? stopRecording : startRecording}
-            style={styles.recordButtonOuter}
-          >
-            <View
-              style={[
-                styles.recordButtonInner,
-                recording && styles.recordingInner,
-              ]}
-            />
-          </TouchableOpacity>
-        </View>
-        
+          <View style={styles.recordBtnArea}>
+            <TouchableOpacity
+              onPress={recording ? stopRecording : startRecording}
+              style={styles.recordButtonOuter}
+            >
+              <View
+                style={[
+                  styles.recordButtonInner,
+                  recording && styles.recordingInner,
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
 
-        <Text style={styles.titleText}>Current Recording:</Text>
+          <Text style={styles.titleText}>Current Recording:</Text>
 
-        {!videoUri ? (
+          {!videoUri ? (
             <Text style={styles.subtitleText}>No video available!</Text>
-        ) : (
-              <VideoPlayer link={videoUri} vidHeight={500}></VideoPlayer>
-        )}
+          ) : (
+            <VideoPlayer link={videoUri} vidHeight={500} />
+          )}
 
-        <View style={styles.buttonContainer}>
-            {/* view submissions btn */}
+          <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.buttonPopup}>
-                <Text style={styles.buttonText}>View Submissions</Text>
+              <Text style={styles.buttonText}>View Submissions</Text>
             </TouchableOpacity>
 
-            {/* confirm submission btn */}
-            <TouchableOpacity style={styles.buttonPopup}>
-                <Text style={styles.buttonText}>Confirm Submission</Text>
+            <TouchableOpacity
+              style={styles.buttonPopup}
+              onPress={() => setScreen("submission")}
+            >
+              <Text style={styles.buttonText}>Confirm Submission</Text>
             </TouchableOpacity>
-        </View>
-
+          </View>
+        </>
+      ) : (
+        <>
+          {/* === SUBMISSION SCREEN === */}
+            <View style={{ width: "100%", alignItems: "center" }}>
+            {[2,8,6].map((item) => (
+              <ActivityOneSubmissionCard key={item} item={item}/>
+            ))}
+      
+            <TouchableOpacity style={styles.backBtn} onPress={() => setScreen("record")}>
+              <Text style={styles.btnText}>Back To Recording Page</Text>
+            </TouchableOpacity>
+      
+            <TouchableOpacity style={styles.submitBtn}>
+              <Text style={styles.btnText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 }
@@ -185,5 +208,32 @@ const styles = StyleSheet.create({
     fontFamily: "Lato_400Regular",
     fontSize: 16,
     marginBottom: 60,
-  }
+  },
+  backBtn: {
+        padding: 10,
+        marginTop: 30,
+        borderWidth: 2,
+        borderColor: '#388087',
+        borderRadius: 50,
+        paddingVertical: 8,
+        alignItems: 'center',
+        width: 260,
+        height: 53,
+    },
+    btnText:{
+        fontSize: 18,
+        color: '#388087',
+        fontWeight: '500',
+        fontFamily: "Nunito_700Bold",
+    },
+    submitBtn: {
+        marginTop: 30,
+        marginBottom: 50,
+        borderWidth: 2,
+        padding: 10,
+        borderRadius: 50,
+        borderColor: '#388087',
+        width: 150,
+        alignItems: 'center'
+    },
 });

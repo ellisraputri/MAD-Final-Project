@@ -1,4 +1,4 @@
-import ActivityOneScreen from '@/components/ui/activity-one'
+import ActivityOneScreen from '@/components/ui/activity1'
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
