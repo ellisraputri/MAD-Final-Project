@@ -1,7 +1,8 @@
 import ActivityOneScreen from '@/components/activity1'
 import ActivitySixScreen from '@/components/activity6'
+import ActivitySevenScreen from '@/components/activity7';
 import { useGlobalSearchParams } from 'expo-router';
-import React, { useEffect } from 'react'
+import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function ActivityScreen() {
@@ -10,6 +11,7 @@ export default function ActivityScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
       {Number(id)===6 && <ActivitySixScreen/>} 
+      {Number(id)===7 && <ActivitySevenScreen/>}
     </ScrollView>
   )
 }

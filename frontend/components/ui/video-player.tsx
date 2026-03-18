@@ -6,12 +6,11 @@ export default function VideoPlayer(props: {link: string}) {
     props.link,
     (player) => {
       player.loop = false;
-      player.play();
     }
   );
 
   return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
+    <View style={{ flex: 1, justifyContent: "center"}}>
       <VideoView
         player={player}
         style={{ width: "100%", height: 250 }}
