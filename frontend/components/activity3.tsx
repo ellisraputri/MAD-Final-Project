@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from "react-native";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
-import VideoPlayer from "./video-player";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import ActivityThreeSubmissionCard from "./activity3-submission-card";
+import VideoPlayer from "./ui/video-player";
+import ActivityThreeSubmissionCard from "./ui/activity3-submission-card";
 
 export default function ActivityThreeScreen() {
   const cameraRef = useRef<CameraView | null>(null);
@@ -120,7 +120,7 @@ export default function ActivityThreeScreen() {
   const handleSubmit = () => {
     const invalid = videos.some(v => !v.bend);
     if (invalid) {
-      alert("Please fill all mass and prediction fields.");
+      alert("Please fill all prediction fields.");
       return;
     }
 

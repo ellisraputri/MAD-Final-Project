@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from "react-native";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
-import VideoPlayer from "./video-player";
-import ActivityOneSubmissionCard from "./activity1-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import VideoPlayer from "./ui/video-player";
+import ActivityOneSubmissionCard from "./ui/activity1-submission-card";
 
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);

@@ -94,7 +94,8 @@ const submissionStyles = StyleSheet.create({
         alignItems: 'center',
     },
     closeVideoBtn: {
-        marginTop: 20,
+        position: 'absolute',
+        bottom: 80, 
         backgroundColor: "#388087",
         padding: 10,
         borderRadius: 8,
