@@ -4,6 +4,7 @@ import LiveRecorder from "./ui/audio-recording";
 import ActivityTwoSubmissionCard from "./ui/activity2-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 type audioType = {
 	uri: string;
@@ -95,7 +96,7 @@ export default function ActivityTwoScreen() {
   }
 
   const handleSubmit = () => {
-    const invalid = audios.some(v => !v.input);
+    const invalid = audios.some(v => v.uri !== "" && !v.input);
     if (invalid) {
       alert("Please fill all prediction fields.");
       return;
@@ -106,6 +107,7 @@ export default function ActivityTwoScreen() {
 		}
     else{
       alert(`Successfully submitted the videos! \n ${audios[0].input} ${audios[1].input} ${audios[2].input}`)
+			router.push("/activity/[id]/results")
     }
   }
 
