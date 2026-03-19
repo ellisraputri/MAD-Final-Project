@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import LiveRecorder from "./ui/audio-recording";
@@ -68,6 +68,7 @@ export default function ActivitySevenScreen() {
 
     const handleSubmit = () =>{
         alert(`result1: ${userInput[1]}, resul2: ${userInput[2]}, result3: ${userInput[3]}`)
+        router.push("/activity/[id]/results")
     }
 
 

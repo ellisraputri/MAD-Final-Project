@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, TextInput } from "react-native";
 import Signature from "react-native-signature-canvas";
@@ -159,6 +159,7 @@ export default function ActivitySixScreen() {
 
   const handleSubmit = () => {
     alert(`time_phase_1: ${userInput[1]}, time_phase_2: ${userInput[2]}, time_phase_3: ${userInput[3]}, accuracy_phase_3: ${userInput[4]}`)
+    router.push("/activity/[id]/results")
   }
 
   useEffect(() => {
