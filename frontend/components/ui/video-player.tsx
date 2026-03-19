@@ -13,7 +13,6 @@ export default function VideoPlayer({link, vidWidth=320, vidHeight=250}: Props) 
     link ? { uri: link } : null,
     (player) => {
       player.loop = false;
-      player.play();
     }
   );
 
@@ -25,7 +24,7 @@ export default function VideoPlayer({link, vidWidth=320, vidHeight=250}: Props) 
   }, [link]);
 
   return (
-    <View style={{ justifyContent: "center" }}>
+    <View style={{ flex: 1, justifyContent: "center" }}>
       <VideoView
         player={player}
         style={{ width: vidWidth, height: vidHeight }}

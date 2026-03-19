@@ -1,12 +1,17 @@
-import ActivityOneScreen from '@/components/ui/activity1'
-import ActivityThreeScreen from '@/components/ui/activity3'
+import ActivityOneScreen from '@/components/activity1'
+import ActivitySixScreen from '@/components/activity6'
+import ActivitySevenScreen from '@/components/activity7';
+import { useGlobalSearchParams } from 'expo-router';
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function ActivityScreen() {
+  const {id} = useGlobalSearchParams();
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 30, paddingBottom: 100 }}>
-      <ActivityThreeScreen/>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
+      {Number(id)===6 && <ActivitySixScreen/>} 
+      {Number(id)===7 && <ActivitySevenScreen/>}
     </ScrollView>
   )
 }
