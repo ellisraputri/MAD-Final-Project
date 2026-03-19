@@ -2,18 +2,17 @@ import React, { useRef, useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from "react-native";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import VideoPlayer from "./video-player";
-import ActivityOneSubmissionCard from "./activity1-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import ActivityThreeSubmissionCard from "./activity3-submission-card";
 
-export default function ActivityOneScreen() {
+export default function ActivityThreeScreen() {
   const cameraRef = useRef<CameraView | null>(null);
   const [screen, setScreen] = useState<"record" | "submission">("record");
   
   const [videos, setVideos] = useState<{
     uri: string;
-    mass: string;
-    time: string;
+    bend: string;
   }[]>([]);
 
   const [videoUri, setVideoUri] = useState<string | null>(null);
@@ -91,7 +90,7 @@ export default function ActivityOneScreen() {
       if (videos.length >= 3) return;
       setVideos((prev) => [
         ...prev,
-        { uri: videoUri, mass: "", time: "" },
+        { uri: videoUri, bend: ""},
       ]);
     }
 
@@ -110,17 +109,16 @@ export default function ActivityOneScreen() {
     setScreen("record");
   };
 
-  const handleFieldChange = (value: string, index: number, type: string) => {
+  const handleFieldChange = (value: string, index: number) => {
     setVideos((prev) => {
       const updated = [...prev];
-      if(type === 'mass') updated[index].mass = value;
-      else if(type === 'time') updated[index].time = value;
+      updated[index].bend = value;
       return updated;
     });
   }
 
   const handleSubmit = () => {
-    const invalid = videos.some(v => !v.mass || !v.time);
+    const invalid = videos.some(v => !v.bend);
     if (invalid) {
       alert("Please fill all mass and prediction fields.");
       return;
@@ -131,7 +129,7 @@ export default function ActivityOneScreen() {
       alert(`You can only submit when there are 3 videos. Please continue to record ${3-currLength} more videos.`)
     }
     else{
-      alert(`Successfully submitted the videos! \n ${videos[0].mass} ${videos[0].time}`)
+      alert(`Successfully submitted the videos! \n ${videos[2].bend}`)
     }
   }
 
@@ -202,14 +200,12 @@ export default function ActivityOneScreen() {
           {/* === SUBMISSION SCREEN === */}
             <View style={{ width: "100%", alignItems: "center" }}>
             {videos.map((item, index) => (
-              <ActivityOneSubmissionCard
+              <ActivityThreeSubmissionCard
                 key={index}
                 item={index + 1}
                 videoUri={item.uri}
-                mass={item.mass}
-                time={item.time}
-                onChangeMass={(value) => handleFieldChange(value, index, 'mass')}
-                onChangeTime={(value) => handleFieldChange(value, index, 'time')}
+                bend={item.bend}
+                onChangeBend={(value) => handleFieldChange(value, index)}
                 onDelete={() => handleDelete(index)}
                 onRerecord={() => handleRerecord(index)}
               />
@@ -256,14 +252,12 @@ export default function ActivityOneScreen() {
               <Text>No submissions yet</Text>
             ) : (
               videos.map((item, index) => (
-                <ActivityOneSubmissionCard
+                <ActivityThreeSubmissionCard
                   key={index}
                   item={index + 1}
                   videoUri={item.uri}
-                  mass={item.mass}
-                  time={item.time}
-                  onChangeMass={(value) => handleFieldChange(value, index, 'mass')}
-                  onChangeTime={(value) => handleFieldChange(value, index, 'time')}
+                  bend={item.bend}
+                  onChangeBend={(value) => handleFieldChange(value, index)}
                   onDelete={() => {
                     handleDelete(index);
                     if (videos.length === 1) setShowModal(false);
