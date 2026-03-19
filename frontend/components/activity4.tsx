@@ -1,17 +1,15 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Vibration } from "react-native";
-import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import VideoPlayer from "./ui/video-player";
-import ActivityOneSubmissionCard from "./ui/activity1-submission-card";
+import ActivityFourSubmissionCard from "./ui/activity4-submission-card";
 
 export default function ActivityFourScreen() {
   const [screen, setScreen] = useState<"record" | "submission">("record");
   
   const [vibrations, setVibrations] = useState<{
     duration: string;
-    phone_moves: string;
+    movement: string;
   }[]>([]);
   const [isVibrating, setIsVibrating] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -67,7 +65,7 @@ export default function ActivityFourScreen() {
         ...prev,
         {
           duration: elapsedTime.toString(),
-          phone_moves: "",
+          movement: "",
         },
       ]);
     }
@@ -90,15 +88,15 @@ export default function ActivityFourScreen() {
   const handleFieldChange = (value: string, index: number) => {
     setVibrations((prev) => {
       const updated = [...prev];
-      updated[index].phone_moves = value;
+      updated[index].movement = value;
       return updated;
     });
   }
 
   const handleSubmit = () => {
-    const invalid = vibrations.some(v => !v.phone_moves);
+    const invalid = vibrations.some(v => !v.movement);
     if (invalid) {
-      alert("Please fill all mass and prediction fields.");
+      alert("Please fill all fields.");
       return;
     }
 
@@ -107,7 +105,7 @@ export default function ActivityFourScreen() {
       alert(`You can only submit when there are 3 videos. Please continue to record ${3-currLength} more videos.`)
     }
     else{
-      alert(`Successfully submitted the videos! \n ${vibrations[0].duration} ${vibrations[0].phone_moves}`)
+      alert(`Successfully submitted the videos! \n ${vibrations[0].duration} ${vibrations[0].movement}`)
     }
   }
 
@@ -167,24 +165,21 @@ export default function ActivityFourScreen() {
         </>
       ) : (
         <>
-          <Text style={styles.buttonText}>Page Submission</Text>
-          {/* === SUBMISSION SCREEN ===
-            <View style={{ width: "100%", alignItems: "center" }}>
-            {videos.map((item, index) => (
-              <ActivityOneSubmissionCard
+          {/* === SUBMISSION SCREEN === */}
+          <View style={{ width: "100%", alignItems: "center" }}>
+            {vibrations.map((item, index) => (
+              <ActivityFourSubmissionCard
                 key={index}
                 item={index + 1}
-                videoUri={item.uri}
-                mass={item.mass}
-                time={item.time}
-                onChangeMass={(value) => handleFieldChange(value, index, 'mass')}
-                onChangeTime={(value) => handleFieldChange(value, index, 'time')}
+                duration={item.duration}
+                movement={item.movement}
+                onChangeMovement={(value) => handleFieldChange(value, index)}
                 onDelete={() => handleDelete(index)}
                 onRerecord={() => handleRerecord(index)}
               />
             ))}
       
-            {videos.length < 3 && (
+            {vibrations.length < 3 && (
               <TouchableOpacity
                 style={styles.backBtn}
                 onPress={() => {
@@ -201,11 +196,11 @@ export default function ActivityFourScreen() {
             <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
               <Text style={styles.btnText}>Submit</Text>
             </TouchableOpacity>
-          </View> */}
+          </View>
         </>
       )}
 
-      {/* <Modal visible={showModal} animationType="slide">
+      <Modal visible={showModal} animationType="slide">
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={styles.modalContainer}>
           <Text style={styles.titleModalText}>Your Submissions</Text>
@@ -221,21 +216,19 @@ export default function ActivityFourScreen() {
             style={{ flex: 1, width: '90%' }}
             contentContainerStyle={styles.scrollView}
           >
-            {videos.length === 0 ? (
+            {vibrations.length === 0 ? (
               <Text>No submissions yet</Text>
             ) : (
-              videos.map((item, index) => (
-                <ActivityOneSubmissionCard
+              vibrations.map((item, index) => (
+                <ActivityFourSubmissionCard
                   key={index}
                   item={index + 1}
-                  videoUri={item.uri}
-                  mass={item.mass}
-                  time={item.time}
-                  onChangeMass={(value) => handleFieldChange(value, index, 'mass')}
-                  onChangeTime={(value) => handleFieldChange(value, index, 'time')}
+                  duration={item.duration}
+                  movement={item.movement}
+                  onChangeMovement={(value) => handleFieldChange(value, index)}
                   onDelete={() => {
                     handleDelete(index);
-                    if (videos.length === 1) setShowModal(false);
+                    if (vibrations.length === 1) setShowModal(false);
                   }}
                   onRerecord={() => {
                     setShowModal(false);
@@ -247,7 +240,7 @@ export default function ActivityFourScreen() {
           </ScrollView>
         </View>
         </SafeAreaView>
-      </Modal> */}
+      </Modal>
     </View>
   );
 }
