@@ -9,6 +9,7 @@ type liveRecorderProps = {
     buttonText: string,
     buttonWidth: number,
     type: number,
+    isDisabledButton: boolean,
     setResult: React.Dispatch<React.SetStateAction<Record<number, any>>>,
     onPressButton: () => void,
 }
@@ -160,7 +161,7 @@ export default function LiveRecorder(props: liveRecorderProps) {
             </View>
         </View>
 
-        <Button 
+        {!props.isDisabledButton && <Button 
             width={props.buttonWidth}
             onPress={async () => {
 							if (isRecording) {
@@ -180,6 +181,7 @@ export default function LiveRecorder(props: liveRecorderProps) {
             fontSize={20}
             text={props.buttonText}
         />
+        }
     </View>
     );
 }

@@ -19,7 +19,6 @@ export default function VideoPlayer({link, vidWidth=320, vidHeight=250}: Props) 
   useEffect(() => {
     if (link) {
       player.replaceAsync({ uri: link });
-      player.play();
     }
   }, [link]);
 
