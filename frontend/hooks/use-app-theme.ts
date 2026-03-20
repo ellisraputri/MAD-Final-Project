@@ -5,9 +5,10 @@ export function useAppTheme() {
   return {
     text: useThemeColor({}, 'text'),
     darkText: useThemeColor({}, 'darkText'),
-    lighText: useThemeColor({}, 'lightText'),
+    lightText: useThemeColor({}, 'lightText'),
     blackText: useThemeColor({}, 'blackText'),
     background: useThemeColor({}, 'background'),
+    greyBackground: useThemeColor({}, 'greyBackground'),
     tint: useThemeColor({}, 'tint'),
     placeholder: useThemeColor({}, 'placeholder'),
     placeholderText: useThemeColor({}, 'placeholderText'),
