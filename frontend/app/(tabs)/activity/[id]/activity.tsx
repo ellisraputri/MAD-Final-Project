@@ -5,11 +5,14 @@ import ActivityFourScreen from '@/components/activity4';
 import ActivityFiveScreen from '@/components/activity5';
 import ActivitySixScreen from '@/components/activity6'
 import ActivitySevenScreen from '@/components/activity7';
+import { useAppTheme } from '@/hooks/use-app-theme';
 import { useGlobalSearchParams } from 'expo-router';
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function ActivityScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
   const {id} = useGlobalSearchParams();
 
   return (
@@ -25,10 +28,13 @@ export default function ActivityScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    backgroundColor:"#fff",
-    paddingHorizontal: 30,
-  }
-})
+const createStyles = (theme:any) => {
+  const styles = StyleSheet.create({
+    container:{
+      flex:1,
+      backgroundColor: theme.background,
+      paddingHorizontal: 30,
+    }
+  })
+  return styles;
+}

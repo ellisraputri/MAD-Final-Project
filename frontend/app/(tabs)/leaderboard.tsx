@@ -1,5 +1,6 @@
 import PodiumCard from "@/components/ui/podium-card";
 import RankingCard from "@/components/ui/ranking-card";
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -17,6 +18,9 @@ const dropdownData = [
 ];
 
 export default function LeaderboardScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const [dropdownValue, setDropdownValue] = useState("global");
   const [results, setResult] = useState([
     {rank: "4", teamName: "hehe1", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
@@ -41,12 +45,22 @@ export default function LeaderboardScreen() {
         <Text style={styles.title}>Leaderboard</Text>
 
         <Dropdown
-          style={styles.dropdown}
+          style={[styles.dropdown, theme.isDark && {borderColor: "white", borderWidth: 1}]}
           data={dropdownData}
           labelField="label"
           valueField="value"
           value={dropdownValue}
           onChange={item => setDropdownValue(item.value)}
+          selectedTextStyle={{ color: theme.blackText }}
+          placeholderStyle={{ color: theme.placeholderText }}
+          itemTextStyle={{ color: theme.blackText }}
+          containerStyle={{
+            backgroundColor: theme.background, 
+          }}
+          itemContainerStyle={{
+            backgroundColor: theme.background, 
+          }}
+          activeColor={theme.hoverBackground}
         />
       </View>
 
@@ -119,67 +133,73 @@ export default function LeaderboardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f4f4f4",
-  },
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: theme.background,
+    },
 
-  header: {
-    marginTop: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+    header: {
+      marginTop: 15,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
 
-  title: {
-    fontSize: 28,
-    fontFamily: "Nunito_700Bold",
-    fontWeight: "600",
-    color: "#4f7c82",
-  },
+    title: {
+      fontSize: 28,
+      fontFamily: "Nunito_700Bold",
+      fontWeight: "600",
+      color: theme.text,
+    },
 
-  dropdown: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    height: 40,
-    width: 150,
-    padding: 10,
-    elevation: 3,
-    fontFamily: "Lato_400Regular",
-  },
+    dropdown: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.background,
+      height: 40,
+      width: 150,
+      padding: 10,
+      elevation: 3,
+      fontFamily: "Lato_400Regular",
+      color: theme.blackText,
+    },
 
-  dropdownText: {
-    fontSize: 18,
-  },
+    dropdownText: {
+      fontSize: 18,
+      color: theme.blackText
+    },
 
-  podiumContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    marginTop: 35,
-  },
+    podiumContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+      marginTop: 35,
+    },
 
-  firstCard: {
-    alignItems: "center",
-    marginHorizontal: 10,
-  },
+    firstCard: {
+      alignItems: "center",
+      marginHorizontal: 10,
+    },
 
-  sideCard: {
-    alignItems: "center",
-  },
+    sideCard: {
+      alignItems: "center",
+    },
 
-  rankingList: {
-    gap: 15,
-    marginTop: 20,
-  },
+    rankingList: {
+      gap: 15,
+      marginTop: 20,
+    },
 
-  section: {
-    fontFamily: "Lato_700Bold",
-    fontSize: 18,
-    marginTop: 40,
-    marginBottom: 10,
-  },
-});
+    section: {
+      fontFamily: "Lato_700Bold",
+      fontSize: 18,
+      marginTop: 40,
+      marginBottom: 10,
+      color: theme.blackText,
+    },
+  });
+  return styles;
+}

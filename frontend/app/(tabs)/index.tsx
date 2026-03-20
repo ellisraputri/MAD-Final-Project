@@ -2,12 +2,13 @@ import { View, Text, StyleSheet, ImageBackground, Image, ScrollView, TouchableOp
 import { Ionicons } from "@expo/vector-icons";
 import RankingCard from "@/components/ui/ranking-card";
 import { useEffect, useRef, useState } from "react";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
 export default function HomeScreen() {
-  // const theme = useAppTheme();
-  // const styles = createStyles(theme);
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
 
   const rankings = [1,2,3,4,5,6,7];
   const scrollRef = useRef<ScrollView>(null);
@@ -95,7 +96,7 @@ export default function HomeScreen() {
               <Ionicons
                 name="pencil"
                 size={18}
-                color="#388087"
+                color={theme.text}
                 onPress={() => setEditing(true)}
               />
             </>
@@ -165,7 +166,7 @@ export default function HomeScreen() {
   
               <TextInput
                   placeholder="Enter your team ID"
-                  placeholderTextColor="#888"
+                  placeholderTextColor={theme.placeholderText}
                   value={teamName}
                   onChangeText={setTeamName}
                   style={styles.input}
@@ -188,206 +189,204 @@ export default function HomeScreen() {
   );
 }
 
-// export const createStyles = (theme: any) => {
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      height: 250,
+      padding: 20,
+    },
+    headerContent: {
+      marginBottom: 10,
+    },
+    welcome: {
+      fontSize: 28,
+      color: "white",
+      marginTop: 40,
+      fontFamily: "Nunito_700Bold"
+    },
+    subtitle: {
+      color: "white",
+      marginTop: 10,
+      fontSize: 18,
+      fontFamily: "Lato_400Regular"
+    },
+    members: {
+      marginTop: 15,
+      paddingRight: 20,
+    },
+    avatarContainer: {
+      alignItems: "center",
+      marginRight: 20,
+    },
 
-  header: {
-    height: 250,
-    padding: 20,
-  },
+    avatar: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: "center",
+      alignItems: "center",
+    },
 
-  headerContent: {
-    marginBottom: 10,
-  },
+    avatarText: {
+      color: "white",
+      fontWeight: "bold",
+    },
 
-  welcome: {
-    fontSize: 28,
-    color: "white",
-    marginTop: 40,
-    fontFamily: "Nunito_700Bold"
-  },
+    memberName: {
+      color: "white",
+      fontFamily: "Lato_400Regular",
+      marginTop: 5,
+      fontSize: 12,
+    },
 
-  subtitle: {
-    color: "white",
-    marginTop: 10,
-    fontSize: 18,
-    fontFamily: "Lato_400Regular"
-  },
+    content: {
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: 20,
+      marginTop: -20,
+    },
 
-  members: {
-    marginTop: 15,
-    paddingRight: 20,
-  },
+    label: {
+      fontSize: 18,
+      fontFamily: "Lato_400Regular", 
+      marginBottom: 20,
+      color: theme.blackText
+    },
 
-  avatarContainer: {
-    alignItems: "center",
-    marginRight: 20,
-  },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
 
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+    editRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginLeft: 10,
+      marginTop: -20
+    },
 
-  avatarText: {
-    color: "white",
-    fontWeight: "bold",
-  },
+    teamName: {
+      fontSize: 18,
+      color: theme.blackText,
+      marginRight: 5,
+      borderBottomWidth: 2,
+      borderBottomColor: theme.text,
+    },
 
-  memberName: {
-    color: "white",
-    fontFamily: "Lato_400Regular",
-    marginTop: 5,
-    fontSize: 12,
-  },
+    logoContainer: {
+      marginTop: 10,
+      flexDirection: "row",
+      alignItems: "center",
+    },
 
-  content: {
-    flex: 1,
-    backgroundColor: "#f3f3f3",
-    padding: 20,
-    marginTop: -20,
-  },
+    logoWrapper: {
+      marginLeft: 10,
+      position: "relative",
+    },
 
-  label: {
-    fontSize: 18,
-    fontFamily: "Lato_400Regular", 
-    marginBottom: 20,
-  },
+    logo: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+    },
 
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+    editIcon: {
+      position: "absolute",
+      bottom: 0,
+      right: 0,
+      backgroundColor: "white",
+      borderRadius: 10,
+      padding: 2,
+      elevation: 3,
+      color: theme.text
+    },
 
-  editRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 10,
-    marginTop: -20
-  },
+    section: {
+      fontFamily: "Lato_400Regular",
+      fontSize: 18,
+      marginTop: 30,
+      marginBottom: 10,
+      color: theme.blackText
+    },
 
-  teamName: {
-    fontSize: 18,
-    marginRight: 5,
-    borderBottomWidth: 2,
-    borderBottomColor: "#388087",
-  },
+    logoApp: {
+      position: 'absolute',
+      top: 10,
+      right: 25,
+      width: 40,
+      height: 60,
+      resizeMode: 'contain',
+    },
 
-  logoContainer: {
-    marginTop: 10,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  logoWrapper: {
-    marginLeft: 10,
-    position: "relative",
-  },
-
-  logo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-
-  editIcon: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 2,
-    elevation: 3,
-    color: "#388087"
-  },
-
-  section: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 18,
-    marginTop: 30,
-    marginBottom: 10,
-  },
-
-  logoApp: {
-    position: 'absolute',
-    top: 10,
-    right: 25,
-    width: 40,
-    height: 60,
-    resizeMode: 'contain',
-  },
-
-  teamInput: {
-    borderBottomWidth: 2,
-    borderColor: "#388087",
-    minWidth: 120,
-    marginRight: 10,
-    fontSize: 16,
-    fontFamily: "Lato_400Regular",
-  },
-  popup: {
-    width: "85%",
-    backgroundColor: "#EDEDED",
-    borderRadius: 25,
-    padding: 24,
-    elevation: 6
-  },
-  headerPopup: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 22,
-    color: "#4F7C7E",
-    fontWeight: "600",
-    fontFamily: "Nunito_700Bold",
-  },
-  close: {
-    fontSize: 28
-  },
-  overlayPopup: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonPopup: {
-    marginTop: 20,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 6,
-    alignItems: 'center',
-    width: 150,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#388087',
-    fontSize: 16,
-    paddingVertical: 8,
-    fontFamily: 'Lato_400Regular',
-    marginTop: 2,
-  },
-});
-// return styles;
-// }
+    teamInput: {
+      borderBottomWidth: 2, 
+      borderColor: theme.text,
+      minWidth: 120,
+      marginRight: 10,
+      fontSize: 16,
+      fontFamily: "Lato_400Regular",
+    },
+    popup: {
+      width: "85%",
+      backgroundColor: theme.background,
+      borderRadius: 25,
+      padding: 24,
+      elevation: 6
+    },
+    headerPopup: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10,
+    },
+    title: {
+      fontSize: 22,
+      color: theme.text,
+      fontWeight: "600",
+      fontFamily: "Nunito_700Bold",
+    },
+    close: {
+      fontSize: 28,
+      color: theme.blackText, 
+    },
+    overlayPopup: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.3)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    buttonPopup: {
+      marginTop: 20,
+      borderWidth: 2,
+      borderColor: theme.text,
+      borderRadius: 50,
+      paddingVertical: 6,
+      alignItems: 'center',
+      width: 150,
+    },
+    buttonText: {
+      fontSize: 16,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Nunito_700Bold",
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 10,
+    },
+    input: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.text,
+      fontSize: 16,
+      paddingVertical: 8,
+      fontFamily: 'Lato_400Regular',
+      marginTop: 2,
+      color: theme.blackText, 
+    },
+  });
+  return styles;
+}

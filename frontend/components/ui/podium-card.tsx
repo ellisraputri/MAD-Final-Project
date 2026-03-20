@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { View, Text, StyleSheet, Image } from "react-native";
 
 type Props = {
@@ -8,6 +9,9 @@ type Props = {
 };
 
 export default function PodiumCard({ rank, name, score, imageUrl }: Props) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+  
   const medal =
     rank === 1
       ? require("@/assets/images/gold.png")
@@ -28,43 +32,48 @@ export default function PodiumCard({ rank, name, score, imageUrl }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-  },
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      alignItems: "center",
+    },
 
-  imageWrapper: {
-    position: "relative",
-  },
+    imageWrapper: {
+      position: "relative",
+    },
 
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 24,
-  },
+    image: {
+      width: 100,
+      height: 100,
+      borderRadius: 24,
+    },
 
-  medal: {
-    position: "absolute",
-    top: -15,
-    right: -10,
-    width: 40,
-    height: 50,
-  },
+    medal: {
+      position: "absolute",
+      top: -15,
+      right: -10,
+      width: 40,
+      height: 50,
+    },
 
-  name: {
-    marginTop: 5,
-    fontSize: 18,
-    fontWeight: "600",
-    width: 100,
-    fontFamily: "Lato_700Bold",
-    textAlign: "center",
-  },
+    name: {
+      marginTop: 5,
+      fontSize: 18,
+      fontWeight: "600",
+      width: 100,
+      fontFamily: "Lato_700Bold",
+      textAlign: "center",
+      color: theme.blackText
+    },
 
-  score: {
-    marginTop: 3,
-    fontSize: 16,
-    width: 100,
-    fontFamily: "Lato_700Bold",
-    textAlign: "center",
-  },
-});
+    score: {
+      marginTop: 3,
+      fontSize: 16,
+      width: 100,
+      fontFamily: "Lato_700Bold",
+      textAlign: "center",
+      color: theme.blackText
+    },
+  });
+  return styles;
+}

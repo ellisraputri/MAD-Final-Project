@@ -3,11 +3,15 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 const { Navigator } = createMaterialTopTabNavigator();
 const TopTabs = withLayoutContext(Navigator);
 
 export default function Layout() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
@@ -15,7 +19,7 @@ export default function Layout() {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push("/(tabs)/activity")} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color="#295F6B" />
+          <Ionicons name="chevron-back" size={24} color={theme.lightText} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Activity {id}</Text>
       </View>
@@ -23,18 +27,18 @@ export default function Layout() {
       <TopTabs
         screenOptions={{
           swipeEnabled: false,
-          tabBarActiveTintColor: "#BADFE7",
+          tabBarActiveTintColor: theme.text,
           tabBarIndicatorStyle: {
-            backgroundColor: "#BADFE7",
+            backgroundColor: theme.text,
             height: 3,
           },
           tabBarLabelStyle: {
             fontSize: 16,
             fontFamily: "Lato_700Bold",
-            color: "#295F6B",
+            color: theme.text,
           },
           tabBarStyle: {
-            backgroundColor: "#fff"
+            backgroundColor: theme.background
           }
         }}
       >
@@ -57,21 +61,24 @@ export default function Layout() {
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: "#F6F6F2",
-  },
-  backButton: {
-    marginRight: 8,
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: "Nunito_700Bold",
-    color: "#295F6B",
-  },
-});
+const createStyles = (theme:any) => {
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      backgroundColor: theme.tint,
+    },
+    backButton: {
+      marginRight: 8,
+      padding: 4,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontFamily: "Nunito_700Bold",
+      color: theme.lightText,
+    },
+  });
+  return styles;
+}
