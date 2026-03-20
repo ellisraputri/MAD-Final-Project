@@ -209,7 +209,7 @@ export default function ActivityFourScreen() {
             style={styles.closeButton}
             onPress={() => setShowModal(false)}
           >
-            <Ionicons name="close" size={35} color={theme.text} />
+            <Ionicons name="close" size={35} color={theme.blackText} />
           </TouchableOpacity>
 
           <ScrollView

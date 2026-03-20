@@ -172,7 +172,7 @@ export const createStyles = (theme: any) => {
             color: theme.blackText
         },
         editBtn: {
-            backgroundColor: "#388087",
+            backgroundColor: theme.text,
             padding: 8,
             borderRadius: 6,
             alignItems: "center",
