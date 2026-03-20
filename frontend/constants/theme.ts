@@ -19,16 +19,16 @@ export const Colors = {
     tabLine: '#BADFE7',
   },
   dark: {
-    text: '#388087',
-    darkText: '#295F6B',
-    lightText: '#6FB3B8',
-    blackText: '#000',
-    background: '#fff',
+    text: '#6FB3B8',
+    darkText: '#388087',
+    lightText: '#BADFE7',
+    blackText: '#F6F6F2',
+    background: '#1E1E1E',
     greyBackground: '#f3f3f3',
-    tint: '#f6f6f2',
+    tint: '#295F6B',
     placeholder: '#D9D9D9',
     placeholderText: '#888',
-    tabLine: '#BADFE7',
+    tabLine: '#295F6B',
   },
 };
 
