@@ -18,5 +18,7 @@ export function useAppTheme() {
     placeholder: useThemeColor({}, 'placeholder'),
     placeholderText: useThemeColor({}, 'placeholderText'),
     tabLine: useThemeColor({}, 'tabLine'),
+    activityCard: useThemeColor({}, 'activityCard'),
+    activityTitle: useThemeColor({}, 'activityTitle'),
   };
 }

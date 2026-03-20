@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -30,6 +31,9 @@ const gradeDropdown = [
 ]
 
 export default function TeamConfirmationScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const router = useRouter();
   const [teamName, setTeamName] = useState("");
   const [grade, setGrade] = useState("");
@@ -79,7 +83,7 @@ export default function TeamConfirmationScreen() {
         >
           <Polygon
             points="0,60 0,65 0,70 0,75 2,79 3,80 4,79 100,0 100,100 0,100"
-            fill="#ededed"
+            fill={theme.background}
           />
         </Svg>
 
@@ -87,7 +91,7 @@ export default function TeamConfirmationScreen() {
 
       {/* Form */}
       <View style={styles.form}>
-        <Text style={styles.text}>Looks like you’re not part of a team yet!</Text>
+        <Text style={styles.text}>Looks like you're not part of a team yet!</Text>
         <Text style={styles.text}>Create one or join a team to jump into the fun 🚀✨</Text>
         
         <Button
@@ -128,7 +132,7 @@ export default function TeamConfirmationScreen() {
             <Text style={styles.label}>Team Name</Text>
             <TextInput
                 placeholder="Enter your team name"
-                placeholderTextColor="#888"
+                placeholderTextColor={theme.placeholderText}
                 value={teamName}
                 onChangeText={setTeamName}
                 style={styles.input}
@@ -171,7 +175,7 @@ export default function TeamConfirmationScreen() {
             <Text style={styles.label}>Team ID</Text>
             <TextInput
                 placeholder="Enter your team ID"
-                placeholderTextColor="#888"
+                placeholderTextColor={theme.placeholderText}
                 value={teamId}
                 onChangeText={setTeamId}
                 style={styles.input}
@@ -193,102 +197,105 @@ export default function TeamConfirmationScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#EDEDED',
-  },
-  header: {
-    height: 300,
-    justifyContent: 'flex-end',
-  },
-  form: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#EDEDED',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: -18,
-  },
-  label: {
-    fontSize: 16,
-    color: '#388087',
-    fontFamily: 'Nunito_700Bold',
-    marginTop: 20,
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#388087',
-    fontSize: 16,
-    paddingVertical: 8,
-    fontFamily: 'Lato_400Regular',
-    marginTop: 2,
-  },
-  text: {
-    fontSize: 20,
-    color: '#388087',
-    lineHeight: 32,
-    fontFamily: "Lato_400Regular",
-  },
-  diagonal: {
-    position: 'absolute',
-    bottom: -1,
-    width: '100%',
-  },
-  logo: {
-    position: 'absolute',
-    top: 60,
-    left: 15,
-    width: 60,
-    height: 80,
-    resizeMode: 'contain',
-  },
-  textLogo: {
-    position: 'absolute',
-    top: 150,
-    left: 20,
-    width: 180,
-    height: 50,
-    resizeMode: 'contain',
-  },
-  overlay: {
-    position: 'absolute',
-    bottom: 60,
-    left: 0,
-    right: 20,
-    padding: 20,
-    backgroundColor: 'rgba(0,0,0,0)',
-  },
-  subtitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontFamily: "Lato_700Bold",
-  },
-  popup: {
-    width: "85%",
-    backgroundColor: "#EDEDED",
-    borderRadius: 25,
-    padding: 24,
-    elevation: 6
-  },
-  headerPopup: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 24,
-    color: "#4F7C7E",
-    fontWeight: "600",
-    fontFamily: "Nunito_700Bold",
-  },
-  close: {
-    fontSize: 28
-  },
-  overlayPopup: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      height: 300,
+      justifyContent: 'flex-end',
+    },
+    form: {
+      flex: 1,
+      padding: 24,
+      backgroundColor: theme.background,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      marginTop: -18,
+    },
+    label: {
+      fontSize: 16,
+      color: theme.text,
+      fontFamily: 'Nunito_700Bold',
+      marginTop: 20,
+    },
+    input: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.text,
+      fontSize: 16,
+      paddingVertical: 8,
+      fontFamily: 'Lato_400Regular',
+      marginTop: 2,
+    },
+    text: {
+      fontSize: 20,
+      color: theme.text,
+      lineHeight: 32,
+      fontFamily: "Lato_400Regular",
+    },
+    diagonal: {
+      position: 'absolute',
+      bottom: -1,
+      width: '100%',
+    },
+    logo: {
+      position: 'absolute',
+      top: 60,
+      left: 15,
+      width: 60,
+      height: 80,
+      resizeMode: 'contain',
+    },
+    textLogo: {
+      position: 'absolute',
+      top: 150,
+      left: 20,
+      width: 180,
+      height: 50,
+      resizeMode: 'contain',
+    },
+    overlay: {
+      position: 'absolute',
+      bottom: 60,
+      left: 0,
+      right: 20,
+      padding: 20,
+    },
+    subtitle: {
+      color: '#fff',
+      fontSize: 18,
+      fontFamily: "Lato_700Bold",
+    },
+    popup: {
+      width: "85%",
+      backgroundColor: theme.background,
+      borderRadius: 25,
+      padding: 24,
+      elevation: 6
+    },
+    headerPopup: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    title: {
+      fontSize: 24,
+      color: theme.text,
+      fontWeight: "600",
+      fontFamily: "Nunito_700Bold",
+    },
+    close: {
+      fontSize: 28,
+      color: theme.blackText
+    },
+    overlayPopup: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.3)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  });
+  return styles;
+}

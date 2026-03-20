@@ -18,6 +18,8 @@ export const Colors = {
     placeholder: '#D9D9D9',
     placeholderText: '#888',
     tabLine: '#BADFE7',
+    activityCard: '#f6f6f2',
+    activityTitle: '#143336',
   },
   dark: {
     text: '#6FB3B8',
@@ -31,6 +33,8 @@ export const Colors = {
     placeholder: '#D9D9D9',
     placeholderText: '#888',
     tabLine: '#295F6B',
+    activityCard: '#143336',
+    activityTitle: '#f6f6f2',
   },
 };
 
