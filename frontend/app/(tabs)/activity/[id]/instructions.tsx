@@ -9,6 +9,7 @@ import activity6Instructions from '@/data/activity6_instructions.json';
 import activity7Instructions from '@/data/activity7_instructions.json';
 import { useLocalSearchParams } from 'expo-router';
 import VideoPlayer from '@/components/ui/video-player';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 type InstructionImage = {
   image: string,
@@ -33,6 +34,9 @@ const instructionsMap: Record<number, InstructionJson> = {
 };
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -43,6 +47,9 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 }
 
 function EquipmentCard({index, name, imageUrl}: {index: number, name: string, imageUrl: string}) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.equipmentItem}>
       <Text style={styles.equipmentText}>
@@ -55,6 +62,9 @@ function EquipmentCard({index, name, imageUrl}: {index: number, name: string, im
 }
 
 export default function InstructionScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const { id } = useLocalSearchParams();
   const data = instructionsMap[Number(id)];
 
@@ -94,78 +104,77 @@ export default function InstructionScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container:{
+      flex:1,
+      backgroundColor: theme.background,
+      paddingHorizontal: 30,
+    },
 
-  container:{
-    flex:1,
-    backgroundColor:"#fff",
-    paddingHorizontal: 30,
-  },
+    section:{
+      marginBottom:30
+    },
 
-  section:{
-    marginBottom:30
-  },
+    sectionTitle:{
+      fontSize:20,
+      fontWeight:"600",
+      color: theme.text,
+      fontFamily: "Lato_700Bold",
+    },
 
-  sectionTitle:{
-    fontSize:20,
-    fontWeight:"600",
-    color:"#357D89",
-    fontFamily: "Lato_700Bold",
-  },
+    divider:{
+      height:2,
+      backgroundColor: theme.text,
+      marginVertical:10
+    },
 
-  divider:{
-    height:2,
-    backgroundColor:"#388087",
-    marginVertical:10
-  },
+    paragraph:{
+      fontSize:15,
+      lineHeight:22,
+      textAlign: "justify",
+      fontFamily: "Lato_400Regular",
+      color: theme.blackText,
+    },
 
-  paragraph:{
-    fontSize:15,
-    lineHeight:22,
-    textAlign: "justify",
-    fontFamily: "Lato_400Regular",
-  },
+    grid:{
+      flexDirection:"row",
+      flexWrap:"wrap",
+      justifyContent:"space-between"
+    },
 
-  grid:{
-    flexDirection:"row",
-    flexWrap:"wrap",
-    justifyContent:"space-between"
-  },
+    equipmentItem:{
+      width:"48%",
+      marginBottom:20
+    },
 
-  equipmentItem:{
-    width:"48%",
-    marginBottom:20
-  },
+    equipmentText:{
+      marginBottom:8,
+      fontSize: 15,
+      fontFamily: "Lato_400Regular",
+      color: theme.blackText,
+    },
 
-  equipmentText:{
-    marginBottom:8,
-    fontSize: 15,
-    fontFamily: "Lato_400Regular",
-  },
+    item: {
+      flexDirection: 'row',
+      marginBottom: 8,
+    },
+    marker: {
+      marginRight: 10,
+      fontWeight: 'bold',
+      fontFamily: "Lato_400Regular",
+      lineHeight:20,
+      fontSize: 15,
+      color: theme.blackText,
+    },
+    text: {
+      flexShrink: 1, 
+      fontFamily: "Lato_400Regular",
+      lineHeight:20,
+      fontSize: 15,
+      color: theme.blackText,
+    },
 
-  item: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  marker: {
-    marginRight: 10,
-    fontWeight: 'bold',
-    fontFamily: "Lato_400Regular",
-    lineHeight:20,
-    fontSize: 15,
-  },
-  text: {
-    flexShrink: 1, 
-    fontFamily: "Lato_400Regular",
-    lineHeight:20,
-    fontSize: 15,
-  },
-
-  videoBox:{
-    height:160,
-    backgroundColor:"#CFCFCF",
-    justifyContent:"center",
-    alignItems:"center"
-  }
-
-});
+  });
+  return styles;
+}

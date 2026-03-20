@@ -3,12 +3,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import Button from "./button";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 export default function RatingPopup(props: { 
     id: string;
     showModal: boolean; 
     onClose: () => void; 
 }) {
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
+
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
 
@@ -26,7 +30,7 @@ export default function RatingPopup(props: {
 
                     <SafeAreaView style={styles.modalBox}>
                         <TouchableOpacity style={styles.closeBtn} onPress={props.onClose}>
-                            <Ionicons name="close" size={35} color="#357D89" />
+                            <Ionicons name="close" size={35} color={theme.text} />
                         </TouchableOpacity>
 
                         <Text style={styles.title}>Rate Activity {props.id}</Text>
@@ -41,7 +45,7 @@ export default function RatingPopup(props: {
                                 <Ionicons
                                     name={item <= rating ? "star" : "star-outline"}
                                     size={40}
-                                    color={"#6FB3B8"}
+                                    color={theme.lightText}
                                 />
                                 </TouchableOpacity>
                             ))}
@@ -59,63 +63,67 @@ export default function RatingPopup(props: {
     );
 }
 
-const styles = StyleSheet.create({
-overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)", // dark background
-    justifyContent: "center",
-    alignItems: "center",
-},
+export const createStyles = (theme: any) => {
+    const styles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)", // dark background
+        justifyContent: "center",
+        alignItems: "center",
+    },
 
-modalBox: {
-    width: "85%",
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 35,
-},
+    modalBox: {
+        width: "85%",
+        backgroundColor: theme.background,
+        borderRadius: 20,
+        padding: 35,
+    },
 
-closeBtn: {
-    position: "absolute",
-    top: 15,
-    right: 15,
-    zIndex: 10,
-},
+    closeBtn: {
+        position: "absolute",
+        top: 15,
+        right: 15,
+        zIndex: 10,
+    },
 
-title: {
-    fontSize: 24,
-    color: "#357D89",
-    marginBottom: 10,
-    marginTop: 15,
-    fontFamily: 'Lato_700Bold',
-},
+    title: {
+        fontSize: 24,
+        color: theme.text,
+        marginBottom: 10,
+        marginTop: 15,
+        fontFamily: 'Lato_700Bold',
+    },
 
-starRow: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between", 
-    marginBottom: 25,
-    marginTop: 10,
-},
+    starRow: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "space-between", 
+        marginBottom: 25,
+        marginTop: 10,
+    },
 
-starContainer: {
-    flex: 1,
-    alignItems: "center", 
-},
+    starContainer: {
+        flex: 1,
+        alignItems: "center", 
+    },
 
-label: {
-    fontSize: 24,
-    color: "#357D89",
-    marginBottom: 10,
-    marginTop: 15,
-    fontFamily: 'Lato_400Regular',
-},
+    label: {
+        fontSize: 24,
+        color: theme.text,
+        marginBottom: 10,
+        marginTop: 15,
+        fontFamily: 'Lato_400Regular',
+    },
 
-commentBox: {
-    height: 140,              // fixed height instead of flex
-    borderWidth: 2,
-    borderColor: "#357D89",
-    borderRadius: 10,
-    padding: 10,
-    textAlignVertical: "top",
+    commentBox: {
+        height: 140,              // fixed height instead of flex
+        borderWidth: 2,
+        borderColor: theme.text,
+        color: theme.blackText,
+        borderRadius: 10,
+        padding: 10,
+        textAlignVertical: "top",
+    }
+    });
+    return styles;
 }
-});

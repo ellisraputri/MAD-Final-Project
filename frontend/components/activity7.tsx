@@ -5,6 +5,7 @@ import LiveRecorder from "./ui/audio-recording";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import AudioPlayer from "./ui/audio-player";
 import Button from "./ui/button";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 type CardActivitySevenProps = {
   title: string;
@@ -17,8 +18,11 @@ type CardActivitySevenProps = {
 };
 
 function CardActivitySeven(props: CardActivitySevenProps) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+  
   return (
-    <View style={styles.cardContainer}>
+    <View style={[styles.cardContainer, {borderWidth:1, borderColor:"white"}]}>
       <Text style={styles.cardTitle}>{props.title}</Text>
       <AudioPlayer uri={props.uri} levels={props.levels}/>
       <Text style={styles.cardSubtitle}>Prediction</Text>
@@ -49,6 +53,9 @@ function CardActivitySeven(props: CardActivitySevenProps) {
 }
 
 export default function ActivitySevenScreen() {
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
+
     const [phase, setPhase] = useState<1|2|3|4>(1);
     const [result, setResult] =  useState<Record<number, any>>({
         1:null, 2:null, 3:null
@@ -70,7 +77,6 @@ export default function ActivitySevenScreen() {
         alert(`result1: ${userInput[1]}, resul2: ${userInput[2]}, result3: ${userInput[3]}`)
         router.push("/activity/[id]/results")
     }
-
 
     return(
         <KeyboardAwareScrollView
@@ -175,77 +181,81 @@ export default function ActivitySevenScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    cardTitle: {
-    fontSize: 18,
-    fontFamily: "Lato_700Bold",
-    color: "#357D89",
-    marginBottom: 14,
-  },
+const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+      cardTitle: {
+      fontSize: 18,
+      fontFamily: "Lato_700Bold",
+      color: theme.text,
+      marginBottom: 14,
+    },
 
-  cardSubtitle: {
-    marginTop: 10,
-    fontSize: 16,
-    fontFamily: "Lato_700Bold",
-    color: "#357D89",
-    marginBottom: 5,
-  },
+    cardSubtitle: {
+      marginTop: 10,
+      fontSize: 16,
+      fontFamily: "Lato_700Bold",
+      color: theme.text,
+      marginBottom: 5,
+    },
 
-  cardLabel: {
-    fontSize: 16,
-    color: "#357D89",
-    marginBottom: 5,
-    fontFamily: "Lato_400Regular"
-  },
+    cardLabel: {
+      fontSize: 16,
+      color: theme.text,
+      marginBottom: 5,
+      fontFamily: "Lato_400Regular"
+    },
 
-  cardInputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+    cardInputRow: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
 
-  cardInput: {
-    width: 100,
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#357D89",
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    backgroundColor: "#FFF",
-    marginBottom: 15,
-    fontFamily: "Lato_400Regular",
-    fontSize: 16,
-  },
+    cardInput: {
+      width: 100,
+      height: 40,
+      borderWidth: 1,
+      borderColor: theme.text,
+      borderRadius: 4,
+      paddingHorizontal: 10,
+      backgroundColor: theme.background,
+      marginBottom: 15,
+      fontFamily: "Lato_400Regular",
+      fontSize: 16,
+      color: theme.blackText,
+    },
 
-  cardUnit: {
-    marginLeft: 12,
-    fontSize: 16,
-    color: "#357D89",
-    fontFamily: "Lato_400Regular",
-  },
+    cardUnit: {
+      marginLeft: 12,
+      fontSize: 16,
+      color: theme.text,
+      fontFamily: "Lato_400Regular",
+    },
 
-  cardContainer: {
-    margin: 10,
-    marginBottom: 20,
-    padding: 20,
-    elevation: 6,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-  },
+    cardContainer: {
+      margin: 10,
+      marginBottom: 20,
+      padding: 20,
+      elevation: 6,
+      backgroundColor: theme.background,
+      borderRadius: 10,
+    },
 
-	editBtn: {
-		backgroundColor: "#388087",
-		padding: 8,
-		borderRadius: 6,
-		alignItems: "center",
-		alignSelf: 'flex-end',
-		width: 80,
-		height: 40,
-		justifyContent: 'center',
-		marginTop: 10,
-  },
-  editBtnText: {
-    color: "#fff",
-    fontFamily: "Lato_400Regular",
-    fontSize: 14
-  }
-})
+    editBtn: {
+      backgroundColor: theme.text,
+      padding: 8,
+      borderRadius: 6,
+      alignItems: "center",
+      alignSelf: 'flex-end',
+      width: 80,
+      height: 40,
+      justifyContent: 'center',
+      marginTop: 10,
+    },
+    editBtnText: {
+      color: "#fff",
+      fontFamily: "Lato_400Regular",
+      fontSize: 14
+    }
+  })
+  return styles;
+}

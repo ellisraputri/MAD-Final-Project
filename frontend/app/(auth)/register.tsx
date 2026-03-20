@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -30,6 +31,8 @@ const gradeDropdown = [
 ]
 
 export default function RegisterScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
   const router = useRouter();
 
   const [email, setEmail] = useState('');
@@ -79,7 +82,7 @@ export default function RegisterScreen() {
         >
           <Polygon
             points="0,60 0,65 0,70 0,75 2,79 3,80 4,79 100,0 100,100 0,100"
-            fill="#ededed"
+            fill={theme.background}
           />
         </Svg>
 
@@ -90,7 +93,7 @@ export default function RegisterScreen() {
         <Text style={styles.label}>Email</Text>
         <TextInput
           placeholder="Enter your email"
-          placeholderTextColor="#888"
+          placeholderTextColor={theme.placeholderText}
           value={email}
           onChangeText={setEmail}
           style={styles.input}
@@ -99,7 +102,7 @@ export default function RegisterScreen() {
         <Text style={styles.label}>Password</Text>
         <TextInput
           placeholder="Enter your password"
-          placeholderTextColor="#888"
+          placeholderTextColor={theme.placeholderText}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -109,7 +112,7 @@ export default function RegisterScreen() {
         <Text style={styles.label}>First Name</Text>
         <TextInput
           placeholder="Enter your first name"
-          placeholderTextColor="#888"
+          placeholderTextColor={theme.placeholderText}
           value={firstName}
           onChangeText={setFirstName}
           style={styles.input}
@@ -139,85 +142,88 @@ export default function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#EDEDED',
-  },
-  header: {
-    height: 300,
-    justifyContent: 'flex-end',
-  },
-  form: {
-    flex: 1,
-    paddingTop: 0,
-    padding: 24,
-    backgroundColor: '#EDEDED',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: -18,
-  },
-  label: {
-    fontSize: 18,
-    color: '#388087',
-    fontFamily: 'Nunito_700Bold',
-    marginTop: 24,
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#388087',
-    fontSize: 14,
-    paddingVertical: 8,
-    fontFamily: 'Lato_400Regular',
-    marginTop: 0,
-  },
-  loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 40,
-  },
-  loginText: {
-    fontSize: 16,
-    color: '#388087',
-  },
-  loginLink: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: '#388087',
-    textDecorationLine: 'underline',
-  },
-  diagonal: {
-    position: 'absolute',
-    bottom: -1,
-    width: '100%',
-  },
-  logo: {
-    position: 'absolute',
-    top: 60,
-    left: 15,
-    width: 60,
-    height: 80,
-    resizeMode: 'contain',
-  },
-  textLogo: {
-    position: 'absolute',
-    top: 150,
-    left: 20,
-    width: 180,
-    height: 50,
-    resizeMode: 'contain',
-  },
-  overlay: {
-    position: 'absolute',
-    bottom: 60,
-    left: 0,
-    right: 20,
-    padding: 20,
-    backgroundColor: 'rgba(0,0,0,0)',
-  },
-  subtitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontFamily: "Lato_700Bold",
-  },
-});
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      height: 300,
+      justifyContent: 'flex-end',
+    },
+    form: {
+      flex: 1,
+      paddingTop: 0,
+      padding: 24,
+      backgroundColor: theme.background,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      marginTop: -18,
+    },
+    label: {
+      fontSize: 18,
+      color: theme.text,
+      fontFamily: 'Nunito_700Bold',
+      marginTop: 24,
+    },
+    input: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.text,
+      fontSize: 14,
+      paddingVertical: 8,
+      fontFamily: 'Lato_400Regular',
+      marginTop: 0,
+      color: theme.blackText
+    },
+    loginContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 40,
+    },
+    loginText: {
+      fontSize: 16,
+      color: theme.text,
+    },
+    loginLink: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: theme.text,
+      textDecorationLine: 'underline',
+    },
+    diagonal: {
+      position: 'absolute',
+      bottom: -1,
+      width: '100%',
+    },
+    logo: {
+      position: 'absolute',
+      top: 60,
+      left: 15,
+      width: 60,
+      height: 80,
+      resizeMode: 'contain',
+    },
+    textLogo: {
+      position: 'absolute',
+      top: 150,
+      left: 20,
+      width: 180,
+      height: 50,
+      resizeMode: 'contain',
+    },
+    overlay: {
+      position: 'absolute',
+      bottom: 60,
+      left: 0,
+      right: 20,
+      padding: 20,
+    },
+    subtitle: {
+      color: '#fff',
+      fontSize: 18,
+      fontFamily: "Lato_700Bold",
+    },
+  });
+  return styles;
+}

@@ -2,13 +2,18 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 export default function AudioPlayer({ uri, levels }: { uri: string; levels: Array<any> }) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const soundRef = useRef<Audio.Sound | null>(null);
   const isPlayingRef = useRef(false); // mirror of isPlaying for use inside callbacks
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -18,6 +23,8 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
 
   const onPlaybackStatusUpdate = useCallback((status: AVPlaybackStatus) => {
     if (!status.isLoaded) return;
+
+    setIsPlaying(status.isPlaying);
 
     if (status.durationMillis) {
       setProgress(status.positionMillis / status.durationMillis);
@@ -48,32 +55,38 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
   };
 
   const togglePlay = async () => {
-    // prevent double-tap race
-    if (isPlayingRef.current !== isPlaying) return;
+  if (isProcessingRef.current) return; // HARD LOCK
+  isProcessingRef.current = true;
 
+  try {
     if (!soundRef.current) {
       const sound = await loadSound();
-      isPlayingRef.current = true;
-      setIsPlaying(true);
       await sound.playAsync();
+      setIsPlaying(true);
+      isPlayingRef.current = true;
       return;
     }
 
-    if (isPlaying) {
-      isPlayingRef.current = false;
-      setIsPlaying(false);
+    if (isPlayingRef.current) {
       await soundRef.current.pauseAsync();
+      setIsPlaying(false);
+      isPlayingRef.current = false;
     } else {
-      isPlayingRef.current = true;
-      setIsPlaying(true);
       await soundRef.current.playAsync();
+      setIsPlaying(true);
+      isPlayingRef.current = true;
     }
-  };
+  } catch (e) {
+    console.error("Audio toggle error:", e);
+  } finally {
+    isProcessingRef.current = false; // RELEASE LOCK
+  }
+};
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={togglePlay} style={styles.button}>
-        <Ionicons name={isPlaying ? "pause" : "play"} size={24} color="#333" />
+        <Ionicons name={isPlaying ? "pause" : "play"} size={24} color={theme.text} />
       </TouchableOpacity>
 
       <View style={styles.waveContainer}>
@@ -84,7 +97,7 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
               key={i}
               style={[
                 styles.bar,
-                { height: level, backgroundColor: played ? "#388087" : "#ccc" },
+                { height: level, backgroundColor: played ? theme.text : theme.blackText },
               ]}
             />
           );
@@ -94,33 +107,36 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    width: "100%",
-    height: 50,
-    borderRadius: 10,
-    borderWidth: 3,
-    borderColor: "#388087",
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    overflow: "hidden",
-    marginBottom: 10,
-  },
-  button: {
-    marginTop: 10,
-    marginRight: 10,
-  },
-  waveContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    height: "100%",
-  },
-  bar: {
-    width: 3,
-    backgroundColor: "#1E1E1E",
-    borderRadius: 2,
-  },
-});
+const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      width: "100%",
+      height: 50,
+      borderRadius: 10,
+      borderWidth: 3,
+      borderColor: theme.text,
+      justifyContent: "center",
+      paddingHorizontal: 10,
+      overflow: "hidden",
+      marginBottom: 10,
+    },
+    button: {
+      marginTop: 10,
+      marginRight: 10,
+    },
+    waveContainer: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      height: "100%",
+    },
+    bar: {
+      width: 3,
+      backgroundColor: theme.blackText,
+      borderRadius: 2,
+    },
+  });
+  return styles;
+}

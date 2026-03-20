@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/use-app-theme";
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -14,15 +15,27 @@ type DropdownProps = {
 }
 
 export default function CustomDropdown({data, placeholder, value, onSelect}: DropdownProps) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
-    <View style={styles.container}>
+    <View>
       <Dropdown
         style={styles.dropdown}
         data={data}
         labelField="label"
         valueField="value"
         placeholder={placeholder}
-        placeholderStyle={{color: "#888", fontFamily: "Lato_400Regular"}}
+        placeholderStyle={{color: theme.placeholderText, fontFamily: "Lato_400Regular"}}
+        selectedTextStyle={{ color: theme.blackText }}
+        itemTextStyle={{ color: theme.blackText }}
+        containerStyle={{
+          backgroundColor: theme.background, 
+        }}
+        itemContainerStyle={{
+          backgroundColor: theme.background, 
+        }}
+        activeColor={theme.hoverBackground}
         value={value}
         onChange={item => onSelect?.(item.value)}
       />
@@ -30,13 +43,14 @@ export default function CustomDropdown({data, placeholder, value, onSelect}: Dro
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-  },
-  dropdown: {
-    height: 40,
-    borderBottomWidth: 1,
-    borderBottomColor: "#388087",
-    fontFamily: 'Lato_400Regular',
-  },
-});
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    dropdown: {
+      height: 40,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.text,
+      fontFamily: 'Lato_400Regular',
+    },
+  });
+  return styles;
+}

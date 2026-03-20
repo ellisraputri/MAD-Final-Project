@@ -4,6 +4,7 @@ import { View, Text, Pressable, StyleSheet, TextInput } from "react-native";
 import Signature from "react-native-signature-canvas";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "./ui/button";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 type CardActivitySixProps = {
   title: string;
@@ -13,8 +14,11 @@ type CardActivitySixProps = {
 };
 
 function CardActivitySix(props: CardActivitySixProps) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+  
   return (
-    <View style={styles.cardContainer}>
+    <View style={[styles.cardContainer, {borderWidth:1, borderColor:"white"}]}>
       <Text style={styles.cardTitle}>{props.title}</Text>
       <Text style={styles.cardSubtitle}>Prediction</Text>
 
@@ -62,6 +66,9 @@ function CardActivitySix(props: CardActivitySixProps) {
 }
 
 export default function ActivitySixScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const [phase, setPhase] = useState<1 | 2 | 3 | 4>(4); 
   const [isWaiting, setIsWaiting] = useState<1 | 2 | 3>(1);
   const [reactionTimes, setReactionTimes] = useState<{ dominant: number | null; nonDominant: number | null }>({
@@ -300,96 +307,100 @@ const signaturePadStyle = `
   }
 `;
 
-const styles = StyleSheet.create({
-  container: { flex: 1},
-  card: { borderRadius: 12, height: 300 },
-  phase12: { 
-    backgroundColor: "#BADFE7", 
-    justifyContent: "center", 
-    alignItems: "center", 
-    borderColor: "#357D89",
-    borderWidth: 1,
-  },
-  phase3: { backgroundColor: "#BADFE7", borderWidth: 1, borderColor: "#357D89" },
-  title: { fontSize: 20, fontWeight: "600", color: "#357D89", lineHeight: 28, marginBottom: 15 },
-  startButton: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stopButton: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "#357D89",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  startText: { color: "#357D89", fontSize: 20, fontFamily: "Lato_700Bold" },
-  stopText: { color: "white", fontSize: 20, fontFamily: "Lato_700Bold" },
-  readyText: {
-    marginTop: 20,
-    marginBottom: 20,
-    fontFamily: "Lato_700Bold",
-    color: "#357D89",
-    fontSize: 24,
-  },
+const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: { flex: 1}, 
+    card: { borderRadius: 12, height: 300 },
+    phase12: { 
+      backgroundColor: "#BADFE7", 
+      justifyContent: "center", 
+      alignItems: "center", 
+      borderColor:  theme.text,
+      borderWidth: 1,
+    },
+    phase3: { backgroundColor: "#BADFE7", borderWidth: 1, borderColor: theme.text },
+    title: { fontSize: 20, fontWeight: "600", color: theme.text, lineHeight: 28, marginBottom: 15 },
+    startButton: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: "white",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    stopButton: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: theme.text,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    startText: { color: theme.darkText, fontSize: 20, fontFamily: "Lato_700Bold" },
+    stopText: { color: "white", fontSize: 20, fontFamily: "Lato_700Bold" },
+    readyText: {
+      marginTop: 20,
+      marginBottom: 20,
+      fontFamily: "Lato_700Bold",
+      color: theme.darkText,
+      fontSize: 24,
+    },
 
-  cardTitle: {
-    fontSize: 18,
-    fontFamily: "Lato_700Bold",
-    color: "#357D89",
-    marginBottom: 14,
-  },
+    cardTitle: {
+      fontSize: 18,
+      fontFamily: "Lato_700Bold",
+      color: theme.text,
+      marginBottom: 14,
+    },
 
-  cardSubtitle: {
-    fontSize: 16,
-    fontFamily: "Lato_700Bold",
-    color: "#357D89",
-    marginBottom: 5,
-  },
+    cardSubtitle: {
+      fontSize: 16,
+      fontFamily: "Lato_700Bold",
+      color: theme.text,
+      marginBottom: 5,
+    },
 
-  cardLabel: {
-    fontSize: 16,
-    color: "#357D89",
-    marginBottom: 5,
-    fontFamily: "Lato_400Regular"
-  },
+    cardLabel: {
+      fontSize: 16,
+      color: theme.text,
+      marginBottom: 5,
+      fontFamily: "Lato_400Regular"
+    },
 
-  cardInputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+    cardInputRow: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
 
-  cardInput: {
-    width: 100,
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#357D89",
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    backgroundColor: "#FFF",
-    marginBottom: 15,
-    fontFamily: "Lato_400Regular",
-    fontSize: 16,
-  },
+    cardInput: {
+      width: 100,
+      height: 40,
+      borderWidth: 1,
+      borderColor: theme.text,
+      borderRadius: 4,
+      paddingHorizontal: 10,
+      backgroundColor: theme.background,
+      marginBottom: 15,
+      fontFamily: "Lato_400Regular",
+      fontSize: 16,
+      color: theme.blackText,
+    },
 
-  cardUnit: {
-    marginLeft: 12,
-    fontSize: 16,
-    color: "#357D89",
-    fontFamily: "Lato_400Regular",
-  },
+    cardUnit: {
+      marginLeft: 12,
+      fontSize: 16,
+      color: theme.text,
+      fontFamily: "Lato_400Regular",
+    },
 
-  cardContainer: {
-    margin: 10,
-    marginBottom: 20,
-    padding: 20,
-    elevation: 6,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-  },
-});
+    cardContainer: {
+      margin: 10,
+      marginBottom: 20,
+      padding: 20,
+      elevation: 6,
+      backgroundColor: theme.background,
+      borderRadius: 10,
+    },
+  });
+  return styles;
+}

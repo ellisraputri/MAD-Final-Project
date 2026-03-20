@@ -6,11 +6,15 @@ import ActivityFiveResultsScreen from "@/components/activity5-results";
 import ActivitySixResultsScreen from "@/components/activity6-results";
 import ActivitySevenResultsScreen from "@/components/activity7-results";
 import ResultCard from "@/components/ui/result-card";
-import { useGlobalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useAppTheme } from "@/hooks/use-app-theme";
+import { useFocusEffect, useGlobalSearchParams } from "expo-router";
+import { useCallback, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function ExplanationScreen(){
+	const theme = useAppTheme();
+	const styles = createStyles(theme);
+
 	const {id} = useGlobalSearchParams();
 	const [detailsVisible, setDetailsVisible] = useState(false);
 	const results = [
@@ -19,12 +23,18 @@ export default function ExplanationScreen(){
     {score: 30}
 	]
 
+	useFocusEffect(
+		useCallback(() => {
+		  setDetailsVisible(false);
+		}, [])
+	  );
+
 	return(
 		<ScrollView style={styles.container}>
 				{!detailsVisible &&
 				 	<View>
 						<Text style={styles.titleText}>Attempts</Text>
-						<View style={{ height: 1, backgroundColor: '#388087', marginVertical: 10 }} />
+						<View style={{ height: 1, backgroundColor: theme.blackText, marginVertical: 10 }} />
 
 						<View style={{marginTop: 10}}>
 							{results.length === 0 && <Text>No attempt yet</Text>}
@@ -67,17 +77,20 @@ export default function ExplanationScreen(){
 	);
 }
 
-const styles = StyleSheet.create({
-	container:{
-		flex:1,
-		backgroundColor:"#fff",
-		paddingHorizontal: 30,
-	},
-	titleText:{
-		marginTop: 30,
-		textAlign: "center",
-		fontFamily: "Lato_700Bold",
-		fontSize: 20,
-		color: "#388087"
-	}
-})
+const createStyles = (theme: any) => {
+	const styles = StyleSheet.create({
+		container:{
+			flex:1,
+			backgroundColor: theme.background,
+			paddingHorizontal: 30,
+		},
+		titleText:{
+			marginTop: 30,
+			textAlign: "center",
+			fontFamily: "Lato_700Bold",
+			fontSize: 20,
+			color: theme.blackText
+		}
+	})
+	return styles;
+}

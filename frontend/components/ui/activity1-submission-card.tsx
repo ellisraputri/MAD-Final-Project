@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import VideoPlayer from "./video-player";
 import { useState } from "react";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 
 export default function ActivityOneSubmissionCard(props: {
@@ -14,6 +15,9 @@ export default function ActivityOneSubmissionCard(props: {
     onDelete: () => void;
     onRerecord: () => void;
 }){
+    const theme = useAppTheme();
+    const submissionStyles = createStyles(theme);
+
     const [showVideoModal, setShowVideoModal] = useState(false);
 
     return(
@@ -24,7 +28,7 @@ export default function ActivityOneSubmissionCard(props: {
             </Text>
 
             <TouchableOpacity onPress={props.onDelete}>
-                <Ionicons name="trash-outline" size={22} color="#357D89" />
+                <Ionicons name="trash-outline" size={22} color={theme.text} />
             </TouchableOpacity>
         </View>
 
@@ -36,7 +40,7 @@ export default function ActivityOneSubmissionCard(props: {
                             style={submissionStyles.playOverlay}
                             onPress={() => setShowVideoModal(true)}
                             >
-                            <Ionicons name="play-circle" size={60} color="#357D89" />
+                            <Ionicons name="play-circle" size={60} color={theme.text} />
                             <Text style={submissionStyles.tapText}>Tap to play</Text>
                             </TouchableOpacity>
 
@@ -83,100 +87,106 @@ export default function ActivityOneSubmissionCard(props: {
     )
 }
 
-
-const submissionStyles = StyleSheet.create({
-    playOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-    },
-    tapText: {
-        marginTop: 8,
-        color: '#357D89',
-        fontFamily: "Lato_400Regular",
-        fontSize: 20,
-    },
-    fullscreenModal: {
-        flex: 1,
-        backgroundColor: '#000',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    closeVideoBtn: {
-        position: 'absolute',
-        bottom: 80, 
-        backgroundColor: "#388087",
-        padding: 10,
-        borderRadius: 8,
-        width: 120,
-        alignItems: 'center',
-    },
-    subsContainer:{
-        marginLeft: 20,
-    },
-    titleRow:{
-        marginBottom: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    card: {
-        width: '90%',
-        backgroundColor: "#fff",
-        borderRadius: 10,
-        padding: 25,
-        marginBottom: 40,
-        elevation: 3,
-    },
-    title: {
-        marginBottom: 20,
-        fontFamily: "Lato_700Bold",
-        color: '#357D89',
-        fontSize: 20
-    },
-    videoPlaceholder: {
-        height: 400,
-        width: '100%',
-        borderWidth: 2,
-        borderColor: '#357D89',
-        backgroundColor: "#d9d9d9",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 10,
-        overflow: 'hidden'
-    },
-    prediction: {
-        marginTop: 15,
-        fontFamily: "Lato_700Bold",
-        color: '#357D89',
-        fontSize: 18
-    },
-    descText:{
-        marginTop: 10,
-        fontFamily: "Lato_400Regular",
-        color: '#357D89',
-        fontSize: 15
-    },
-    inputBox: {
-        borderWidth: 0.8,
-        height: 40,
-        marginVertical: 10,
-        marginBottom: 20,
-    },
-    editBtn: {
-        backgroundColor: "#388087",
-        padding: 8,
-        borderRadius: 6,
-        alignItems: "center",
-        alignSelf: 'flex-end',
-        width: 80,
-        height: 40,
-        justifyContent: 'center',
-        marginTop: 10,
-  },
-  editBtnText: {
-    color: "#fff",
-    fontFamily: "Lato_400Regular",
-    fontSize: 14
-  }
-});
+export const createStyles = (theme: any) => {
+    const submissionStyles = StyleSheet.create({
+        playOverlay: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+        },
+        tapText: {
+            marginTop: 8,
+            color: theme.text,
+            fontFamily: "Lato_400Regular",
+            fontSize: 20,
+        },
+        fullscreenModal: {
+            flex: 1,
+            backgroundColor: '#000',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        closeVideoBtn: {
+            position: 'absolute',
+            bottom: 80, 
+            backgroundColor: theme.text,
+            padding: 10,
+            borderRadius: 8,
+            width: 120,
+            alignItems: 'center',
+        },
+        subsContainer:{
+            marginLeft: 20,
+        },
+        titleRow:{
+            marginBottom: 5,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+        },
+        card: {
+            width: '90%',
+            backgroundColor: theme.background,
+            borderWidth: theme.isDark ? 1 : 0,
+            borderColor: theme.isDark ? theme.blackText : "transparent",
+            borderRadius: 10,
+            padding: 25,
+            marginBottom: 40,
+            elevation: 3,
+        },
+        title: {
+            marginBottom: 20,
+            fontFamily: "Lato_700Bold",
+            color: theme.text,
+            fontSize: 20
+        },
+        videoPlaceholder: {
+            height: 400,
+            width: '100%',
+            borderWidth: 2,
+            borderColor: theme.text,
+            backgroundColor: theme.hoverBackground,
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 10,
+            overflow: 'hidden'
+        },
+        prediction: {
+            marginTop: 15,
+            fontFamily: "Lato_700Bold",
+            color: theme.text,
+            fontSize: 18
+        },
+        descText:{
+            marginTop: 10,
+            fontFamily: "Lato_400Regular",
+            color: theme.text,
+            fontSize: 15
+        },
+        inputBox: {
+            borderWidth: 0.8,
+            height: 40,
+            marginVertical: 10,
+            marginBottom: 20,
+            borderColor: theme.blackText,
+            color: theme.blackText
+        },
+        editBtn: {
+            backgroundColor: theme.text,
+            padding: 8,
+            borderRadius: 6,
+            alignItems: "center",
+            alignSelf: 'flex-end',
+            width: 80,
+            height: 40,
+            justifyContent: 'center',
+            marginTop: 10,
+        },
+        editBtnText: {
+            color: "#fff",
+            fontFamily: "Lato_400Regular",
+            fontSize: 14
+        }
+    });
+    return submissionStyles;
+}

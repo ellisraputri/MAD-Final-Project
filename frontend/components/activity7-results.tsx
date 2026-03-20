@@ -4,8 +4,12 @@ import { router, useLocalSearchParams } from 'expo-router';
 import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
     <View>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -22,8 +26,11 @@ function ActivitySevenResultCard(props: {
     valuePredict: number;
     valueCalculated: number;
 }){
+  const theme = useAppTheme();
+  const resultStyles = createStyles(theme);
+
     return(
-        <View key={props.item} style={resultStyles.card}>
+        <View key={props.item} style={[resultStyles.card, {borderWidth:1, borderColor:"white"}]}>
           <View style={resultStyles.titleRow}>
             <Text style={resultStyles.title}>
                 {props.item}. Submission {props.item}
@@ -77,6 +84,8 @@ const data = [
 ]
 
 export default function ActivitySevenResultsScreen(props: {onBack: ()=>void}) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
 
   return (
@@ -110,165 +119,86 @@ export default function ActivitySevenResultsScreen(props: {onBack: ()=>void}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    backgroundColor:"#fff",
-    paddingHorizontal: 5,
-  },
+const createStyles = (theme:any) => {
+  const styles = StyleSheet.create({
+    container:{
+      flex:1,
+      backgroundColor: theme.background,
+      paddingHorizontal: 5,
+    },
 
-  sectionTitle:{
-    fontSize:20,
-    fontWeight:"600",
-    color:"#357D89",
-    fontFamily: "Lato_700Bold",
-  },
+    sectionTitle:{
+      fontSize:20,
+      fontWeight:"600",
+      color: theme.text,
+      fontFamily: "Lato_700Bold",
+    },
 
-  divider:{
-    height:2,
-    backgroundColor:"#388087",
-    marginVertical:10
-  },
+    divider:{
+      height:2,
+      backgroundColor: theme.text,
+      marginVertical:10
+    },
 
-  paragraph:{
-    fontSize:15,
-    lineHeight:22,
-    textAlign: "justify",
-    fontFamily: "Lato_400Regular",
-  },
+    paragraph:{
+      fontSize:15,
+      lineHeight:22,
+      textAlign: "justify",
+      fontFamily: "Lato_400Regular",
+      color: theme.blackText,
+    },
 
-  grid:{
-    flexDirection:"row",
-    flexWrap:"wrap",
-    justifyContent:"space-between"
-  },
+    grid:{
+      flexDirection:"row",
+      flexWrap:"wrap",
+      justifyContent:"space-between"
+    },
+      
+      subsContainer:{
+          marginLeft: 20,
+      },
+      titleRow:{
+          marginBottom: 5,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+      },
+      card: {
+          width: '100%',
+          backgroundColor: theme.background,
+          borderRadius: 10,
+          padding: 20,
+          marginBottom: 30,
+          elevation: 3,
+      },
+      title: {
+          marginBottom: 20,
+          fontFamily: "Lato_700Bold",
+          color: theme.text,
+          fontSize: 20,
+      },
+      subtitleText:{
+          marginTop: 10,
+          fontFamily: "Lato_700Bold",
+          fontSize: 16,
+          color: theme.blackText,
+      },
+      descText:{
+          marginTop: 10,
+          fontFamily: "Lato_400Regular",
+          fontSize: 15,
+          color: theme.blackText,
+      },
+      list: {
+          marginLeft: 10,
+          marginTop: 4,
+      },
+      listItem: {
+          fontSize: 15,
+          fontFamily: "Lato_400Regular",
+          marginBottom: 5,
+          color: theme.blackText,
+      }
+  });
 
-  equipmentItem:{
-    width:"48%",
-    marginBottom:20
-  },
-
-  equipmentText:{
-    marginBottom:8,
-    fontSize: 15,
-    fontFamily: "Lato_400Regular",
-  },
-
-  item: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  marker: {
-    marginRight: 10,
-    fontWeight: 'bold',
-    fontFamily: "Lato_400Regular",
-    lineHeight:20,
-    fontSize: 15,
-  },
-  text: {
-    flexShrink: 1, 
-    fontFamily: "Lato_400Regular",
-    lineHeight:20,
-    fontSize: 15,
-  },
-
-  videoBox:{
-    height:160,
-    backgroundColor:"#CFCFCF",
-    justifyContent:"center",
-    alignItems:"center"
-  },
-});
-
-const resultStyles = StyleSheet.create({
-    playOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-    },
-    tapText: {
-        marginTop: 8,
-        color: '#357D89',
-        fontFamily: "Lato_400Regular",
-        fontSize: 20,
-    },
-    fullscreenModal: {
-        flex: 1,
-        backgroundColor: '#000',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    closeVideoBtn: {
-        position: 'absolute',
-        bottom: 80, 
-        backgroundColor: "#388087",
-        padding: 10,
-        borderRadius: 8,
-        width: 120,
-        alignItems: 'center',
-    },
-    subsContainer:{
-        marginLeft: 20,
-    },
-    titleRow:{
-        marginBottom: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    card: {
-        width: '100%',
-        backgroundColor: "#fff",
-        borderRadius: 10,
-        padding: 20,
-        marginBottom: 30,
-        elevation: 3,
-    },
-    title: {
-        marginBottom: 20,
-        fontFamily: "Lato_700Bold",
-        color: '#357D89',
-        fontSize: 20
-    },
-    videoPlaceholder: {
-        height: 400,
-        width: '100%',
-        borderWidth: 2,
-        borderColor: '#357D89',
-        backgroundColor: "#d9d9d9",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 10,
-        overflow: 'hidden'
-    },
-    prediction: {
-        marginTop: 15,
-        fontFamily: "Lato_700Bold",
-        color: '#357D89',
-        fontSize: 18
-    },
-    subtitleText:{
-        marginTop: 10,
-        fontFamily: "Lato_700Bold",
-        fontSize: 16
-    },
-    descText:{
-        marginTop: 10,
-        fontFamily: "Lato_400Regular",
-        fontSize: 15
-    },
-    closeBtnText: {
-        color: "#fff",
-        fontFamily: "Lato_400Regular",
-        fontSize: 14
-    },
-    list: {
-        marginLeft: 10,
-        marginTop: 4,
-    },
-    listItem: {
-        fontSize: 15,
-        fontFamily: "Lato_400Regular",
-        marginBottom: 5,
-    }
-});
+  return styles;
+}

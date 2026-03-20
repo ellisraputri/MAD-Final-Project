@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { Link, useRouter } from "expo-router";
 import React from "react";
 import { View, Text, StyleSheet, ImageBackground } from "react-native";
@@ -11,6 +12,8 @@ type ActivityProps = {
 };
 
 export default function ActivityListCard(props: ActivityProps) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
   const router = useRouter();
 
   return (
@@ -54,72 +57,74 @@ export default function ActivityListCard(props: ActivityProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 25,
-    marginHorizontal: 30,
-    marginBottom: 40,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4
-  },
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      borderRadius: 25,
+      marginHorizontal: 30,
+      marginBottom: 40,
+      overflow: "hidden",
+      backgroundColor: theme.activityCard,
+      shadowColor: "#000",
+      shadowOpacity: 0.1,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4
+    },
 
-  image: {
-    height: 160,
-    justifyContent: "flex-start",
-  },
+    image: {
+      height: 160,
+      justifyContent: "flex-start",
+    },
 
-  imageStyle: {
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-  },
+    imageStyle: {
+      borderTopLeftRadius: 25,
+      borderTopRightRadius: 25,
+    },
 
-  badge: {
-    position: "absolute",
-    top: 15,
-    right: 15,
-    backgroundColor: "#A9C5CC",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
+    badge: {
+      position: "absolute",
+      top: 15,
+      right: 15,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 8,
+    },
 
-  badgeText: {
-    color: "#295F6B",
-    fontWeight: "600",
-  },
+    badgeText: {
+      color: "#295F6B",
+      fontWeight: "600",
+    },
 
-  card: {
-    backgroundColor: "#EFEFEF",
-    padding: 20,
-  },
+    card: {
+      backgroundColor: theme.activityCard,
+      padding: 20,
+    },
 
-  title: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 10,
-    color: "#143336",
-    fontFamily: "Lato_700Bold",
-  },
+    title: {
+      fontSize: 20,
+      fontWeight: "700",
+      marginBottom: 10,
+      color: theme.activityTitle,
+      fontFamily: "Lato_700Bold",
+    },
 
-  description: {
-    fontSize: 15,
-    color: "#143336",
-    marginBottom: 15,
-    fontFamily: "Lato_400Regular",
-    textAlign: "justify",
-    lineHeight: 20,
-  },
+    description: {
+      fontSize: 15,
+      color: theme.activityTitle,
+      marginBottom: 15,
+      fontFamily: "Lato_400Regular",
+      textAlign: "justify",
+      lineHeight: 20,
+    },
 
-  link: {
-    textAlign: "right",
-    color: "#357D89",
-    fontWeight: "500",
-    fontSize: 16,
-    fontFamily: "Lato_700Bold",
-  },
-});
+    link: {
+      textAlign: "right",
+      color: theme.text,
+      fontWeight: "500",
+      fontSize: 16,
+      fontFamily: "Lato_700Bold",
+    },
+  });
+  return styles;
+}
