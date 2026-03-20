@@ -229,7 +229,7 @@ const createStyles = (theme: any) => {
         width: '100%',
         borderWidth: 2,
         borderColor: theme.text,
-        backgroundColor: theme.greyBackground,
+        backgroundColor: theme.hoverBackground,
         justifyContent: "center",
         alignItems: "center",
         marginBottom: 10,
