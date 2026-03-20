@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import VideoPlayer from "./ui/video-player";
 import ActivityThreeSubmissionCard from "./ui/activity3-submission-card";
+import Button from "./ui/button";
 import { router } from "expo-router";
 
 export default function ActivityThreeScreen() {
@@ -35,15 +36,25 @@ export default function ActivityThreeScreen() {
         <Text style={styles.titleText}>Camera & microphone permission required</Text>
 
         {!permissionCamera.granted && (
-          <TouchableOpacity onPress={requestPermissionCamera} style={styles.buttonPopup}>
-            <Text style={styles.buttonText}>Grant Camera</Text>
-          </TouchableOpacity>
+          <Button
+              onPress={requestPermissionCamera}
+              width={300} 
+              height={53} 
+              fontSize={20}
+              marginTop={20} 
+              text={`Grant Camera`}
+            />
         )}
 
         {!permissionMic.granted && (
-          <TouchableOpacity onPress={requestPermissionMic} style={styles.buttonPopup}>
-            <Text style={styles.buttonText}>Grant Microphone</Text>
-          </TouchableOpacity>
+          <Button
+              onPress={requestPermissionMic}
+              width={300} 
+              height={53} 
+              fontSize={20}
+              marginTop={20} 
+              text={`Grant Microphone`}
+            />
         )}
       </View>
     );
@@ -176,25 +187,25 @@ export default function ActivityThreeScreen() {
           )}
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.buttonPopup}
+            <Button
               onPress={() => setShowModal(true)}
-            >
-              <Text style={styles.buttonText}>
-                View Submissions ({videos.length}/3)
-              </Text>
-            </TouchableOpacity>
+              width={300} 
+              height={53} 
+              fontSize={20}
+              marginTop={20} 
+              text={`View Submissions (${videos.length}/3)`}
+            />
 
-            <TouchableOpacity
-              style={[
-                styles.buttonPopup,
-                confirmDisabled && styles.disabledBtn,
-              ]}
+            <Button
               onPress={handleConfirmSubmission}
-              disabled={confirmDisabled}
-            >
-              <Text style={styles.buttonText}>Confirm Submission</Text>
-            </TouchableOpacity>
+              width={300}
+              height={53}
+              fontSize={20}
+              marginTop={20}
+              marginBottom={50}
+              text="Confirm Submission"
+              isDisabled={confirmDisabled}
+            />
           </View>
         </>
       ) : (
@@ -214,22 +225,17 @@ export default function ActivityThreeScreen() {
             ))}
       
             {videos.length < 3 && (
-              <TouchableOpacity
-                style={styles.backBtn}
+              <Button 
                 onPress={() => {
                   setRerecordIndex(null);
                   setScreen("record");
-                }}
-              >
-                <Text style={styles.btnText}>
-                  Add Another Submission
-                </Text>
-              </TouchableOpacity>
+                }} 
+                width={260} fontSize={18} height={53}
+                marginTop={20} text="Add Another Submission"/>
             )}
       
-            <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-              <Text style={styles.btnText}>Submit</Text>
-            </TouchableOpacity>
+            <Button onPress={handleSubmit} width={150} fontSize={18} 
+                          marginTop={20} marginBottom={50} text="Submit"/>
           </View>
         </>
       )}
@@ -287,25 +293,6 @@ const styles = StyleSheet.create({
     right: 15,
     zIndex: 10,
     padding: 8,
-  },
-  buttonPopup: {
-    marginTop: 30,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 8,
-    alignItems: 'center',
-    width: 300,
-    height: 53,
-  },
-  disabledBtn: {
-    opacity: 0.4,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
   },
   buttonContainer: {
     flexDirection: 'column',
@@ -386,34 +373,5 @@ const styles = StyleSheet.create({
     fontFamily: "Lato_400Regular",
     fontSize: 16,
     marginBottom: 60,
-  },
-  backBtn: {
-    padding: 10,
-    marginTop: 30,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 8,
-    alignItems: 'center',
-    width: 260,
-    height: 53,
-  },
-
-  btnText:{
-    fontSize: 18,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
-  },
-
-  submitBtn: {
-    marginTop: 30,
-    marginBottom: 50,
-    borderWidth: 2,
-    padding: 10,
-    borderRadius: 50,
-    borderColor: '#388087',
-    width: 150,
-    alignItems: 'center'
   },
 });

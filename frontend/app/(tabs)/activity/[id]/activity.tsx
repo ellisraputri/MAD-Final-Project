@@ -1,6 +1,8 @@
 import ActivityOneScreen from '@/components/activity1'
 import ActivityTwoScreen from '@/components/activity2';
 import ActivityThreeScreen from '@/components/activity3';
+import ActivityFourScreen from '@/components/activity4';
+import ActivityFiveScreen from '@/components/activity5';
 import ActivitySixScreen from '@/components/activity6'
 import ActivitySevenScreen from '@/components/activity7';
 import { useGlobalSearchParams } from 'expo-router';
@@ -15,6 +17,8 @@ export default function ActivityScreen() {
       {Number(id)===1 && <ActivityOneScreen/>} 
       {Number(id)===2 && <ActivityTwoScreen/>}
       {Number(id)===3 && <ActivityThreeScreen/>} 
+      {Number(id)===4 && <ActivityFourScreen/>} 
+      {Number(id)===5 && <ActivityFiveScreen/>} 
       {Number(id)===6 && <ActivitySixScreen/>} 
       {Number(id)===7 && <ActivitySevenScreen/>}
     </ScrollView>
