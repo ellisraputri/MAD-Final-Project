@@ -146,6 +146,7 @@ export const createStyles = (theme: any) => {
       paddingVertical: 8,
       fontFamily: 'Lato_400Regular',
       marginTop: 8,
+      color: theme.blackText
     },
     registerText: {
       fontSize: 16,

@@ -4,8 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import ActivityFiveSubmissionCard from "./ui/activity5-submission-card";
 import Button from "./ui/button";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 export default function ActivityFiveScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const [screen, setScreen] = useState<"record" | "submission">("record");
   
   const [vibrations, setVibrations] = useState<{
@@ -197,7 +201,7 @@ export default function ActivityFiveScreen() {
       )}
 
       <Modal visible={showModal} animationType="slide">
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
         <View style={styles.modalContainer}>
           <Text style={styles.titleModalText}>Your Submissions</Text>
 
@@ -205,7 +209,7 @@ export default function ActivityFiveScreen() {
             style={styles.closeButton}
             onPress={() => setShowModal(false)}
           >
-            <Ionicons name="close" size={35} color="#357D89" />
+            <Ionicons name="close" size={35} color={theme.text} />
           </TouchableOpacity>
 
           <ScrollView
@@ -213,7 +217,7 @@ export default function ActivityFiveScreen() {
             contentContainerStyle={styles.scrollView}
           >
             {vibrations.length === 0 ? (
-              <Text>No submissions yet</Text>
+              <Text style={{color: theme.blackText}}>No submissions yet</Text>
             ) : (
               vibrations.map((item, index) => (
                 <ActivityFiveSubmissionCard
@@ -242,85 +246,88 @@ export default function ActivityFiveScreen() {
 }
 
 
-const styles = StyleSheet.create({
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 15,
-    zIndex: 10,
-    padding: 8,
-  },
-  
-  buttonContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginTop: 40,
-  },
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    closeButton: {
+      position: 'absolute',
+      top: 10,
+      right: 15,
+      zIndex: 10,
+      padding: 8,
+    },
+    
+    buttonContainer: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      marginTop: 40,
+    },
 
-  timer: {
-    fontSize: 28,
-    color: "#357D89",
-    fontFamily: 'Lato_700Bold',
-    marginBottom: 25,
-    marginTop: 5
-  },
+    timer: {
+      fontSize: 28,
+      color: theme.text,
+      fontFamily: 'Lato_700Bold',
+      marginBottom: 25,
+      marginTop: 5
+    },
 
-  circle: {
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    backgroundColor: "#BADFE7",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  circleText: {
-    fontSize: 32,
-    color: "#357D89",
-    fontFamily: 'Lato_400Regular',
-    textAlign: "center",
-    lineHeight: 45
-  },
+    circle: {
+      width: 250,
+      height: 250,
+      borderRadius: 125,
+      backgroundColor: "#BADFE7",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    circleText: {
+      fontSize: 32,
+      color: "#357D89",
+      fontFamily: 'Lato_400Regular',
+      textAlign: "center",
+      lineHeight: 45
+    },
 
-  stopCircle: {
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    backgroundColor: "#F6F6F2",
-    borderColor: '#badfe7',
-    borderWidth: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  mainView: { 
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center" 
-  }, 
+    stopCircle: {
+      width: 250,
+      height: 250,
+      borderRadius: 125,
+      backgroundColor: "#F6F6F2",
+      borderColor: '#badfe7',
+      borderWidth: 5,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    mainView: { 
+      flex: 1, 
+      alignItems: "center", 
+      justifyContent: "center" 
+    }, 
 
-  modalContainer: {
-    flex: 1,
-    paddingTop: 30,
-    paddingHorizontal: 5,
-    alignItems: "center",
-    justifyContent: 'flex-start',
-  },
-  scrollView: {
-    alignItems: 'center',
-    paddingBottom: 40,
-  },
-  titleModalText: {
-    marginTop: 20,
-    marginBottom: 20,
-    fontSize: 20,
-    color: '#357D89',
-    fontWeight: '500',
-    fontFamily: "Lato_700Bold",
-  },
-  titleText: {
-    marginTop: 10,
-    fontSize: 24,
-    color: '#357D89',
-    fontWeight: '500',
-    fontFamily: "Lato_700Bold",
-  },
-});
+    modalContainer: {
+      flex: 1,
+      paddingTop: 30,
+      paddingHorizontal: 5,
+      alignItems: "center",
+      justifyContent: 'flex-start',
+    },
+    scrollView: {
+      alignItems: 'center',
+      paddingBottom: 40,
+    },
+    titleModalText: {
+      marginTop: 20,
+      marginBottom: 20,
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Lato_700Bold",
+    },
+    titleText: {
+      marginTop: 10,
+      fontSize: 24,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Lato_700Bold",
+    },
+  });
+  return styles;
+}

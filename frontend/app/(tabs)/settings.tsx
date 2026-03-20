@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import CustomDropdown from "@/components/ui/dropdown";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import RatingPopup from "@/components/ui/rating-popup";
 
 const dropdownValue = [
   {label: "Light", value: "light"},
@@ -13,6 +14,8 @@ const dropdownValue = [
 export default function SettingsScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+
+  const [showRating, setShowRating] = useState(false);
 
   const [name, setName] = useState("Ellis");
   const [mode, setMode] = useState("light");
@@ -114,6 +117,22 @@ export default function SettingsScreen() {
         fontSize={20}
         marginTop={60}
       />
+
+      {/* Modal */}
+      <Button
+        onPress={() => setShowRating(true)}
+        text='Setttt'
+        width={300}
+        fontSize={20}
+        marginTop={60}
+      />
+
+      <RatingPopup
+        id={'1'}
+        showModal={showRating}
+        onClose={() => setShowRating(false)}
+      />
+
 
     </ScrollView>
   );

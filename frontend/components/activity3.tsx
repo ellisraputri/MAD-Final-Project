@@ -7,8 +7,12 @@ import VideoPlayer from "./ui/video-player";
 import ActivityThreeSubmissionCard from "./ui/activity3-submission-card";
 import Button from "./ui/button";
 import { router } from "expo-router";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 export default function ActivityThreeScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const cameraRef = useRef<CameraView | null>(null);
   const [screen, setScreen] = useState<"record" | "submission">("record");
   
@@ -241,7 +245,7 @@ export default function ActivityThreeScreen() {
       )}
 
       <Modal visible={showModal} animationType="slide">
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
         <View style={styles.modalContainer}>
           <Text style={styles.titleModalText}>Your Submissions</Text>
 
@@ -249,7 +253,7 @@ export default function ActivityThreeScreen() {
             style={styles.closeButton}
             onPress={() => setShowModal(false)}
           >
-            <Ionicons name="close" size={35} color="#357D89" />
+            <Ionicons name="close" size={35} color={theme.text} />
           </TouchableOpacity>
 
           <ScrollView
@@ -257,7 +261,7 @@ export default function ActivityThreeScreen() {
             contentContainerStyle={styles.scrollView}
           >
             {videos.length === 0 ? (
-              <Text>No submissions yet</Text>
+              <Text style={styles.subtitleText}>No submissions yet</Text>
             ) : (
               videos.map((item, index) => (
                 <ActivityThreeSubmissionCard
@@ -285,93 +289,96 @@ export default function ActivityThreeScreen() {
   );
 }
 
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    closeButton: {
+      position: 'absolute',
+      top: 10,
+      right: 15,
+      zIndex: 10,
+      padding: 8,
+    },
+    buttonContainer: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      marginTop: 40,
+    },
 
-const styles = StyleSheet.create({
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 15,
-    zIndex: 10,
-    padding: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginTop: 40,
-  },
+    recordButtonOuter: {
+      width: 60,
+      height: 60,
+      borderRadius: 40,
+      backgroundColor: "#fff",
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 10,
+    },
 
-  recordButtonOuter: {
-    width: 60,
-    height: 60,
-    borderRadius: 40,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
+    recordButtonInner: {
+      width: 35,
+      height: 35,
+      borderRadius: 25,
+      backgroundColor: "#c50000",
+    },
 
-  recordButtonInner: {
-    width: 35,
-    height: 35,
-    borderRadius: 25,
-    backgroundColor: "#c50000",
-  },
+    recordingInner: {
+      width: 25,
+      height: 25,
+      borderRadius: 6, 
+      backgroundColor: "#c50000",
+    },
 
-  recordingInner: {
-    width: 25,
-    height: 25,
-    borderRadius: 6, 
-    backgroundColor: "#c50000",
-  },
+    recordBtnArea:{
+      backgroundColor: theme.hoverBackground,
+      width: 320,
+      alignItems: 'center',
+      paddingBottom: 15
+    },
 
-  recordBtnArea:{
-    backgroundColor: '#d9d9d9',
-    width: 320,
-    alignItems: 'center',
-    paddingBottom: 15
-  },
+    videoScreen: { 
+      width: 320, 
+      height: 500 
+    },
 
-  videoScreen: { 
-    width: 320, 
-    height: 500 
-  },
+    mainView: { 
+      flex: 1, 
+      alignItems: "center", 
+      justifyContent: "center" 
+    }, 
 
-  mainView: { 
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center" 
-  }, 
-
-   modalContainer: {
-    flex: 1,
-    paddingTop: 30,
-    paddingHorizontal: 5,
-    alignItems: "center",
-    justifyContent: 'flex-start',
-  },
-  scrollView: {
-    alignItems: 'center',
-    paddingBottom: 40,
-  },
-  titleModalText: {
-    marginTop: 20,
-    marginBottom: 20,
-    fontSize: 20,
-    color: '#357D89',
-    fontWeight: '500',
-    fontFamily: "Lato_700Bold",
-  },
-  titleText: {
-    marginTop: 100,
-    marginBottom: 20,
-    fontSize: 20,
-    color: '#357D89',
-    fontWeight: '500',
-    fontFamily: "Lato_700Bold",
-  },
-  subtitleText: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 16,
-    marginBottom: 60,
-  },
-});
+    modalContainer: {
+      flex: 1,
+      paddingTop: 30,
+      paddingHorizontal: 5,
+      alignItems: "center",
+      justifyContent: 'flex-start',
+    },
+    scrollView: {
+      alignItems: 'center',
+      paddingBottom: 40,
+    },
+    titleModalText: {
+      marginTop: 20,
+      marginBottom: 20,
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Lato_700Bold",
+    },
+    titleText: {
+      marginTop: 100,
+      marginBottom: 20,
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Lato_700Bold",
+    },
+    subtitleText: {
+      fontFamily: "Lato_400Regular",
+      fontSize: 16,
+      marginBottom: 60,
+      color: theme.blackText
+    },
+  });
+  return styles;
+}

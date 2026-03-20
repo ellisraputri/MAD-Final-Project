@@ -27,6 +27,15 @@ export default function CustomDropdown({data, placeholder, value, onSelect}: Dro
         valueField="value"
         placeholder={placeholder}
         placeholderStyle={{color: theme.placeholderText, fontFamily: "Lato_400Regular"}}
+        selectedTextStyle={{ color: theme.blackText }}
+        itemTextStyle={{ color: theme.blackText }}
+        containerStyle={{
+          backgroundColor: theme.background, 
+        }}
+        itemContainerStyle={{
+          backgroundColor: theme.background, 
+        }}
+        activeColor={theme.hoverBackground}
         value={value}
         onChange={item => onSelect?.(item.value)}
       />

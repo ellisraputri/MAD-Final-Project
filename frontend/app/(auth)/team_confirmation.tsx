@@ -228,6 +228,7 @@ export const createStyles = (theme: any) => {
       paddingVertical: 8,
       fontFamily: 'Lato_400Regular',
       marginTop: 2,
+      color: theme.blackText
     },
     text: {
       fontSize: 20,

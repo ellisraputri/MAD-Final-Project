@@ -174,6 +174,7 @@ export const createStyles = (theme: any) => {
       paddingVertical: 8,
       fontFamily: 'Lato_400Regular',
       marginTop: 0,
+      color: theme.blackText
     },
     loginContainer: {
       flexDirection: 'row',
