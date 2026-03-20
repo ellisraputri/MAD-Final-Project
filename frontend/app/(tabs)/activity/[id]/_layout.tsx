@@ -19,9 +19,9 @@ export default function Layout() {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push("/(tabs)/activity")} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color={theme.lightText} />
+          <Ionicons name="chevron-back" size={24} color={theme.isDark? theme.lightText : theme.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Activity {id}</Text>
+        <Text style={[styles.headerTitle, theme.isDark? {color: theme.lightText} : {color: theme.text}]}>Activity {id}</Text>
       </View>
 
       <TopTabs
@@ -77,7 +77,6 @@ const createStyles = (theme:any) => {
     headerTitle: {
       fontSize: 24,
       fontFamily: "Nunito_700Bold",
-      color: theme.lightText,
     },
   });
   return styles;

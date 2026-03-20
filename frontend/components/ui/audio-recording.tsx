@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
 import Button from './button';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 type liveRecorderProps = {
     title: string,
@@ -15,6 +16,9 @@ type liveRecorderProps = {
 }
 
 export default function LiveRecorder(props: liveRecorderProps) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+  
   const [recording, setRecording] = useState<Audio.Recording|null>(null);
 	const recordingRef = useRef<Audio.Recording|null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -197,58 +201,61 @@ function normalizeMetering(db: number) {
   return normalized * 30 + 5; // height in px
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
+const createStyles = (theme:any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    },
 
-  title: {
-    fontSize: 24,
-    fontFamily: "Lato_700Bold",
-    color: '#357D89',
-    marginBottom: 10,
-  },
+    title: {
+      fontSize: 24,
+      fontFamily: "Lato_700Bold",
+      color: theme.text,
+      marginBottom: 10,
+    },
 
-  timer: {
-    fontSize: 20,
-    color: '#4f7c82',
-    marginBottom: 20,
-    fontFamily: "Lato_700Bold",
-  },
+    timer: {
+      fontSize: 20,
+      color: theme.text,
+      marginBottom: 20,
+      fontFamily: "Lato_700Bold",
+    },
 
-  bigMicInner: {
-    width: 200,
-    height: 200,
-    borderRadius: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    elevation: 3,
-  },
+    bigMicInner: {
+      width: 200,
+      height: 200,
+      borderRadius: 120,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 20,
+      elevation: 3,
+    },
 
-  waveContainer: {
-    width: '100%',
-    height: 50,
-    borderRadius: 10,
-    borderWidth: 3,
-    borderColor: '#388087',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    overflow: 'hidden',
-  },
+    waveContainer: {
+      width: '100%',
+      height: 50,
+      borderRadius: 10,
+      borderWidth: 3,
+      borderColor: theme.text,
+      justifyContent: 'center',
+      paddingHorizontal: 10,
+      overflow: 'hidden',
+    },
 
-  waveRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    height: '100%',
-  },
+    waveRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      height: '100%',
+    },
 
-  bar: {
-    width: 3,
-    backgroundColor: '#1E1E1E',
-    borderRadius: 2,
-  },
-});
+    bar: {
+      width: 3,
+      backgroundColor: theme.blackText,
+      borderRadius: 2,
+    },
+  });
+  return styles;
+}
