@@ -41,7 +41,7 @@ export default function ActivityTwoSubmissionCard(props: {
 
                 <Text style={submissionStyles.descText}>Order of Loudness (among all submissions)</Text>
                 <TextInput
-                    style={[submissionStyles.inputBox, {borderWidth:1, borderColor:"white"}]}
+                    style={[submissionStyles.inputBox, theme.isDark && {borderWidth:1, borderColor:"white"}]}
                     value={props.input}
                     onChangeText={props.onChangeInput}
                     keyboardType="numeric"

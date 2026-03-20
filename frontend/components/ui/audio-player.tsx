@@ -13,6 +13,7 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
 
   const soundRef = useRef<Audio.Sound | null>(null);
   const isPlayingRef = useRef(false); // mirror of isPlaying for use inside callbacks
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -22,6 +23,8 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
 
   const onPlaybackStatusUpdate = useCallback((status: AVPlaybackStatus) => {
     if (!status.isLoaded) return;
+
+    setIsPlaying(status.isPlaying);
 
     if (status.durationMillis) {
       setProgress(status.positionMillis / status.durationMillis);
@@ -52,27 +55,33 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
   };
 
   const togglePlay = async () => {
-    // prevent double-tap race
-    if (isPlayingRef.current !== isPlaying) return;
+  if (isProcessingRef.current) return; // HARD LOCK
+  isProcessingRef.current = true;
 
+  try {
     if (!soundRef.current) {
       const sound = await loadSound();
-      isPlayingRef.current = true;
-      setIsPlaying(true);
       await sound.playAsync();
+      setIsPlaying(true);
+      isPlayingRef.current = true;
       return;
     }
 
-    if (isPlaying) {
-      isPlayingRef.current = false;
-      setIsPlaying(false);
+    if (isPlayingRef.current) {
       await soundRef.current.pauseAsync();
+      setIsPlaying(false);
+      isPlayingRef.current = false;
     } else {
-      isPlayingRef.current = true;
-      setIsPlaying(true);
       await soundRef.current.playAsync();
+      setIsPlaying(true);
+      isPlayingRef.current = true;
     }
-  };
+  } catch (e) {
+    console.error("Audio toggle error:", e);
+  } finally {
+    isProcessingRef.current = false; // RELEASE LOCK
+  }
+};
 
   return (
     <View style={styles.container}>
