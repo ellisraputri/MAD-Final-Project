@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import VideoPlayer from "./ui/video-player";
 import ActivityThreeSubmissionCard from "./ui/activity3-submission-card";
 import Button from "./ui/button";
+import { router } from "expo-router";
 
 export default function ActivityThreeScreen() {
   const cameraRef = useRef<CameraView | null>(null);
@@ -141,6 +142,7 @@ export default function ActivityThreeScreen() {
     }
     else{
       alert(`Successfully submitted the videos! \n ${videos[2].bend}`)
+      router.push("/activity/[id]/results")
     }
   }
 

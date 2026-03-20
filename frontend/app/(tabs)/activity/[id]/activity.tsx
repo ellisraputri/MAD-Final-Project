@@ -1,4 +1,5 @@
 import ActivityOneScreen from '@/components/activity1'
+import ActivityTwoScreen from '@/components/activity2';
 import ActivityThreeScreen from '@/components/activity3';
 import ActivityFourScreen from '@/components/activity4';
 import ActivityFiveScreen from '@/components/activity5';
@@ -14,6 +15,7 @@ export default function ActivityScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
       {Number(id)===1 && <ActivityOneScreen/>} 
+      {Number(id)===2 && <ActivityTwoScreen/>}
       {Number(id)===3 && <ActivityThreeScreen/>} 
       {Number(id)===4 && <ActivityFourScreen/>} 
       {Number(id)===5 && <ActivityFiveScreen/>} 

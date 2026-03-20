@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import VideoPlayer from "./ui/video-player";
 import ActivityOneSubmissionCard from "./ui/activity1-submission-card";
 import Button from "./ui/button";
+import { router } from "expo-router";
 
 export default function ActivityOneScreen() {
   const cameraRef = useRef<CameraView | null>(null);
@@ -143,6 +144,7 @@ export default function ActivityOneScreen() {
     }
     else{
       alert(`Successfully submitted the videos! \n ${videos[0].mass} ${videos[0].time}`)
+      router.push("/activity/[id]/results")
     }
   }
 

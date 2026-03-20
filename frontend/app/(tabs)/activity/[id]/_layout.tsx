@@ -47,6 +47,11 @@ export default function Layout() {
           name="activity"
           options={{ title: "Activity" }}
         />
+
+        <TopTabs.Screen
+          name="results"
+          options={{ title: "Results" }}
+        />
       </TopTabs>
     </SafeAreaView>
   );
