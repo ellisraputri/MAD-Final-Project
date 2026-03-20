@@ -6,6 +6,9 @@ import { useEffect, useRef, useState } from "react";
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
 export default function HomeScreen() {
+  // const theme = useAppTheme();
+  // const styles = createStyles(theme);
+
   const rankings = [1,2,3,4,5,6,7];
   const scrollRef = useRef<ScrollView>(null);
   const members = ["Ellis","Ella","Ello","Ellu"];
@@ -185,6 +188,7 @@ export default function HomeScreen() {
   );
 }
 
+// export const createStyles = (theme: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -385,3 +389,5 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 });
+// return styles;
+// }
