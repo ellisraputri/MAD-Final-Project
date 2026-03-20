@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type buttonProps = {
@@ -12,6 +13,9 @@ type buttonProps = {
 }
 
 export default function Button(props: buttonProps) {
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
+
     return(
         <View style={[styles.registerContainer, {marginTop: props.marginTop, marginBottom: props.marginBottom ?? 0} ]}>
 
@@ -24,22 +28,25 @@ export default function Button(props: buttonProps) {
     );
 }
 
-const styles = StyleSheet.create({
-    button: {
-        marginTop: 20,
-        borderWidth: 2,
-        borderColor: '#388087',
-        borderRadius: 50,
-        paddingVertical: 10,
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#388087',
-        fontWeight: '500',
-        fontFamily: "Nunito_700Bold",
-    },
-    registerContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-    }
-})
+export const createStyles = (theme: any) => {
+    const styles = StyleSheet.create({
+        button: {
+            marginTop: 20,
+            borderWidth: 2,
+            borderColor: theme.text,
+            borderRadius: 50,
+            paddingVertical: 10,
+            alignItems: 'center',
+        },
+        buttonText: {
+            color: theme.text,
+            fontWeight: '500',
+            fontFamily: "Nunito_700Bold",
+        },
+        registerContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+        }
+    });
+    return styles;
+}

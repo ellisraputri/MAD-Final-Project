@@ -1,4 +1,5 @@
 import ActivityListCard from "@/components/ui/activity-list-card";
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const activityList = [
@@ -47,7 +48,8 @@ const activityList = [
 ]
 
 export default function ActivityListScreen(){
-
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
 
   return(
     <View style={styles.container}>
@@ -72,7 +74,7 @@ export default function ActivityListScreen(){
 
       {/* List */}
       <ScrollView
-        style={{ backgroundColor: "#fff" }}
+        style={{ backgroundColor: theme.background }}
         contentContainerStyle={{ paddingVertical: 20, paddingBottom: 80 }}
       >
         {activityList.map((row, idx) => (
@@ -91,42 +93,45 @@ export default function ActivityListScreen(){
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+export const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
 
-  header: {
-    height: 200,
-    padding: 20,
-  },
+    header: {
+      height: 200,
+      padding: 20,
+    },
 
-  headerContent: {
-    marginBottom: 10,
-  },
+    headerContent: {
+      marginBottom: 10,
+    },
 
-  welcome: {
-    fontSize: 36,
-    color: "white",
-    marginTop: 50,
-    fontFamily: "Nunito_700Bold"
-  },
+    welcome: {
+      fontSize: 36,
+      color: "white",
+      marginTop: 50,
+      fontFamily: "Nunito_700Bold"
+    },
 
-  subtitle: {
-    color: "white",
-    marginTop: 5,
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: "Lato_400Regular"
-  },
+    subtitle: {
+      color: "white",
+      marginTop: 5,
+      fontSize: 16,
+      lineHeight: 24,
+      fontFamily: "Lato_400Regular"
+    },
 
-  logoApp: {
-    position: 'absolute',
-    top: 10,
-    right: 25,
-    width: 40,
-    height: 60,
-    resizeMode: 'contain',
-  },
-})
+    logoApp: {
+      position: 'absolute',
+      top: 10,
+      right: 25,
+      width: 40,
+      height: 60,
+      resizeMode: 'contain',
+    },
+  });
+  return styles;
+}
