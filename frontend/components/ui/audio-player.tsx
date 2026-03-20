@@ -2,8 +2,12 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 export default function AudioPlayer({ uri, levels }: { uri: string; levels: Array<any> }) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -73,7 +77,7 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={togglePlay} style={styles.button}>
-        <Ionicons name={isPlaying ? "pause" : "play"} size={24} color="#333" />
+        <Ionicons name={isPlaying ? "pause" : "play"} size={24} color={theme.text} />
       </TouchableOpacity>
 
       <View style={styles.waveContainer}>
@@ -84,7 +88,7 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
               key={i}
               style={[
                 styles.bar,
-                { height: level, backgroundColor: played ? "#388087" : "#ccc" },
+                { height: level, backgroundColor: played ? theme.text : theme.blackText },
               ]}
             />
           );
@@ -94,33 +98,36 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    width: "100%",
-    height: 50,
-    borderRadius: 10,
-    borderWidth: 3,
-    borderColor: "#388087",
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    overflow: "hidden",
-    marginBottom: 10,
-  },
-  button: {
-    marginTop: 10,
-    marginRight: 10,
-  },
-  waveContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    height: "100%",
-  },
-  bar: {
-    width: 3,
-    backgroundColor: "#1E1E1E",
-    borderRadius: 2,
-  },
-});
+const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      width: "100%",
+      height: 50,
+      borderRadius: 10,
+      borderWidth: 3,
+      borderColor: theme.text,
+      justifyContent: "center",
+      paddingHorizontal: 10,
+      overflow: "hidden",
+      marginBottom: 10,
+    },
+    button: {
+      marginTop: 10,
+      marginRight: 10,
+    },
+    waveContainer: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      height: "100%",
+    },
+    bar: {
+      width: 3,
+      backgroundColor: theme.blackText,
+      borderRadius: 2,
+    },
+  });
+  return styles;
+}

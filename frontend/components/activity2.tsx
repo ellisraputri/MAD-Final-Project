@@ -5,6 +5,7 @@ import ActivityTwoSubmissionCard from "./ui/activity2-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 type audioType = {
 	uri: string;
@@ -17,6 +18,9 @@ const isAudioTypeEmpty = (obj: audioType) => {
 }
 
 export default function ActivityTwoScreen() {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const [screen, setScreen] = useState<"record" | "submission">("record");
   const [result, setResult] =  useState<Record<number, any>>({
 			0:null, 1:null, 2:null
@@ -200,7 +204,7 @@ export default function ActivityTwoScreen() {
       )}
 
       <Modal visible={showModal} animationType="slide">
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
         <View style={styles.modalContainer}>
           <Text style={styles.titleModalText}>Your Submissions</Text>
 
@@ -208,7 +212,7 @@ export default function ActivityTwoScreen() {
             style={styles.closeButton}
             onPress={() => setShowModal(false)}
           >
-            <Ionicons name="close" size={35} color="#357D89" />
+            <Ionicons name="close" size={35} color={theme.blackText } />
           </TouchableOpacity>
 
           <ScrollView
@@ -216,7 +220,7 @@ export default function ActivityTwoScreen() {
             contentContainerStyle={styles.scrollView}
           >
             {filledCount === 0 ? (
-              <Text style={{fontFamily: "Lato_400Regular", fontSize: 18}}>No submissions yet</Text>
+              <Text style={{fontFamily: "Lato_400Regular", fontSize: 18, color: theme.blackText}}>No submissions yet</Text>
             ) : (
 							(() => {
 							let displayNum = 1;
@@ -248,140 +252,126 @@ export default function ActivityTwoScreen() {
 }
 
 
-const styles = StyleSheet.create({
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 15,
-    zIndex: 10,
-    padding: 8,
-  },
-  buttonPopup: {
-    marginTop: 30,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 8,
-    alignItems: 'center',
-    width: 300,
-    height: 53,
-  },
-  disabledBtn: {
-    opacity: 0.4,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
-  },
-  buttonContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginTop: 40,
-  },
+const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    closeButton: {
+      position: 'absolute',
+      top: 10,
+      right: 15,
+      zIndex: 10,
+      padding: 8,
+    },
+    buttonPopup: {
+      marginTop: 30,
+      borderWidth: 2,
+      borderColor: theme.text,
+      borderRadius: 50,
+      paddingVertical: 8,
+      alignItems: 'center',
+      width: 300,
+      height: 53,
+    },
+    disabledBtn: {
+      opacity: 0.4,
+    },
+    buttonText: {
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Nunito_700Bold",
+    },
+    buttonContainer: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      marginTop: 40,
+    },
 
-  recordButtonOuter: {
-    width: 60,
-    height: 60,
-    borderRadius: 40,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
+    recordButtonInner: {
+      width: 35,
+      height: 35,
+      borderRadius: 25,
+      backgroundColor: "#c50000",
+    },
 
-  recordButtonInner: {
-    width: 35,
-    height: 35,
-    borderRadius: 25,
-    backgroundColor: "#c50000",
-  },
+    recordingInner: {
+      width: 25,
+      height: 25,
+      borderRadius: 6, 
+      backgroundColor: "#c50000",
+    },
 
-  recordingInner: {
-    width: 25,
-    height: 25,
-    borderRadius: 6, 
-    backgroundColor: "#c50000",
-  },
+    videoScreen: { 
+      width: 320, 
+      height: 500 
+    },
 
-  recordBtnArea:{
-    backgroundColor: '#d9d9d9',
-    width: 320,
-    alignItems: 'center',
-    paddingBottom: 15
-  },
+    mainView: { 
+      flex: 1, 
+      alignItems: "center", 
+      justifyContent: "center" 
+    }, 
 
-  videoScreen: { 
-    width: 320, 
-    height: 500 
-  },
+    modalContainer: {
+      flex: 1,
+      paddingTop: 30,
+      paddingHorizontal: 5,
+      alignItems: "center",
+      justifyContent: 'flex-start',
+    },
+    scrollView: {
+      alignItems: 'center',
+      paddingBottom: 40,
+    },
+    titleModalText: {
+      marginTop: 20,
+      marginBottom: 20,
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Lato_700Bold",
+    },
+    titleText: {
+      marginTop: 100,
+      marginBottom: 20,
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Lato_700Bold",
+    },
+    subtitleText: {
+      fontFamily: "Lato_400Regular",
+      fontSize: 16,
+      marginBottom: 60,
+    },
+    backBtn: {
+      padding: 10,
+      marginTop: 30,
+      borderWidth: 2,
+      borderColor: theme.text,
+      borderRadius: 50,
+      paddingVertical: 8,
+      alignItems: 'center',
+      width: 260,
+      height: 53,
+    },
 
-  mainView: { 
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center" 
-  }, 
+    btnText:{
+      fontSize: 18,
+      color: theme.text,
+      fontWeight: '500',
+      fontFamily: "Nunito_700Bold",
+    },
 
-   modalContainer: {
-    flex: 1,
-    paddingTop: 30,
-    paddingHorizontal: 5,
-    alignItems: "center",
-    justifyContent: 'flex-start',
-  },
-  scrollView: {
-    alignItems: 'center',
-    paddingBottom: 40,
-  },
-  titleModalText: {
-    marginTop: 20,
-    marginBottom: 20,
-    fontSize: 20,
-    color: '#357D89',
-    fontWeight: '500',
-    fontFamily: "Lato_700Bold",
-  },
-  titleText: {
-    marginTop: 100,
-    marginBottom: 20,
-    fontSize: 20,
-    color: '#357D89',
-    fontWeight: '500',
-    fontFamily: "Lato_700Bold",
-  },
-  subtitleText: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 16,
-    marginBottom: 60,
-  },
-  backBtn: {
-    padding: 10,
-    marginTop: 30,
-    borderWidth: 2,
-    borderColor: '#388087',
-    borderRadius: 50,
-    paddingVertical: 8,
-    alignItems: 'center',
-    width: 260,
-    height: 53,
-  },
-
-  btnText:{
-    fontSize: 18,
-    color: '#388087',
-    fontWeight: '500',
-    fontFamily: "Nunito_700Bold",
-  },
-
-  submitBtn: {
-    marginTop: 30,
-    marginBottom: 50,
-    borderWidth: 2,
-    padding: 10,
-    borderRadius: 50,
-    borderColor: '#388087',
-    width: 150,
-    alignItems: 'center'
-  },
-});
+    submitBtn: {
+      marginTop: 30,
+      marginBottom: 50,
+      borderWidth: 2,
+      padding: 10,
+      borderRadius: 50,
+      borderColor: theme.text,
+      width: 150,
+      alignItems: 'center'
+    },
+  });
+  return styles;
+}

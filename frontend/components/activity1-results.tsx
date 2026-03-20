@@ -5,8 +5,12 @@ import VideoPlayer from '@/components/ui/video-player';
 import theoryActivity from '@/data/activity_theory.json';
 import { Ionicons } from '@expo/vector-icons';
 import Button from './ui/button';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
     <View>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -23,10 +27,13 @@ function ActivityOneResultCard(props: {
     timePredict: number;
     timeCalculated: number;
 }){
+    const theme = useAppTheme();
+    const resultStyles = createStyles(theme);
+
     const [showVideoModal, setShowVideoModal] = useState(false);
 
     return(
-        <View key={props.item} style={resultStyles.card}>
+        <View key={props.item} style={[resultStyles.card, {borderWidth:1, borderColor:"white"}]}>
           <View style={resultStyles.titleRow}>
             <Text style={resultStyles.title}>
                 {props.item}. Submission {props.item}
@@ -41,7 +48,7 @@ function ActivityOneResultCard(props: {
                         style={resultStyles.playOverlay}
                         onPress={() => setShowVideoModal(true)}
                         >
-                        <Ionicons name="play-circle" size={60} color="#357D89" />
+                        <Ionicons name="play-circle" size={60} color={theme.text} />
                         <Text style={resultStyles.tapText}>Tap to play</Text>
                         </TouchableOpacity>
 
@@ -104,6 +111,9 @@ const data = [
 ]
 
 export default function ActivityOneResultsScreen(props: {onBack: ()=>void}) {
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+
   const { id } = useLocalSearchParams();
 
   return (
@@ -137,77 +147,41 @@ export default function ActivityOneResultsScreen(props: {onBack: ()=>void}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    backgroundColor:"#fff",
-    paddingHorizontal: 5,
-  },
+const createStyles = (theme: any) => {
+  const styles = StyleSheet.create({
+    container:{
+      flex:1,
+      backgroundColor: theme.background,
+      paddingHorizontal: 5,
+    },
 
-  sectionTitle:{
-    fontSize:20,
-    fontWeight:"600",
-    color:"#357D89",
-    fontFamily: "Lato_700Bold",
-  },
+    sectionTitle:{
+      fontSize:20,
+      fontWeight:"600",
+      color: theme.text,
+      fontFamily: "Lato_700Bold",
+    },
 
-  divider:{
-    height:2,
-    backgroundColor:"#388087",
-    marginVertical:10
-  },
+    divider:{
+      height:2,
+      backgroundColor: theme.text,
+      marginVertical:10
+    },
 
-  paragraph:{
-    fontSize:15,
-    lineHeight:22,
-    textAlign: "justify",
-    fontFamily: "Lato_400Regular",
-  },
+    paragraph:{
+      fontSize:15,
+      lineHeight:22,
+      textAlign: "justify",
+      fontFamily: "Lato_400Regular",
+      color: theme.blackText
+    },
 
-  grid:{
-    flexDirection:"row",
-    flexWrap:"wrap",
-    justifyContent:"space-between"
-  },
+    grid:{
+      flexDirection:"row",
+      flexWrap:"wrap",
+      justifyContent:"space-between"
+    },
 
-  equipmentItem:{
-    width:"48%",
-    marginBottom:20
-  },
-
-  equipmentText:{
-    marginBottom:8,
-    fontSize: 15,
-    fontFamily: "Lato_400Regular",
-  },
-
-  item: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  marker: {
-    marginRight: 10,
-    fontWeight: 'bold',
-    fontFamily: "Lato_400Regular",
-    lineHeight:20,
-    fontSize: 15,
-  },
-  text: {
-    flexShrink: 1, 
-    fontFamily: "Lato_400Regular",
-    lineHeight:20,
-    fontSize: 15,
-  },
-
-  videoBox:{
-    height:160,
-    backgroundColor:"#CFCFCF",
-    justifyContent:"center",
-    alignItems:"center"
-  },
-});
-
-const resultStyles = StyleSheet.create({
     playOverlay: {
         flex: 1,
         justifyContent: 'center',
@@ -216,7 +190,7 @@ const resultStyles = StyleSheet.create({
     },
     tapText: {
         marginTop: 8,
-        color: '#357D89',
+        color: theme.text,
         fontFamily: "Lato_400Regular",
         fontSize: 20,
     },
@@ -229,7 +203,7 @@ const resultStyles = StyleSheet.create({
     closeVideoBtn: {
         position: 'absolute',
         bottom: 80, 
-        backgroundColor: "#388087",
+        backgroundColor: theme.text,
         padding: 10,
         borderRadius: 8,
         width: 120,
@@ -245,7 +219,7 @@ const resultStyles = StyleSheet.create({
     },
     card: {
         width: '100%',
-        backgroundColor: "#fff",
+        backgroundColor: theme.background,
         borderRadius: 10,
         padding: 20,
         marginBottom: 30,
@@ -254,15 +228,15 @@ const resultStyles = StyleSheet.create({
     title: {
         marginBottom: 20,
         fontFamily: "Lato_700Bold",
-        color: '#357D89',
+        color: theme.text,
         fontSize: 20
     },
     videoPlaceholder: {
         height: 400,
         width: '100%',
         borderWidth: 2,
-        borderColor: '#357D89',
-        backgroundColor: "#d9d9d9",
+        borderColor: theme.text,
+        backgroundColor: theme.greyBackground,
         justifyContent: "center",
         alignItems: "center",
         marginBottom: 10,
@@ -271,18 +245,20 @@ const resultStyles = StyleSheet.create({
     prediction: {
         marginTop: 15,
         fontFamily: "Lato_700Bold",
-        color: '#357D89',
+        color: theme.text,
         fontSize: 18
     },
     subtitleText:{
         marginTop: 10,
         fontFamily: "Lato_700Bold",
-        fontSize: 16
+        fontSize: 16,
+        color: theme.blackText
     },
     descText:{
         marginTop: 10,
         fontFamily: "Lato_400Regular",
-        fontSize: 15
+        fontSize: 15,
+        color: theme.blackText
     },
     closeBtnText: {
         color: "#fff",
@@ -297,5 +273,8 @@ const resultStyles = StyleSheet.create({
         fontSize: 15,
         fontFamily: "Lato_400Regular",
         marginBottom: 5,
+        color: theme.blackText
     }
-});
+  });
+  return styles;
+}
