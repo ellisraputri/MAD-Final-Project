@@ -6,9 +6,9 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Image,
 } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import Button from '@/components/ui/button';
@@ -31,8 +31,13 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
+    <KeyboardAwareScrollView
       style={styles.container}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      keyboardShouldPersistTaps="handled"
+      enableOnAndroid={true}
+      extraScrollHeight={10}        // extra space above keyboard
+      enableAutomaticScroll={true}  // auto scrolls to focused input
     >
       {/* Header Image */}
       <ImageBackground
@@ -121,7 +126,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }
 
