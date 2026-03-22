@@ -14,6 +14,7 @@ import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { registerAndGetData } from '@/services/auth';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -40,9 +41,10 @@ export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
   const [grade, setGrade] = useState('');
 
-  const handleRegister = () => {
-    // TODO: Add real authentication
-    router.replace('/(auth)/team_confirmation');
+  const handleRegister = async() => {
+    const res = await registerAndGetData(email, password, firstName, grade);
+    console.log(res);
+    alert(res.message);
   };
 
   return (
