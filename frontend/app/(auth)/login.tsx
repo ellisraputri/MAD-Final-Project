@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { loginAndGetData } from "@/services/auth.js";
 
 export default function LoginScreen() {
   const theme = useAppTheme();
@@ -23,9 +24,9 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // TODO: Add real authentication
-    router.replace('/(auth)/team_confirmation'); // Go to tabs after login
+  const handleLogin = async() => {
+    const res = await loginAndGetData(email, password);
+    alert(res.message);
   };
 
   return (

@@ -1,10 +1,12 @@
 import admin from 'firebase-admin';
-import { readFile } from 'fs/promises';
+import dotenv from 'dotenv';
 
-// In ES Modules, we sometimes need to manually load JSON
+dotenv.config();
+
 const serviceAccount = JSON.parse(
-  await readFile(new URL('./serviceAccountKey.json', import.meta.url))
+  process.env.FIREBASE_KEY
 );
+serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

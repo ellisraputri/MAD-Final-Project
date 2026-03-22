@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 
 export default function Index() {
-  const isLoggedIn = true; // replace later
+  const isLoggedIn = false; // replace later
 
   useEffect(() => {
     NavigationBar.setBehaviorAsync("overlay-swipe");
