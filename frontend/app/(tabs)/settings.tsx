@@ -5,6 +5,8 @@ import CustomDropdown from "@/components/ui/dropdown";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import RatingPopup from "@/components/ui/rating-popup";
+import { logout } from "@/services/auth";
+import { router } from "expo-router";
 
 const dropdownValue = [
   {label: "Light", value: "light"},
@@ -33,7 +35,11 @@ export default function SettingsScreen() {
     setIsEditing(false);
   };
 
-  const handleLogout = () => {}
+  const handleLogout = async() => {
+    await logout();
+    alert("success logout");
+    router.push("/(auth)/login");
+  };
 
   return (
     <ScrollView 
@@ -111,7 +117,7 @@ export default function SettingsScreen() {
 
       {/* Logout */}
       <Button
-        onPress={() => handleLogout()}
+        onPress={handleLogout}
         text='Logout'
         width={300}
         fontSize={20}

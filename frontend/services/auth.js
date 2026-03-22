@@ -1,5 +1,5 @@
 import { apiClient, auth } from './firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export const loginAndGetData = async (email, password) => {
   try {
@@ -43,5 +43,14 @@ export const registerAndGetData = async (email, password, firstName, grade) => {
     return response.data;
   } catch (error) {
     console.error("Register error:", error.message);
+  }
+};
+
+export const logout = async () => {
+  try {
+    await signOut(auth);
+    console.log("User logged out");
+  } catch (error) {
+    console.error("Logout error:", error.message);
   }
 };

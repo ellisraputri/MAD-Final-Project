@@ -28,6 +28,7 @@ export default function LoginScreen() {
   const handleLogin = async() => {
     const res = await loginAndGetData(email, password);
     alert(res.message);
+    router.push("/(auth)/team_confirmation");
   };
 
   return (
