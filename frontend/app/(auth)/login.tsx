@@ -14,6 +14,7 @@ import Svg, { Polygon } from 'react-native-svg';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { loginAndGetData } from "@/services/auth.js";
+import { auth } from '@/services/firebase';
 
 export default function LoginScreen() {
   const theme = useAppTheme();
@@ -91,6 +92,14 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
           style={styles.input}
+        />
+
+        <Button
+          onPress={()=>alert(`current user= ${auth.currentUser?.email}`)}
+          text='check'
+          width={200}
+          fontSize={20}
+          marginTop={60}
         />
 
         {/* Login Button */}
