@@ -1,5 +1,4 @@
 export const studentModel = ({
-  id,
   email,
   firstName,
   grade,
@@ -7,7 +6,6 @@ export const studentModel = ({
   teamId = null,
 }) => {
   return {
-    id: id, 
     email: email,
     firstName: firstName,
     grade: grade,
