@@ -1,18 +1,16 @@
 import { studentModel } from "../models/student.js";
 import { db } from "../config/firestore.js";
+import { error400, error500 } from "../config/error.js";
 
 export const login = (req, res) => {
   try {
-   return res.json({
+   return res.status(200).json({
       success: true,
       message: `Hello user ${req.user.email}`,
     }) 
   } catch (error) {
     console.error(error)
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong. Please try again.",
-    });
+    return error500(res)
   }
 }
 
@@ -36,17 +34,14 @@ export const register = async (req, res) => {
       await userRef.set(studentData);
     }
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "User saved successfully",
     });
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong. Please try again.",
-    });
+    return error500(res);
   }
 };
 
@@ -58,13 +53,10 @@ export const getDetail = async (req, res) => {
     const doc = await userRef.get();
 
     if (!doc.exists) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found",
-      });
+      return error400(res, "User not found");
     }
 
-    return res.json({
+    return res.status(200).json({
       user: doc.data(), 
       success: true,
       message: "User found",
@@ -72,9 +64,6 @@ export const getDetail = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong. Please try again.",
-    });
+    return error500(res);
   }
 };
