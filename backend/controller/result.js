@@ -1,3 +1,4 @@
+import { error400, error500 } from "../config/error.js";
 import { db } from "../config/firestore.js";
 
 const filterByActivity = (results, activityType) => {
@@ -157,6 +158,82 @@ export const getLatestRank = async (req, res) => {
       success: true,
       message: "result retrieved successfully",
       data: team,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const getResultList = async (req, res) => {
+  try {
+    const { teamId, activityId } = req.query;
+
+    if (!teamId || !activityId) {
+      return error400(res, "teamId and activityId are required");
+    }
+
+    const snapshot = db
+      .collection("results")
+      .where("teamId", "==", teamId)
+      .where("activityId", "==", activityId)
+      .orderBy("attemptNo", "asc"); // optional: sort attempts
+
+    const results = (await snapshot.get()).docs.map(doc => ({
+      resultId: doc.id,
+      score: doc.data().score,
+      attempt: doc.data().attemptNo,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: results,
+      message: "Result list fetched successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const getResultDetail = async (req, res) => {
+  try {
+    const { resultId } = req.query;
+    const resultDoc = await db.collection("results").doc(resultId).get();
+    if (!resultDoc.exists) {
+      return error400(res, "Result not found");
+    }
+
+    const result = resultDoc.data();
+    let mediaList = [];
+
+    if (result.medias && result.medias.length > 0) {
+      const mediaSnapshot = await db
+        .collection("medias")
+        .where("__name__", "in", result.medias)
+        .get();
+
+      const rawMedia = mediaSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const mediaMap = new Map();
+      rawMedia.forEach(m => mediaMap.set(m.id, m));
+
+      mediaList = result.medias.map(id => mediaMap.get(id) || null);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Result detail fetched successfully",
+      data: {
+        resultId: resultDoc.id,
+        ...result,
+        medias: mediaList,
+      },
     });
 
   } catch (error) {
