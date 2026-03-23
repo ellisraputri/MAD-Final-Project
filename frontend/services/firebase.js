@@ -14,10 +14,23 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export const auth = initializeAuth(app, {
+const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-export const apiClient = axios.create({
+const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
 });
+
+apiClient.interceptors.request.use(async (config) => {
+  const user = auth.currentUser;
+
+  if (user) {
+    const token = await user.getIdToken();
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+export {auth, apiClient};

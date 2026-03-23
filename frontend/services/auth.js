@@ -26,7 +26,7 @@ export const registerAndGetData = async (email, password, firstName, grade) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const idToken = await userCredential.user.getIdToken();
 
-    console.log("id token register", idToken);
+    console.log("id token ", idToken);
 
     const response = await apiClient.post("/api/auth/register", 
       {

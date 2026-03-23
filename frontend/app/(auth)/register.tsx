@@ -42,9 +42,11 @@ export default function RegisterScreen() {
   const [grade, setGrade] = useState('');
 
   const handleRegister = async() => {
+    if(email==='' || password==='' || firstName==='' || grade==='') {
+      alert("Fields cannot be empty");
+    }
     const res = await registerAndGetData(email, password, firstName, grade);
-    console.log(res);
-    alert(res.message);
+    router.replace('/team_confirmation');
   };
 
   return (

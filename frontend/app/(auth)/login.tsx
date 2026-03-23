@@ -26,9 +26,12 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   const handleLogin = async() => {
+    if(email==="" || password===""){
+      alert("Fields cannot be empty");
+    }
+
     const res = await loginAndGetData(email, password);
-    alert(res.message);
-    router.push("/(auth)/team_confirmation");
+    router.replace('/team_confirmation');
   };
 
   return (

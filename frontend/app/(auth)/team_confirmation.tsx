@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import {getStudentDetail} from "@/services/student.js";
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -41,10 +42,17 @@ export default function TeamConfirmationScreen() {
   const [newTeamModalVisible, setNewTeamModalVisible] = useState(false);
   const [joinTeamModalVisible, setJoinTeamModalVisible] = useState(false);
 
-  const handleLogin = () => {
-    // TODO: Add real authentication
-    router.replace('/team_confirmation'); // Go to tabs after login
-  };
+  useEffect(() => {
+    checkTeam();
+  }, []);
+
+  const checkTeam = async() => {
+    const response = await getStudentDetail();
+    if(response.user.teamId !== null) {
+      // TODO: fetch team detail 
+      router.push("/(tabs)");
+    }
+  }
 
   return (
     <KeyboardAvoidingView
