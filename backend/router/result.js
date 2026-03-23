@@ -1,11 +1,14 @@
 import express from "express";
 import { authenticate } from "../middleware/auth.js";
-import { getHighestRank, getLatestRank, getTopRanking } from "../controller/result.js";
+import { getHighestRank, getLatestRank, getResultDetail, getResultList, getTopRanking } from "../controller/result.js";
 
 const resultRouter = express.Router();
 
-resultRouter.get("/highest-by-team", authenticate, getHighestRank);
-resultRouter.get("/latest-by-team", authenticate, getLatestRank);
-resultRouter.get("/all", authenticate, getTopRanking);
+resultRouter.get("/rank/highest-by-team", authenticate, getHighestRank);
+resultRouter.get("/rank/latest-by-team", authenticate, getLatestRank);
+resultRouter.get("/rank/all", authenticate, getTopRanking);
+
+resultRouter.get("/list", authenticate, getResultList);
+resultRouter.get("/detail", authenticate, getResultDetail);
 
 export default resultRouter;
