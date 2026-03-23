@@ -5,6 +5,7 @@ import { db } from './config/firestore.js';
 import studentRouter from './router/student.js';
 import teamRouter from './router/team.js';
 import resultRouter from './router/result.js';
+import activityRouter from './router/activity.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -18,6 +19,7 @@ app.get('/', (req, res) => res.send("Firebase API working"));
 app.use("/api/auth", studentRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/result", resultRouter);
+app.use("/api/activity", activityRouter);
 
 // Start server
 app.listen(PORT, "0.0.0.0", () => {
