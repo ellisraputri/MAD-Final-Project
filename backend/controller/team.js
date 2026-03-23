@@ -1,5 +1,6 @@
 import { db } from "../config/firestore.js";
 import { error400, error500 } from "../config/error.js";
+import { teamModel } from "../models/team.js";
 
 
 const generateId = (length = 6) => {
@@ -38,12 +39,11 @@ export const createTeam = async (req, res) => {
     const customId = generateId(6);
     const teamRef = db.collection('teams').doc(customId); 
 
-    const teamData = {
+    const teamData = teamModel({
       name: name,
       grade: grade,
       logo: null,
-      updatedAt: new Date(),
-    };
+    });
 
     await teamRef.set(teamData);
     await userRef.update({

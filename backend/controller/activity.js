@@ -1,5 +1,6 @@
 import { db } from "../config/firestore.js";
 import { error400, error500 } from "../config/error.js";
+import { activityModel } from "../models/activity.js";
 
 
 export const getList = async (req, res) => {
@@ -13,11 +14,11 @@ export const getList = async (req, res) => {
       });
     }
 
-    const activities = snapshot.docs.map(doc => ({
+    const activities = snapshot.docs.map(doc => (activityModel({
       id: doc.id,
       name: doc.data().name,
       type: doc.data().type,
-    }));
+    })));
 
     return res.status(200).json({
       activities,
