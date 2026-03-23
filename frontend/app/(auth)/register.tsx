@@ -6,14 +6,15 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Image,
 } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { registerAndGetData } from '@/services/auth/auth';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -40,14 +41,22 @@ export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
   const [grade, setGrade] = useState('');
 
-  const handleRegister = () => {
-    // TODO: Add real authentication
-    router.replace('/(auth)/team_confirmation');
+  const handleRegister = async() => {
+    if(email==='' || password==='' || firstName==='' || grade==='') {
+      alert("Fields cannot be empty");
+    }
+    const res = await registerAndGetData({email, password, firstName, grade});
+    if(res.success) router.replace('/team_confirmation');
   };
 
   return (
-    <KeyboardAvoidingView
+    <KeyboardAwareScrollView
       style={styles.container}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      keyboardShouldPersistTaps="handled"
+      enableOnAndroid={true}
+      extraScrollHeight={10}        // extra space above keyboard
+      enableAutomaticScroll={true}  // auto scrolls to focused input
     >
       {/* Header Image */}
       <ImageBackground
@@ -138,7 +147,7 @@ export default function RegisterScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }
 

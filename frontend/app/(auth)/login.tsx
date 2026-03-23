@@ -6,13 +6,15 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Image,
 } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { loginAndGetData } from "@/services/auth/auth";
+import { auth } from '@/services/firebase';
 
 export default function LoginScreen() {
   const theme = useAppTheme();
@@ -23,14 +25,24 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // TODO: Add real authentication
-    router.replace('/(auth)/team_confirmation'); // Go to tabs after login
+  const handleLogin = async() => {
+    if(email==="" || password===""){
+      alert("Fields cannot be empty");
+    }
+
+    const res = await loginAndGetData({email, password});
+    alert(res.message);
+    if(res.success) router.replace('/team_confirmation');
   };
 
   return (
-    <KeyboardAvoidingView
+    <KeyboardAwareScrollView
       style={styles.container}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      keyboardShouldPersistTaps="handled"
+      enableOnAndroid={true}
+      extraScrollHeight={10}        // extra space above keyboard
+      enableAutomaticScroll={true}  // auto scrolls to focused input
     >
       {/* Header Image */}
       <ImageBackground
@@ -92,6 +104,14 @@ export default function LoginScreen() {
           style={styles.input}
         />
 
+        <Button
+          onPress={()=>alert(`current user= ${auth.currentUser?.email}`)}
+          text='check'
+          width={200}
+          fontSize={20}
+          marginTop={60}
+        />
+
         {/* Login Button */}
         <Button
           onPress={handleLogin}
@@ -111,7 +131,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }
 
