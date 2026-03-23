@@ -5,7 +5,7 @@ import CustomDropdown from "@/components/ui/dropdown";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import RatingPopup from "@/components/ui/rating-popup";
-import { logout } from "@/services/auth";
+import { logout } from "@/services/auth/auth";
 import { router } from "expo-router";
 
 const dropdownValue = [
@@ -36,9 +36,9 @@ export default function SettingsScreen() {
   };
 
   const handleLogout = async() => {
-    await logout();
-    alert("success logout");
-    router.push("/(auth)/login");
+    const res = await logout();
+    alert(res.message);
+    if(res.success) router.push("/(auth)/login");
   };
 
   return (

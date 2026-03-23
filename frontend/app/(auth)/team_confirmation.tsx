@@ -14,7 +14,7 @@ import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import {getStudentDetail} from "@/services/student.js";
+import { getStudentDetail } from '@/services/student/student';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -48,7 +48,7 @@ export default function TeamConfirmationScreen() {
 
   const checkTeam = async() => {
     const response = await getStudentDetail();
-    if(response.user.teamId !== null) {
+    if(response.user?.teamId !== null) {
       // TODO: fetch team detail 
       router.push("/(tabs)");
     }

@@ -3,6 +3,8 @@ import { Ionicons } from "@expo/vector-icons";
 import RankingCard from "@/components/ui/ranking-card";
 import { useEffect, useRef, useState } from "react";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { getStudentDetail } from "@/services/student/student";
+import { router } from "expo-router";
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
@@ -40,6 +42,18 @@ export default function HomeScreen() {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    checkTeam();
+  }, []);
+  
+  const checkTeam = async() => {
+    const response = await getStudentDetail();
+    if(response.user?.teamId === null) {
+      // TODO: fetch team detail 
+      router.push("/(auth)/team_confirmation");
+    }
+  }
 
   return (
     <View style={styles.container}>

@@ -4,7 +4,9 @@ export const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("Unauthorized");
+    return res.status(401).json({
+      message: "Unauthorized user"
+    });
   }
 
   const idToken = authHeader.split("Bearer ")[1];
@@ -15,6 +17,8 @@ export const authenticate = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Token verification failed:", error.message);
-    res.status(403).send("Invalid Token");
+    return res.status(403).json({
+      message: "Session expired. Please login again.",
+    });
   }
 };

@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { loginAndGetData } from "@/services/auth.js";
+import { loginAndGetData } from "@/services/auth/auth";
 import { auth } from '@/services/firebase';
 
 export default function LoginScreen() {
@@ -30,8 +30,9 @@ export default function LoginScreen() {
       alert("Fields cannot be empty");
     }
 
-    const res = await loginAndGetData(email, password);
-    router.replace('/team_confirmation');
+    const res = await loginAndGetData({email, password});
+    alert(res.message);
+    if(res.success) router.replace('/team_confirmation');
   };
 
   return (

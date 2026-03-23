@@ -14,7 +14,7 @@ import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { registerAndGetData } from '@/services/auth';
+import { registerAndGetData } from '@/services/auth/auth';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -45,8 +45,8 @@ export default function RegisterScreen() {
     if(email==='' || password==='' || firstName==='' || grade==='') {
       alert("Fields cannot be empty");
     }
-    const res = await registerAndGetData(email, password, firstName, grade);
-    router.replace('/team_confirmation');
+    const res = await registerAndGetData({email, password, firstName, grade});
+    if(res.success) router.replace('/team_confirmation');
   };
 
   return (
