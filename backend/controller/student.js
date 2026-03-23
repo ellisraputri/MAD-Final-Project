@@ -23,7 +23,6 @@ export const register = async (req, res) => {
 
     if (!doc.exists) {
       const studentData = studentModel({
-        id: user.uid,
         email: user.email,
         firstName: req.body.firstName,
         grade: req.body.grade,
