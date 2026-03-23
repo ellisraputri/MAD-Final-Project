@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import { db } from './config/firestore.js';
 import studentRouter from './router/student.js';
+import teamRouter from './router/team.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -14,6 +15,7 @@ app.use(express.json());
 // Routes
 app.get('/', (req, res) => res.send("Firebase API working"));
 app.use("/api/auth", studentRouter);
+app.use("/api/team", teamRouter);
 
 // Start server
 app.listen(PORT, "0.0.0.0", () => {
