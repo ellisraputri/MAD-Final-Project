@@ -1,4 +1,5 @@
 import ActivityListCard from "@/components/ui/activity-list-card";
+import Loading from "@/components/ui/loading";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { getActivityList } from "@/services/activity/activity";
 import { useEffect, useState } from "react";
@@ -61,9 +62,7 @@ export default function ActivityListScreen(){
         contentContainerStyle={{ paddingVertical: 20, paddingBottom: 80 }}
       >
         {loading ? (
-          <Text style={{ textAlign: "center", marginTop: 20 }}>
-            Loading...
-          </Text>
+          <Loading/>
         ) : (
           activityList.map((row, idx) => (
             <ActivityListCard 
