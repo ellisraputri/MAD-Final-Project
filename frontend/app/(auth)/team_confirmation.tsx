@@ -15,6 +15,9 @@ import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { getStudentDetail } from '@/services/student/student';
+import { useAppContext } from '@/context/AppContext';
+import { createTeam, getTeamDetail, joinTeam } from '@/services/team/team';
+import { toast } from 'sonner-native';
 
 const gradeDropdown = [
   {label: "1 (SD Kelas 1)", value: "1"},
@@ -34,6 +37,7 @@ const gradeDropdown = [
 export default function TeamConfirmationScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {setUser} = useAppContext();
 
   const router = useRouter();
   const [teamName, setTeamName] = useState("");
@@ -41,17 +45,60 @@ export default function TeamConfirmationScreen() {
   const [teamId, setTeamId] = useState("");
   const [newTeamModalVisible, setNewTeamModalVisible] = useState(false);
   const [joinTeamModalVisible, setJoinTeamModalVisible] = useState(false);
+  const [newTeamModalLoading, setNewTeamModalLoading] = useState(false);
+  const [joinTeamModalLoading, setJoinTeamModalLoading] = useState(false);
 
   useEffect(() => {
     checkTeam();
   }, []);
 
   const checkTeam = async() => {
-    const response = await getStudentDetail();
-    if(response.user?.teamId !== null) {
-      // TODO: fetch team detail 
+    const userResponse = await getStudentDetail();
+    if(!userResponse.success){
+      toast.error(userResponse.message)
+      return;
+    }
+    setUser(userResponse.user);
+
+    if(userResponse.user?.teamId !== null && userResponse.user?.teamId) {
       router.push("/(tabs)");
     }
+  }
+
+  const handleCreateTeam = async() => {
+    setNewTeamModalLoading(true);
+
+    const response = await createTeam({
+      name: teamName, grade: Number(grade)
+    })
+    if(!response.success) {
+      toast.error(response.message)
+      setNewTeamModalLoading(false);
+      return;
+    }
+    
+    setNewTeamModalLoading(false);
+    setNewTeamModalVisible(false);
+
+    router.push("/(tabs)");
+  }
+
+  const handleJoinTeam = async() => {
+    setJoinTeamModalLoading(true);
+
+    const response = await joinTeam({
+      teamId: teamId
+    })
+    if(!response.success) {
+      toast.error(response.message);
+      setJoinTeamModalLoading(false);
+      return;
+    }
+
+    setJoinTeamModalLoading(false);
+    setJoinTeamModalVisible(false);
+
+    router.push("/(tabs)");
   }
 
   return (
@@ -152,11 +199,12 @@ export default function TeamConfirmationScreen() {
 
             {/* OK Button */}
             <Button
-              onPress={() => setNewTeamModalVisible(false)}
+              onPress={handleCreateTeam}
               text='OK'
               width={150}
               fontSize={20}
               marginTop={30}
+              isLoading={newTeamModalLoading}
             />
 
           </View>
@@ -191,11 +239,12 @@ export default function TeamConfirmationScreen() {
 
             {/* OK Button */}
             <Button
-              onPress={() => setJoinTeamModalVisible(false)}
+              onPress={handleJoinTeam}
               text='OK'
               width={150}
               fontSize={20}
               marginTop={30}
+              isLoading={joinTeamModalLoading}
             />
 
           </View>

@@ -24,14 +24,18 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async() => {
     if(email==="" || password===""){
       alert("Fields cannot be empty");
     }
-
+    setIsLoading(true);
+    
     const res = await loginAndGetData({email, password});
     alert(res.message);
+    setIsLoading(false);
+
     if(res.success) router.replace('/team_confirmation');
   };
 
@@ -104,14 +108,6 @@ export default function LoginScreen() {
           style={styles.input}
         />
 
-        <Button
-          onPress={()=>alert(`current user= ${auth.currentUser?.email}`)}
-          text='check'
-          width={200}
-          fontSize={20}
-          marginTop={60}
-        />
-
         {/* Login Button */}
         <Button
           onPress={handleLogin}
@@ -119,6 +115,7 @@ export default function LoginScreen() {
           width={200}
           fontSize={20}
           marginTop={60}
+          isLoading={isLoading}
         />
 
         {/* Register */}

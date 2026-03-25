@@ -8,6 +8,9 @@ import {
   Nunito_700Bold,
 } from '@expo-google-fonts/nunito';
 import { Lato_400Regular, Lato_700Bold } from '@expo-google-fonts/lato';
+import { AppProvider } from '@/context/AppContext';
+import { Toaster } from "sonner-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -27,5 +30,12 @@ export default function RootLayout() {
     );
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}> 
+      <AppProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+          <Toaster/>
+      </AppProvider>
+    </GestureHandlerRootView>
+  );
 }

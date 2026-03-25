@@ -40,9 +40,10 @@ export const createTeam = async (req, res) => {
     const teamRef = db.collection('teams').doc(customId); 
 
     const teamData = teamModel({
+      id: customId,
       name: name,
       grade: grade,
-      logo: null,
+      logo: "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg",
     });
 
     await teamRef.set(teamData);
@@ -119,7 +120,10 @@ export const getDetail = async (req, res) => {
     }
 
     return res.status(200).json({
-      team: teamDoc.data(),
+      team: {
+        id: teamDoc.id,
+        ...teamDoc.data(),
+      },
       success: true,
       message: "Team found",
     });
