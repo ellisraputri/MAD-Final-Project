@@ -1,5 +1,6 @@
 import { error400, error500 } from "../config/error.js";
 import { db } from "../config/firestore.js";
+import { resultModel } from "../models/result.js";
 
 const filterByActivity = (results, activityType) => {
   if (!activityType) return results;
@@ -234,6 +235,81 @@ export const getResultDetail = async (req, res) => {
         ...result,
         medias: mediaList,
       },
+    });
+
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const submitResult = async (req, res) => {
+  try {
+    const { activityId, teamId, medias, predictions } = req.body;
+
+    const resultRef = db.collection("results");
+
+    const newAttemptNo = await db.runTransaction(async (transaction) => {
+      const query = resultRef
+        .where("teamId", "==", teamId)
+        .where("activityId", "==", activityId)
+        .orderBy("attemptNo", "desc")
+        .limit(1);
+
+      const snapshot = await transaction.get(query);
+
+      let latestAttemptNo = 0;
+
+      if (!snapshot.empty) {
+        latestAttemptNo = snapshot.docs[0].data().attemptNo || 0;
+      }
+
+      return latestAttemptNo + 1;
+    });
+
+    let score = 0;
+    // TODO: model scoring
+
+    const resultData = resultModel({
+      activityId,
+      teamId,
+      attemptNo: newAttemptNo,
+      score,
+      medias,
+      predictions,
+    });
+
+    await resultRef.add(resultData);
+
+    return res.status(200).json({
+      success: true,
+      message: "Result saved successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const rate = async (req, res) => {
+  try {
+    const { resultId, ratings, comments } = req.body; 
+
+    const resultRef = db.collection("results").doc(resultId);
+    const doc = await resultRef.get();
+    if (!doc.exists) {
+      return error400(res, "Result not found");
+    }
+
+    await resultRef.update({
+      ...(ratings && { ratings }),
+      ...(comments && { comments }),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Rating done successfully",
     });
 
   } catch (error) {
