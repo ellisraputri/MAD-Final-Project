@@ -4,13 +4,17 @@ import RankingCard from "@/components/ui/ranking-card";
 import { useEffect, useRef, useState } from "react";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { getStudentDetail } from "@/services/student/student";
+import { useAppContext } from "@/context/AppContext";
+import { getTeamDetail } from "@/services/team/team";
 import { router } from "expo-router";
+import { toast } from "sonner-native";
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
 export default function HomeScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {user, setUser, team, setTeam} = useAppContext();
 
   const rankings = [1,2,3,4,5,6,7];
   const scrollRef = useRef<ScrollView>(null);
@@ -48,11 +52,28 @@ export default function HomeScreen() {
   }, []);
   
   const checkTeam = async() => {
-    const response = await getStudentDetail();
-    if(response.user?.teamId === null) {
-      // TODO: fetch team detail 
-      router.push("/(auth)/team_confirmation");
+    const userResponse = await getStudentDetail();
+    if(!userResponse.success){
+      toast.error(userResponse.message)
+      return;
     }
+    setUser(userResponse.user);
+
+    if(userResponse.user?.teamId === null || !userResponse.user?.teamId) {
+      router.push("/(auth)/team_confirmation"); 
+    } else{
+      fetchTeamDetail(userResponse.user.teamId);
+    }
+    
+  }
+
+  const fetchTeamDetail = async(id: string) => {
+    const teamResponse = await getTeamDetail(id);
+    if(!teamResponse.success){
+      toast.error(teamResponse.message);
+      return;
+    }
+    setTeam(teamResponse.team);
   }
 
   return (
@@ -71,7 +92,7 @@ export default function HomeScreen() {
         </Image>
 
         <View style={styles.headerContent}>
-          <Text style={styles.welcome}>Welcome, Ellis!</Text>
+          <Text style={styles.welcome}>Welcome, {user?.firstName}!</Text>
 
           <Text style={styles.subtitle}>Online team members:</Text>
 
@@ -98,14 +119,14 @@ export default function HomeScreen() {
       <ScrollView style={styles.content}  contentContainerStyle={{ paddingBottom: 150 }}>
         
         {/* TEAM INFO */}
-        <Text style={styles.label}>Team ID: gyh6fg</Text>
+        <Text style={styles.label}>Team ID: {team?.id}</Text>
 
         <View style={styles.row}>
           <Text style={styles.label}>Team Name:</Text>
 
           <View style={styles.editRow}>
             <>
-              <Text style={styles.teamName}>{teamName}</Text>
+              <Text style={styles.teamName}>{team?.name}</Text>
 
               <Ionicons
                 name="pencil"
@@ -123,7 +144,7 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.logoWrapper}>
             <Image
               source={{
-                uri: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+                uri: team?.logo
               }}
               style={styles.logo}
             />

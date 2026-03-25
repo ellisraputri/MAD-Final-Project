@@ -40,12 +40,18 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [grade, setGrade] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async() => {
     if(email==='' || password==='' || firstName==='' || grade==='') {
       alert("Fields cannot be empty");
     }
+    setIsLoading(true);
+
     const res = await registerAndGetData({email, password, firstName, grade});
+    alert(res.message);
+    setIsLoading(false);
+
     if(res.success) router.replace('/team_confirmation');
   };
 
@@ -136,6 +142,7 @@ export default function RegisterScreen() {
           width={200}
           fontSize={20}
           marginTop={30}
+          isLoading={isLoading}
         />
 
         <View style={styles.loginContainer}>

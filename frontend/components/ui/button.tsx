@@ -1,5 +1,5 @@
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 
 type buttonProps = {
     onPress: () => void,
@@ -9,7 +9,8 @@ type buttonProps = {
     text: string,
     marginBottom?: number,
     height?: number,
-    isDisabled?: boolean
+    isDisabled?: boolean,
+    isLoading?: boolean,
 }
 
 export default function Button(props: buttonProps) {
@@ -21,8 +22,12 @@ export default function Button(props: buttonProps) {
 
             <TouchableOpacity style={[styles.button, {width: props.width, height: props.height ?? "auto", 
                 opacity: props.isDisabled? 0.4 : 1}]} onPress={props.onPress} disabled={props.isDisabled ?? false}>
-
-                <Text style={[styles.buttonText, {fontSize: props.fontSize}]}>{props.text}</Text>
+                {props.isLoading ? (
+                    <ActivityIndicator color={theme.text} />
+                ) :
+                (
+                    <Text style={[styles.buttonText, {fontSize: props.fontSize}]}>{props.text}</Text>
+                )}
             </TouchableOpacity>
         </View>
     );

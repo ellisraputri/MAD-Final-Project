@@ -2,7 +2,7 @@ type StudentDetail = {
     appearance: boolean,
     email: string,
     firstName: string,
-    grade: string,
+    grade: number,
     id: string,
     teamId: string,
 }
@@ -13,4 +13,4 @@ type StudentDetailResponse = {
     message: string,
 }
 
-export {StudentDetailResponse}
+export {StudentDetail, StudentDetailResponse}
