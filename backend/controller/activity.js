@@ -18,6 +18,7 @@ export const getList = async (req, res) => {
       id: doc.id,
       name: doc.data().name,
       type: doc.data().type,
+      imageUrl: doc.data().imageUrl,
     })));
 
     return res.status(200).json({

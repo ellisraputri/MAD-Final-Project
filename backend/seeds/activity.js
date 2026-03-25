@@ -20,6 +20,7 @@ const seedWithBatch = async () => {
     const docRef = collectionRef.doc(id);
     batch.set(docRef, {
       ...data,
+      imageUrl: "../../../assets/images/header.png",
       updatedAt: new Date(),
     });
   });
