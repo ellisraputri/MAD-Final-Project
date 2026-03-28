@@ -88,27 +88,27 @@ export default function ExplanationScreen(){
 			)}
 
 			{detailsVisible && Number(id) === 2 && (
-				<ActivityTwoResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityTwoResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 3 && (
-				<ActivityThreeResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityThreeResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 4 && (
-				<ActivityFourResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityFourResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 5 && (
-				<ActivityFiveResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityFiveResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 6 && (
-				<ActivitySixResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivitySixResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 7 && (
-				<ActivitySevenResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivitySevenResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 		</ScrollView>
 	);

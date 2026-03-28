@@ -67,7 +67,7 @@ const data = [
     }
 ]
 
-export default function ActivityFourResultsScreen(props: {onBack: ()=>void}) {
+export default function ActivityFourResultsScreen(props: {resultId: string, onBack: ()=>void}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();

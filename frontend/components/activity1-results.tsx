@@ -26,9 +26,9 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 function ActivityOneResultCard(props: {
     item: number; 
     videoUri: string | null | undefined;
-    mass: string;
-    timePredict: string;
-    timeCalculated: string;
+    mass: number | undefined;
+    timePredict: number | undefined;
+    timeCalculated: number | undefined;
 }){
     const theme = useAppTheme();
     const resultStyles = createStyles(theme);
@@ -133,15 +133,15 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
       <Section title="Results">
         <ActivityOneResultCard 
             item={1} mass={data?.predictions[0]?.mass} videoUri={data?.medias[0].content}
-            timeCalculated={"0"} timePredict={data?.predictions[0].prediction} 
+            timeCalculated={data?.outcomes[0]} timePredict={data?.predictions[0].prediction} 
         />
         <ActivityOneResultCard 
             item={2} mass={data?.predictions[1]?.mass} videoUri={data?.medias[1].content}
-            timeCalculated={"0"} timePredict={data?.predictions[1].prediction} 
+            timeCalculated={data?.outcomes[1]} timePredict={data?.predictions[1].prediction} 
         />
         <ActivityOneResultCard 
             item={3} mass={data?.predictions[2]?.mass} videoUri={data?.medias[2].content}
-            timeCalculated={"0"} timePredict={data?.predictions[2].prediction} 
+            timeCalculated={data?.outcomes[2]} timePredict={data?.predictions[2].prediction} 
         />
       </Section>
 

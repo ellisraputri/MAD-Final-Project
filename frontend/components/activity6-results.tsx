@@ -89,7 +89,7 @@ const data = [
     }
 ]
 
-export default function ActivitySixResultsScreen(props: {onBack: ()=>void}) {
+export default function ActivitySixResultsScreen(props: {resultId: string, onBack: ()=>void}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();

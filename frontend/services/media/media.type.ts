@@ -32,3 +32,8 @@ export type MediaDetail = {
     type: string,
     content: string
 }
+
+export type ContentAudio = {
+    url: string,
+    levels: number[],
+}
