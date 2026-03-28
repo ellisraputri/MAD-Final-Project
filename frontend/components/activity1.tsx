@@ -195,6 +195,7 @@ export default function ActivityOneScreen() {
     }
 
     setSubmitLoading(false);
+    alert("Successfully submitted the videos and predictions!");
     router.push("/activity/[id]/results")
   }
 

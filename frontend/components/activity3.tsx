@@ -8,10 +8,15 @@ import ActivityThreeSubmissionCard from "./ui/activity3-submission-card";
 import Button from "./ui/button";
 import { router } from "expo-router";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { uploadMedia } from "@/services/media/media";
+import { submitResult } from "@/services/result/result";
+import { useAppContext } from "@/context/AppContext";
+import { toast } from "sonner-native";
 
 export default function ActivityThreeScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {team} = useAppContext();
 
   const cameraRef = useRef<CameraView | null>(null);
   const [screen, setScreen] = useState<"record" | "submission">("record");
@@ -30,6 +35,7 @@ export default function ActivityThreeScreen() {
   const [permissionMic, requestPermissionMic] = useMicrophonePermissions();
   const [recording, setRecording] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
 
   if (!permissionCamera || !permissionMic) return <View />;
@@ -133,7 +139,9 @@ export default function ActivityThreeScreen() {
     });
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
+    if(!team?.id || submitLoading) return;
+
     const invalid = videos.some(v => !v.bend);
     if (invalid) {
       alert("Please fill all prediction fields.");
@@ -144,10 +152,47 @@ export default function ActivityThreeScreen() {
     if(currLength < 3){
       alert(`You can only submit when there are 3 videos. Please continue to record ${3-currLength} more videos.`)
     }
-    else{
-      alert(`Successfully submitted the videos! \n ${videos[2].bend}`)
-      router.push("/activity/[id]/results")
+
+    setSubmitLoading(true);
+    const uploads = videos.map((video, index) => {
+      const file = {
+        uri: video.uri,
+        name: `video_${index}_${Math.random().toString(36).substring(2, 7)}.mp4`,
+        type: "video/mp4",
+      };
+
+      return uploadMedia({
+        file: file,
+        type: "video"
+      });
+    });
+
+    const medias = await Promise.all(uploads);
+    const urls = medias.map((media,_) => {
+      return media.id
+    })
+    const predictions = videos.map((video, _) => {
+      return {
+        prediction: video.bend,
+      }
+    })
+
+    const response = await submitResult({
+      activityId: "3", 
+      teamId: team?.id, 
+      medias: urls, 
+      predictions: predictions
+    })
+    if(!response.success){
+      toast.error(response.message);
+      setSubmitLoading(false);
+      return;
     }
+
+    setSubmitLoading(false);
+
+    alert(`Successfully submitted the videos and predictions!`)
+    router.push("/activity/[id]/results")
   }
 
   const confirmDisabled = !videoUri || (rerecordIndex === null && videos.length >= 3);
@@ -239,7 +284,7 @@ export default function ActivityThreeScreen() {
             )}
       
             <Button onPress={handleSubmit} width={150} fontSize={18} 
-                          marginTop={20} marginBottom={50} text="Submit"/>
+                          marginTop={20} marginBottom={50} text="Submit" isLoading={submitLoading} />
           </View>
         </>
       )}
