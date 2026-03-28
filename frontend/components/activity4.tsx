@@ -133,7 +133,7 @@ export default function ActivityFourScreen() {
     })
     const predictions = vibrations.map((vib, _) => {
       return {
-        prediction: vib.movement,
+        prediction: Number(vib.movement),
       }
     })
 

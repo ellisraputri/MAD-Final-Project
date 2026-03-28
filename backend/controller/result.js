@@ -341,11 +341,14 @@ export const submitResult = async (req, res) => {
     // TODO: model scoring
     // activity 6 = loop predictions, ambil predictions[i].outcome
 
+    const outcomes = [0, 0, 0];
+
     const resultData = resultModel({
       activityId,
       teamId,
       attemptNo: newAttemptNo,
       score,
+      outcomes,
       medias,
       predictions: preds,
     });
