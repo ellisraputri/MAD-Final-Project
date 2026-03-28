@@ -1,36 +1,42 @@
 import { db } from '../config/firestore.js';
 
-const getTeamsWhoFinishedAll = async () => {
-  const TOTAL_ACTIVITIES = 7;
-  
+const updateScoresAndOutcomes = async () => {
   try {
-    // 1. Fetch all result records (only need teamId and activityId)
     const snapshot = await db.collection('results').get();
-    
-    // 2. Map of TeamID -> Set of unique ActivityIDs
-    const completionMap = {};
 
-    snapshot.forEach(doc => {
-      const { teamId, activityId } = doc.data();
-      
-      if (!completionMap[teamId]) {
-        completionMap[teamId] = new Set();
+    const batch = db.batch();
+    let count = 0;
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      if (data.score !== undefined) {
+        let score = data.score;
+        const newScore = score / 100;
+
+        const outcomes = [
+          newScore / 3,
+          newScore / 3,
+          newScore / 3,
+        ];
+
+        batch.update(doc.ref, {
+          score: newScore,
+          outcomes: outcomes,
+        });
+
+        count++;
       }
-      
-      completionMap[teamId].add(activityId);
     });
 
-    // 3. Filter for teams that have 7 unique activities
-    const finishedTeams = Object.keys(completionMap).filter(teamId => {
-      return completionMap[teamId].size === TOTAL_ACTIVITIES;
-    });
+    await batch.commit();
 
-    console.log("Teams who finished everything:", finishedTeams);
-    return finishedTeams;
-
+    console.log(`Updated ${count} documents successfully!`);
+    process.exit();
   } catch (error) {
-    console.error("Error building query:", error);
+    console.error("Update failed:", error);
+    process.exit(1);
   }
 };
 
-getTeamsWhoFinishedAll();
+updateScoresAndOutcomes();
