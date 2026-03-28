@@ -177,8 +177,8 @@ export default function ActivityOneScreen() {
     })
     const predictions = videos.map((video, _) => {
       return {
-        mass: video.mass,
-        prediction: video.time,
+        mass: Number(video.mass),
+        prediction: Number(video.time),
       }
     })
 

@@ -5,6 +5,10 @@ import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { ResultDetail } from '@/services/result/result.type';
+import { getResultDetail } from '@/services/result/result';
+import { toast } from 'sonner-native';
+import Loading from './ui/loading';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -25,6 +29,7 @@ function ActivitySixResultCard(props: {
     timeCalculated: number;
     accuracyPredict: number;
     accuracyCalculated: number;
+    url?: string;
 }){
   const theme = useAppTheme();
   const resultStyles = createStyles(theme);
@@ -39,8 +44,24 @@ function ActivitySixResultCard(props: {
             </Text>
           </View>
 
+          {props.item===3 && 
+            <View style={resultStyles.padContainer}>
+              <Image
+                source={{
+                  uri: "https://coloringlib.com/wp-content/uploads/2024/01/truck-tracing-sheet-coloring.jpg",
+                }}
+                style={resultStyles.image}
+              />
+
+              <Image
+                source={{ uri: props.url }} // from Cloudinary
+                style={[resultStyles.image, resultStyles.overlay]}
+              />
+            </View>
+          }
+
           <Text style={resultStyles.subtitleText}>
-              Time used
+              Time used 
           </Text>
           <View style={resultStyles.list}>
               <Text style={resultStyles.listItem}>
@@ -51,50 +72,53 @@ function ActivitySixResultCard(props: {
               </Text>
           </View>
 
-          <Text style={resultStyles.subtitleText}>
-              Accuracy
-          </Text>
-          <View style={resultStyles.list}>
-              <Text style={resultStyles.listItem}>
-                  • Predicted: {props.accuracyPredict}
+          {props.item===3 && 
+            <>
+              <Text style={resultStyles.subtitleText}>
+                  Accuracy
               </Text>
-              <Text style={resultStyles.listItem}>
-                  • Outcome: {props.accuracyCalculated}
-              </Text>
-          </View>
+              <View style={resultStyles.list}>
+                <Text style={resultStyles.listItem}>
+                    • Predicted: {props.accuracyPredict}
+                </Text>
+                <Text style={resultStyles.listItem}>
+                    • Outcome: {props.accuracyCalculated}
+                </Text>
+              </View>
+            </>
+          }
 
           <Text style={resultStyles.descText}>This is the results of calculation..</Text>
         </View>
     )
 }
 
-const data = [
-    {
-        "timePredicted": 20,
-        "timeOutcome": 10,
-        "accuracyPredicted": 100,
-        "accuracyOutcome": 100
-    },
-    {
-        "timePredicted": 20,
-        "timeOutcome": 10,
-        "accuracyPredicted": 100,
-        "accuracyOutcome": 100
-    },
-    {
-        "timePredicted": 20,
-        "timeOutcome": 10,
-        "accuracyPredicted": 100,
-        "accuracyOutcome": 100
-    }
-]
-
-export default function ActivitySixResultsScreen(props: {onBack: ()=>void}) {
+export default function ActivitySixResultsScreen(props: {resultId: string, onBack: ()=>void}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
 
-  return (
+  const [data, setData] = useState<ResultDetail>();
+  const [loading, setLoading] = useState(false);
+
+  const fetchDetail = async() => {
+    setLoading(true);
+
+    const response = await getResultDetail({resultId: props.resultId});
+    if(!response.success || response.data === null){
+        toast.error(response.message);
+        setLoading(false);
+        return;
+    }
+    setData(response.data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchDetail();
+  }, []);
+
+  return loading? <Loading/> : (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
       {/* Theory */}
       <Section title="Theory">
@@ -102,16 +126,25 @@ export default function ActivitySixResultsScreen(props: {onBack: ()=>void}) {
       </Section>
 
       {/* Results */}
-      <Section title="Results">
-        {data?.map((d, idx) => (
+      {data &&
+        <Section title="Results">
           <ActivitySixResultCard 
-            key={idx}
-            item={idx+1} 
-            timePredict={d.timePredicted} timeCalculated={d.timeOutcome}
-            accuracyPredict={d.accuracyPredicted} accuracyCalculated={d.accuracyOutcome} 
-            />
-        ))}
-      </Section>
+            item={1} 
+            timePredict={data.predictions[0].prediction} timeCalculated={data.outcomes[0]}
+            accuracyPredict={0} accuracyCalculated={0} 
+          />
+          <ActivitySixResultCard 
+            item={2} 
+            timePredict={data.predictions[1].prediction} timeCalculated={data.outcomes[1]}
+            accuracyPredict={0} accuracyCalculated={0} 
+          />
+          <ActivitySixResultCard 
+            item={3} url={data.medias[0].content}
+            timePredict={data.predictions[2].prediction} timeCalculated={data.outcomes[2]}
+            accuracyPredict={data.predictions[3].prediction} accuracyCalculated={data.outcomes[3]} 
+          />
+        </Section>
+      }
 
       <Button 
         width={250} onPress={()=>alert("see leaderboard")}
@@ -204,7 +237,20 @@ const createStyles = (theme:any) => {
         fontFamily: "Lato_400Regular",
         marginBottom: 5,
         color: theme.blackText,
-    }
+    },
+    padContainer: {
+      width: 300,
+      height: 200,
+    },
+    image: {
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      resizeMode: "contain",
+    },
+    overlay: {
+      zIndex: 200,
+    },
   });
 
   return styles;

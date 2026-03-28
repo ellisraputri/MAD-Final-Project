@@ -173,7 +173,7 @@ export default function ActivityThreeScreen() {
     })
     const predictions = videos.map((video, _) => {
       return {
-        prediction: video.bend,
+        prediction: Number(video.bend),
       }
     })
 
