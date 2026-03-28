@@ -1,3 +1,5 @@
+import { MediaDetail } from "../media/media.type"
+
 export type ResultBaseResponse = {
     success: boolean,
     message: string,
@@ -25,4 +27,26 @@ export type GetResultListResponse = {
     data: ResultList[],
     success: boolean,
     message: string,
+}
+
+export type GetResultDetailRequest = {
+    resultId: string,
+}
+
+export type ResultDetail = {
+    resultId: string,
+    activityId: number,
+    teamId: string,
+    attemptNo: number,
+    score: number,
+    medias: MediaDetail[],
+    predictions: any[],
+    ratings: number,
+    comments: string,
+}
+
+export type GetResultDetailResponse = {
+    success: boolean,
+    message: string,
+    data: ResultDetail | null
 }

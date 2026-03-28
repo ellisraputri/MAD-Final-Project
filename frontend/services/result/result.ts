@@ -1,6 +1,6 @@
 import { createDefaultError } from "@/constants/error";
 import { apiClient } from "../firebase";
-import { GetResultListRequest, GetResultListResponse, ResultBaseResponse, SubmitResultRequest } from "./result.type";
+import { GetResultDetailRequest, GetResultDetailResponse, GetResultListRequest, GetResultListResponse, ResultBaseResponse, SubmitResultRequest } from "./result.type";
 
 export const submitResult = async(req: SubmitResultRequest): Promise<ResultBaseResponse> => {
     try {
@@ -20,6 +20,19 @@ export const getResultList = async(req: GetResultListRequest): Promise<GetResult
     } catch (error: any) {
         return {
             data: [],
+            ...createDefaultError(error.response.data.message)
+        };
+    }
+}
+
+export const getResultDetail = async(req: GetResultDetailRequest): Promise<GetResultDetailResponse> =>{
+    try {
+        const response = await apiClient.get(`/api/result/detail?resultId=${req.resultId}`);
+        return response.data;
+
+    } catch (error: any) {
+        return {
+            data: null,
             ...createDefaultError(error.response.data.message)
         };
     }

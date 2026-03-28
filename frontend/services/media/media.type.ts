@@ -26,3 +26,9 @@ export type RNFile = {
   name: string;
   type: string;
 };
+
+export type MediaDetail = {
+    id: string,
+    type: string,
+    content: string
+}
