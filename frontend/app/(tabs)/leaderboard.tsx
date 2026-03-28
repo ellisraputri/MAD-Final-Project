@@ -3,7 +3,8 @@ import PodiumCard from "@/components/ui/podium-card";
 import RankingCard from "@/components/ui/ranking-card";
 import { useAppContext } from "@/context/AppContext";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { getTopRanking } from "@/services/result/result";
+import { getHighestRank, getLatestRank, getTopRanking } from "@/services/result/result";
+import { MyRankDetail, MyRankDetailParams, RankDetail } from "@/services/result/result.type";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -25,8 +26,13 @@ export default function LeaderboardScreen() {
   const styles = createStyles(theme);
   const { team } = useAppContext();
 
+  const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+
   const [dropdownValue, setDropdownValue] = useState("global");
-  const [results, setResult] = useState<any[]>([]);
+  const [results, setResult] = useState<RankDetail[]>([]);
+  const [myTeamBest, setMyTeamBest] = useState<MyRankDetail | null>(null);
+  const [myTeamLatest, setMyTeamLatest] = useState<MyRankDetail| null>(null);
+
   const [loading, setLoading] = useState(true);
 
   const calculateDisplayScore = (score: number) => {
@@ -36,23 +42,72 @@ export default function LeaderboardScreen() {
 
   const fetchRanking = async (activityParam?: string) => {
     try {
-      setLoading(true);
       const res = await getTopRanking(activityParam);
-
       if (res?.data) {
         setResult(res.data);
       }
     } catch (err) {
       console.log("Fetch error:", err);
-    } finally {
-      setLoading(false);
+    } 
+  };
+
+  const fetchMyTeamBestResult = async (inputParams: MyRankDetailParams) => {
+    try {
+      const res = await getHighestRank(inputParams);
+      if (res?.data) {
+        setMyTeamBest(res.data);
+      }
+    } catch (err) {
+      console.log("Fetch error:", err);
+    }
+  };
+
+  const fetchMyTeamLatestResult = async (inputParams: MyRankDetailParams) => {
+    try {
+      const res = await getLatestRank(inputParams);
+      if (res?.data) {
+        setMyTeamLatest(res.data);
+      }
+    } catch (err) {
+      console.log("Fetch error:", err);
     }
   };
 
   useEffect(() => {
-    const param = dropdownData.find(item => item.value === dropdownValue)?.params;
-    fetchRanking(param);
-  }, [dropdownValue]);
+    const run = async () => {
+      const param = dropdownData.find(item => item.value === dropdownValue)?.params;
+      const activityParam = param || undefined; 
+
+      setLoading(true);
+      setMyTeamBest(null);
+      setMyTeamLatest(null);
+
+      try {
+        await Promise.all([
+          fetchRanking(activityParam),
+          
+          team?.id
+            ? fetchMyTeamBestResult({
+                teamId: team.id,
+                activityType: activityParam,
+              })
+            : Promise.resolve(null), 
+
+          (team?.id && dropdownValue !== "global")
+            ? fetchMyTeamLatestResult({
+                teamId: team.id,
+                activityType: activityParam,
+              })
+            : Promise.resolve(null),
+        ]);
+      } 
+      finally {
+        setLoading(false);
+      }
+    };
+
+    run();
+  }, [dropdownValue, team?.id]);
 
   const top1 = results[0];
   const top2 = results[1];
@@ -133,7 +188,7 @@ export default function LeaderboardScreen() {
           {results.slice(3).map((item, i) => (
               <RankingCard 
               key={i}
-                rank={item.rank}
+                rank={item.rank.toString()}
                 score={calculateDisplayScore(item.score)}
                 teamName={item.teamName}
                 imageUrl={item.imageUrl}
@@ -147,10 +202,10 @@ export default function LeaderboardScreen() {
         </Text>
 
         <RankingCard 
-          rank="1"
-          score="100%"
-          teamName="Kita Menang Yey"
-          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+          rank={myTeamBest?.rank?.toString() || "-"}
+          score={myTeamBest ? calculateDisplayScore(myTeamBest.score) : "-"}
+          teamName={team?.name || "-"}
+          imageUrl={team?.logo || defaultLogo}
         />
       </View>
 
@@ -161,10 +216,10 @@ export default function LeaderboardScreen() {
           </Text>
 
           <RankingCard 
-            rank="1"
-            score="100%"
-            teamName="Kita Menang Yey"
-            imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+            rank={myTeamLatest?.rank?.toString() || "-"}
+            score={myTeamLatest ? calculateDisplayScore(myTeamLatest.score) : "-"}
+            teamName={team?.name || "-"}
+            imageUrl={team?.logo || defaultLogo}
           />
         </View>
       }

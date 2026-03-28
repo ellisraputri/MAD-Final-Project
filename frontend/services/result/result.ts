@@ -1,6 +1,6 @@
 import { createDefaultError } from "@/constants/error";
 import {apiClient} from "../firebase.js"
-import { RankDetailResponse } from "./result.type.js";
+import { MyRankDetailParams, MyRankDetailResponse, RankDetailResponse } from "./result.type.js";
 
 export const getTopRanking = async(activityType?: string): Promise<RankDetailResponse> => {
     try {
@@ -14,6 +14,44 @@ export const getTopRanking = async(activityType?: string): Promise<RankDetailRes
         console.log(error);
         return {
             data: [],
+            ...createDefaultError(error.response.data.message),
+        };
+    }
+}
+
+export const getHighestRank = async(inputParams: MyRankDetailParams)
+    : Promise<MyRankDetailResponse> => {
+    try {
+        const params = new URLSearchParams();
+        params.append('teamId', inputParams.teamId);
+        if (inputParams.activityType) params.append('activityType', inputParams.activityType);
+
+        const response = await apiClient.get(`/api/result/rank/highest-by-team?${params.toString()}`);
+        return response.data;
+
+    } catch (error: any) {
+        console.log(error);
+        return {
+            data: null,
+            ...createDefaultError(error.response.data.message),
+        };
+    }
+}
+
+export const getLatestRank = async(inputParams: MyRankDetailParams)
+    : Promise<MyRankDetailResponse> => {
+    try {
+        const params = new URLSearchParams();
+        params.append('teamId', inputParams.teamId);
+        if (inputParams.activityType) params.append('activityType', inputParams.activityType);
+
+        const response = await apiClient.get(`/api/result/rank/latest-by-team?${params.toString()}`);
+        return response.data;
+
+    } catch (error: any) {
+        console.log(error);
+        return {
+            data: null,
             ...createDefaultError(error.response.data.message),
         };
     }
