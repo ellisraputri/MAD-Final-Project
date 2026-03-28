@@ -41,7 +41,7 @@ export const uploadToCloudinary = async (req, res) => {
 
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({ folder: "users" }, (err, result) => {
+        .upload_stream({ folder: "users", resource_type: "auto" }, (err, result) => {
           if (err) reject(err);
           else resolve(result);
         })
