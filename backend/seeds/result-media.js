@@ -73,11 +73,14 @@ const seedOnDemand = async () => {
             }
           }
 
+          const score = Math.random();
+
           batch.set(resultRef, {
             activityId,
             teamId,
             attemptNo,
-            score: Math.floor(Math.random() * 101),
+            score: score,
+            outcomes: [score/3, score/3, score/3],
             medias: assignedMediaIds, 
             predictions: dummyPredictions[activityId],
             ratings: Math.floor(Math.random() * 5) + 1,
