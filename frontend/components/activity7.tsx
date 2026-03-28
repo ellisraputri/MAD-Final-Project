@@ -6,6 +6,10 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-nativ
 import AudioPlayer from "./ui/audio-player";
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { useAppContext } from "@/context/AppContext";
+import { uploadMedia } from "@/services/media/media";
+import { submitResult } from "@/services/result/result";
+import { toast } from "sonner-native";
 
 type CardActivitySevenProps = {
   title: string;
@@ -55,6 +59,8 @@ function CardActivitySeven(props: CardActivitySevenProps) {
 export default function ActivitySevenScreen() {
     const theme = useAppTheme();
     const styles = createStyles(theme);
+    const {team} = useAppContext();
+    const  [submitLoading, setSubmitLoading] = useState(false);
 
     const [phase, setPhase] = useState<1|2|3|4>(1);
     const [result, setResult] =  useState<Record<number, any>>({
@@ -73,9 +79,50 @@ export default function ActivitySevenScreen() {
         setUserInput({1:"", 2:"", 3:""});
     }
 
-    const handleSubmit = () =>{
-        alert(`result1: ${userInput[1]}, resul2: ${userInput[2]}, result3: ${userInput[3]}`)
-        router.push("/activity/[id]/results")
+    const handleSubmit = async() =>{
+      if(!team?.id) return;
+
+      setSubmitLoading(true);
+      const uploads = Object.values(result).map((audio, index) => {
+        const file = {
+          uri: audio.uri,
+          name: `audio_${index}_${Math.random().toString(36).substring(2, 7)}.mp3`,
+          type: "audio/mp3",
+        };
+
+        return uploadMedia({
+          file,
+          type: "audio",
+          additional: audio.levels.toString(),
+        });
+      });
+
+      const medias = await Promise.all(uploads.filter(Boolean));
+
+      const urls = medias.map((media,_) => {
+        return media.id
+      })
+      const predictions = Object.values(userInput).map((inp, _) => {
+        return {
+          prediction: inp,
+        }
+      })
+  
+      const response = await submitResult({
+        activityId: "7", 
+        teamId: team?.id, 
+        medias: urls, 
+        predictions: predictions
+      })
+      if(!response.success){
+        toast.error(response.message);
+        setSubmitLoading(false);
+        return;
+      }
+  
+      setSubmitLoading(false);
+      alert("Successfully submitted the audios and predictions!");
+      router.push("/activity/[id]/results")
     }
 
     return(
@@ -159,6 +206,7 @@ export default function ActivitySevenScreen() {
 													fontSize={18}
 													marginTop={10}
 													text={"Confirm"}
+                          isLoading={submitLoading}
 											/>
                     </View>
                 </>

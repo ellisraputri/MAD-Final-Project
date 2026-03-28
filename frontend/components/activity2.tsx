@@ -123,7 +123,7 @@ export default function ActivityTwoScreen() {
     const uploads = audios.map((audio, index) => {
       const file = {
         uri: audio.uri,
-        name: `audio_${index}_${Math.random().toString(36).substring(2, 7)}.mp4`,
+        name: `audio_${index}_${Math.random().toString(36).substring(2, 7)}.mp3`,
         type: "audio/mp3",
       };
 
