@@ -43,6 +43,8 @@ export default function RegisterScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async() => {
+    if(isLoading) return;
+
     if(email==='' || password==='' || firstName==='' || grade==='') {
       alert("Fields cannot be empty");
     }
