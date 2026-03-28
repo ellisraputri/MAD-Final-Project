@@ -1,13 +1,13 @@
 import { db } from '../config/firestore.js';
 
 const dummyPredictions = {
-  '1':  [{'mass': 800, 'time': 2.31}, {'mass': 800, 'time': 2.31}, {'mass': 800, 'time': 2.31}],
-  '2':  [{'order': 1}, {'order': 3}, {'order': 2}],
-  '3':  [{'bend': 100}, {'bend': 30.99}, {'bend': 22.09}],
-  '4':  [{'movement': 0.99}, {'movement': 3.12}, {'movement': 1.78}],
-  '5':  [{'vibration': 5.12}, {'vibration': 3.99}, {'vibration': 2.09}],
-  '6':  [{'delay': 8.79}, {'delay': 9.01}, {'delay': 5.09}],
-  '7':  [{'breathe_per_minute': 12}, {'breathe_per_minute': 34}, {'breathe_per_minute': 43}],
+  '1':  [{'mass': 800, 'prediction': 2.31}, {'mass': 800, 'prediction': 2.31}, {'mass': 800, 'prediction': 2.31}],
+  '2':  [{'prediction': 1}, {'prediction': 3}, {'prediction': 2}],
+  '3':  [{'prediction': 100}, {'prediction': 30.99}, {'prediction': 22.09}],
+  '4':  [{'prediction': 0.99}, {'prediction': 3.12}, {'prediction': 1.78}],
+  '5':  [{'prediction': 5.12}, {'prediction': 3.99}, {'prediction': 2.09}],
+  '6':  [{'prediction': 8.79}, {'prediction': 9.01}, {'prediction': 5.09}],
+  '7':  [{'prediction': 12}, {'prediction': 34}, {'prediction': 43}],
 }
 
 
