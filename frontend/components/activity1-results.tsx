@@ -9,6 +9,7 @@ import { useAppTheme } from '@/hooks/use-app-theme';
 import { ResultDetail } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
+import Loading from './ui/loading';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -119,9 +120,7 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
 
 
   return loading? (
-    <View>
-		<Text>Loading...</Text>
-	</View>
+    <Loading/>
   ) : (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
       {/* Theory */}

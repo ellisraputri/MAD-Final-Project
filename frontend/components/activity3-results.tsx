@@ -6,6 +6,10 @@ import theoryActivity from '@/data/activity_theory.json';
 import { Ionicons } from '@expo/vector-icons';
 import Button from './ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { ResultDetail } from '@/services/result/result.type';
+import { getResultDetail } from '@/services/result/result';
+import { toast } from 'sonner-native';
+import Loading from './ui/loading';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -69,7 +73,7 @@ function ActivityThreeResultCard(props: {
             </View>
 
             <Text style={resultStyles.subtitleText}>
-                Time to hit ground (seconds)
+                Bend (degree)
             </Text>
             <View style={resultStyles.list}>
                 <Text style={resultStyles.listItem}>
@@ -86,30 +90,32 @@ function ActivityThreeResultCard(props: {
     )
 }
 
-const data = [
-    {
-        "uri": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "predicted": 20,
-        "outcome": 10,
-    },
-    {
-        "uri": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "predicted": 20,
-        "outcome": 10,
-    },
-    {
-        "uri": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "predicted": 20,
-        "outcome": 10,
-    }
-]
-
 export default function ActivityThreeResultsScreen(props: {resultId: string, onBack: ()=>void}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
 
-  return (
+  const [data, setData] = useState<ResultDetail>();
+  const [loading, setLoading] = useState(false);
+
+  const fetchDetail = async() => {
+    setLoading(true);
+
+    const response = await getResultDetail({resultId: props.resultId});
+    if(!response.success || response.data === null){
+        toast.error(response.message);
+        setLoading(false);
+        return;
+    }
+    setData(response.data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+      fetchDetail();
+  }, []);
+
+  return loading? <Loading/> : (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
       {/* Theory */}
       <Section title="Theory">
@@ -117,15 +123,22 @@ export default function ActivityThreeResultsScreen(props: {resultId: string, onB
       </Section>
 
       {/* Results */}
-      <Section title="Results">
-        {data?.map((d, idx) => (
+      {data &&
+        <Section title="Results">
           <ActivityThreeResultCard 
-            key={idx}
-            item={idx+1} videoUri={d.uri}
-            timeCalculated={d.outcome} timePredict={d.predicted} 
-            />
-        ))}
-      </Section>
+            item={1} videoUri={data.medias[0].content}
+            timeCalculated={data.outcomes[0]} timePredict={data.predictions[0].prediction} 
+          />
+          <ActivityThreeResultCard 
+            item={2} videoUri={data.medias[1].content}
+            timeCalculated={data.outcomes[1]} timePredict={data.predictions[1].prediction} 
+          />
+          <ActivityThreeResultCard 
+            item={3} videoUri={data.medias[2].content}
+            timeCalculated={data.outcomes[2]} timePredict={data.predictions[2].prediction} 
+          />
+        </Section>
+      }
 
       <Button 
         width={250} onPress={()=>alert("see leaderboard")}

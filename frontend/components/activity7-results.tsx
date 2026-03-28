@@ -5,6 +5,11 @@ import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { ContentAudio } from '@/services/media/media.type';
+import { ResultDetail } from '@/services/result/result.type';
+import { getResultDetail } from '@/services/result/result';
+import { toast } from 'sonner-native';
+import { parseMediaContent } from '@/services/media/media';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -62,31 +67,37 @@ function ActivitySevenResultCard(props: {
     )
 }
 
-const data = [
-    {
-        "uri": "https://res.cloudinary.com/djgvizqh6/video/upload/v1773991717/1t_-_Fontaine_ttbeih.mp3",
-        "predicted": 20,
-        "outcome": 10,
-        "levels": [0,0,0,0,50,5,20,2,10,4,10,20,10,50,5,10]
-    },
-    {
-        "uri": "https://res.cloudinary.com/djgvizqh6/video/upload/v1773991717/1t_-_Fontaine_ttbeih.mp3",
-        "predicted": 20,
-        "outcome": 10,
-        "levels": [0,0,0,0,50,5,20,2,10,4,10,20,10,50,5,10]
-    },
-    {
-        "uri": "https://res.cloudinary.com/djgvizqh6/video/upload/v1773991717/1t_-_Fontaine_ttbeih.mp3",
-        "predicted": 20,
-        "outcome": 10,
-        "levels": [0,0,0,0,50,5,20,2,10,4,10,20,10,50,5,10]
-    }
-]
-
 export default function ActivitySevenResultsScreen(props: {resultId: string, onBack: ()=>void}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
+
+  const [data, setData] = useState<ResultDetail>();
+  const [contents, setContents] = useState<ContentAudio[]>();
+  const [loading, setLoading] = useState(false);
+
+  const fetchDetail = async() => {
+    setLoading(true);
+
+    const response = await getResultDetail({resultId: props.resultId});
+    if(!response.success || response.data === null){
+        toast.error(response.message);
+        setLoading(false);
+        return;
+    }
+
+    const contents = response.data.medias.map((m, _) => {
+      return parseMediaContent(m.content);
+    })
+
+    setContents(contents);
+    setData(response.data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchDetail();
+  }, []);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
@@ -96,15 +107,22 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
       </Section>
 
       {/* Results */}
-      <Section title="Results">
-        {data?.map((d, idx) => (
+      {data && contents &&
+        <Section title="Results">
           <ActivitySevenResultCard 
-            key={idx}
-            item={idx+1} audioUri={d.uri} levels={d.levels}
-            valueCalculated={d.outcome} valuePredict={d.predicted} 
-            />
-        ))}
-      </Section>
+            item={1} audioUri={contents[0].url} levels={contents[0].levels}
+            valueCalculated={data.outcomes[0]} valuePredict={data.predictions[0].prediction} 
+          />
+          <ActivitySevenResultCard 
+            item={2} audioUri={contents[1].url} levels={contents[1].levels}
+            valueCalculated={data.outcomes[1]} valuePredict={data.predictions[1].prediction} 
+          />
+          <ActivitySevenResultCard 
+            item={3} audioUri={contents[2].url} levels={contents[2].levels}
+            valueCalculated={data.outcomes[2]} valuePredict={data.predictions[2].prediction} 
+          />
+        </Section>
+      }
 
       <Button 
         width={250} onPress={()=>alert("see leaderboard")}
