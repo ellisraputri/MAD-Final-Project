@@ -1,5 +1,5 @@
 export type MediaRequest = {
-    file: File,
+    file: RNFile,
     type: string,
     additional?: string,
 }
@@ -15,3 +15,9 @@ export type CloudinaryUploadResponse = {
     success: boolean,
     message: string
 }
+
+export type RNFile = {
+  uri: string;
+  name: string;
+  type: string;
+};
