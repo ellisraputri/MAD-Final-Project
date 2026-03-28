@@ -9,135 +9,100 @@ const filterByActivity = (results, activityType) => {
 
 const groupByTeam = (results) => {
   const map = new Map();
-
   results.forEach(r => {
-    if (!map.has(r.teamId)) {
-      map.set(r.teamId, []);
-    }
+    if (!map.has(r.teamId)) map.set(r.teamId, []);
     map.get(r.teamId).push(r);
   });
-
   return map;
 };
 
-const computeHighest = (grouped) => {
-  const ranking = [];
-
-  grouped.forEach((records, teamId) => {
-    let best = records[0];
-
-    records.forEach(r => {
-      if (r.score > best.score) {
-        best = r;
-      }
-    });
-
-    ranking.push({
-      teamId,
-      score: best.score,
-      attemptNo: best.attemptNo,
-      resultId: best.id,
-    });
+const groupByTeamAndActivity = (results) => {
+  // { teamId -> { activityId -> [records] } }
+  const map = new Map();
+  results.forEach(r => {
+    if (!map.has(r.teamId)) map.set(r.teamId, new Map());
+    const activityMap = map.get(r.teamId);
+    if (!activityMap.has(r.activityId)) activityMap.set(r.activityId, []);
+    activityMap.get(r.activityId).push(r);
   });
-
-  return ranking;
+  return map;
 };
 
-const computeLatest = (grouped) => {
-  const ranking = [];
+const getBestRecord = (records) =>
+  records.reduce((best, r) => (r.score > best.score ? r : best), records[0]);
 
-  grouped.forEach((records, teamId) => {
-    let latest = records[0];
-
-    records.forEach(r => {
-      if (r.timestamp.toDate() > latest.timestamp.toDate()) {
-        latest = r;
-      }
-    });
-
-    ranking.push({
-      teamId,
-      score: latest.score,
-      attemptNo: latest.attemptNo,
-      resultId: latest.id,
-    });
-  });
-
-  return ranking;
-};
+const getLatestRecord = (records) =>
+  records.reduce((latest, r) =>
+    r.attemptNo > latest.attemptNo ? r : latest,
+    records[0]
+  );
 
 const sortAndRank = (ranking) => {
   ranking.sort((a, b) => b.score - a.score);
-
   let currentRank = 1;
-
   ranking.forEach((item, index) => {
     if (index > 0 && item.score < ranking[index - 1].score) {
       currentRank = index + 1;
     }
     item.rank = currentRank;
   });
-
   return ranking;
 };
 
-const findTeam = (ranking, teamId) => {
-  return ranking.find(r => r.teamId === teamId) || null;
-};
+const getScoreGlobal = (byTeamAndActivity) => {
+  const ranking = [];
+  byTeamAndActivity.forEach((activityMap, teamId) => {
+    let totalScore = 0;
 
-export const getHighestRank = async (req, res) => {
-  try {
-    const { teamId, activityType } = req.query;
-
-    const snapshot = await db.collection("results").get();
-    const results = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    const filtered = filterByActivity(results, activityType);
-    const grouped = groupByTeam(filtered);
-    const ranking = sortAndRank(computeHighest(grouped));
-
-    const team = findTeam(ranking, teamId);
-
-    return res.status(200).json({
-      success: true,
-      message: "result retrieved successfully",
-      data: team,
+    activityMap.forEach((records) => {
+      const best = getBestRecord(records);
+      totalScore += best.score;
     });
+    const activityDone = activityMap.size;
+    ranking.push({ teamId, score: totalScore / activityDone });
+  });
+  return ranking;
+} 
 
-  } catch (error) {
-    console.error(error);
-    return error500(res);
-  }
-};
+const findTeam = (ranking, teamId) =>
+  ranking.find(r => r.teamId === teamId) || null;
+
 
 export const getTopRanking = async (req, res) => {
   try {
     const { activityType } = req.query;
 
     const snapshot = await db.collection("results").get();
-    const results = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    const filtered = filterByActivity(results, activityType);
-    const grouped = groupByTeam(filtered);
-    const ranking = sortAndRank(computeHighest(grouped));
+    let ranking;
 
+    if (!activityType) {
+      // Sum of each team's highest score per activity
+      const byTeamAndActivity = groupByTeamAndActivity(results);
+      ranking = getScoreGlobal(byTeamAndActivity);     
+    } 
+    else {
+      // Single activity: all attempts from each teams
+      const filtered = filterByActivity(results, activityType);
+      ranking = filtered.map(r => ({
+        teamId: r.teamId,
+        score: r.score,
+        attemptNo: r.attemptNo,
+        resultId: r.id,
+      }));
+    }
+
+    sortAndRank(ranking);
+
+    // Enrich with team info
     const teamIds = [...new Set(ranking.map(r => r.teamId))];
-
     const teamDocs = await Promise.all(
       teamIds.map(id => db.collection("teams").doc(id).get())
     );
-
     const teamMap = {};
     teamDocs.forEach(doc => {
-      if (doc.exists) {
-        teamMap[doc.id] = doc.data();
-      }
+      if (doc.exists) teamMap[doc.id] = doc.data();
     });
 
     const enrichedRanking = ranking.map(item => ({
@@ -148,8 +113,60 @@ export const getTopRanking = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "result retrieved successfully",
+      message: "Result retrieved successfully",
       data: enrichedRanking.slice(0, 100),
+    });
+
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const getHighestRank = async (req, res) => {
+  try {
+    const { teamId, activityType } = req.query;
+
+    const snapshot = await db.collection("results").get();
+    const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    let team;
+
+    if (!activityType) {
+      // Sum of team's highest score across all activities
+      const teamResults = results.filter(r => r.teamId === teamId);
+
+      if (teamResults.length === 0) {
+        return res.status(200).json({
+          success: true,
+          message: "Result retrieved successfully",
+          data: null,
+        });
+      }
+
+      const byTeamAndActivity = groupByTeamAndActivity(results);
+      const globalRanking = getScoreGlobal(byTeamAndActivity);
+      
+      sortAndRank(globalRanking);
+      team = findTeam(globalRanking, teamId);
+
+    } else {
+      // Single activity: best attempt for this team
+      const filtered = filterByActivity(results, activityType);
+      const grouped = groupByTeam(filtered);
+      const ranking = sortAndRank(
+        [...grouped.entries()].map(([tid, records]) => {
+          const best = getBestRecord(records);
+          return { teamId: tid, score: best.score, attemptNo: best.attemptNo, resultId: best.id };
+        })
+      );
+      team = findTeam(ranking, teamId);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Result retrieved successfully",
+      data: team,
     });
 
   } catch (error) {
@@ -162,22 +179,47 @@ export const getLatestRank = async (req, res) => {
   try {
     const { teamId, activityType } = req.query;
 
+    if (!activityType) {
+      return res.status(200).json({
+        success: true,
+        message: "Result retrieved successfully",
+        data: null,
+      });
+    }
+
     const snapshot = await db.collection("results").get();
-    const results = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     const filtered = filterByActivity(results, activityType);
-    const grouped = groupByTeam(filtered);
-    const ranking = sortAndRank(computeLatest(grouped));
 
-    const team = findTeam(ranking, teamId);
+    // Rank ALL attempts by score (same pool as getTopRanking single activity)
+    const ranking = sortAndRank(
+      filtered.map(r => ({
+        teamId: r.teamId,
+        score: r.score,
+        attemptNo: r.attemptNo,
+        resultId: r.id,
+      }))
+    );
+
+    // Find the latest attempt of the requested team within the ranked list
+    const teamAttempts = ranking.filter(r => r.teamId === teamId);
+    if (teamAttempts.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "Result retrieved successfully",
+        data: null,
+      });
+    }
+
+    const latest = teamAttempts.reduce((a, b) =>
+      a.attemptNo > b.attemptNo ? a : b
+    );
 
     return res.status(200).json({
       success: true,
-      message: "result retrieved successfully",
-      data: team,
+      message: "Result retrieved successfully",
+      data: latest,
     });
 
   } catch (error) {
