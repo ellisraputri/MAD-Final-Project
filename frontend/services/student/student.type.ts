@@ -1,4 +1,4 @@
-type StudentDetail = {
+export type StudentDetail = {
     appearance: boolean,
     email: string,
     firstName: string,
@@ -7,10 +7,18 @@ type StudentDetail = {
     teamId: string,
 }
 
-type StudentDetailResponse = {
+export type StudentDetailResponse = {
     user: StudentDetail | null,
     success: boolean,
     message: string,
 }
 
-export {StudentDetail, StudentDetailResponse}
+export type UpdateStudentRequest = {
+    firstName: string,
+    appearance: boolean,
+}
+
+export type UpdateStudentResponse = {
+    success: boolean,
+    message: string,
+}

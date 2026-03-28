@@ -1,6 +1,6 @@
 import { createDefaultError } from "@/constants/error";
 import {apiClient, auth} from "../firebase.js"
-import { StudentDetailResponse } from "./student.type";
+import { StudentDetailResponse, UpdateStudentRequest, UpdateStudentResponse } from "./student.type";
 
 export const getStudentDetail = async(): Promise<StudentDetailResponse> => {
     try {
@@ -11,6 +11,19 @@ export const getStudentDetail = async(): Promise<StudentDetailResponse> => {
         console.log(error);
         return {
             user: null,
+            ...createDefaultError(error.response.data.message),
+        };
+    }
+}
+
+export const editStudentDetail = async(req: UpdateStudentRequest): Promise<UpdateStudentResponse> => {
+    try {
+       const response = await apiClient.put("/api/auth/update", req);
+       return response.data;
+
+    } catch (error: any) {
+        console.log(error);
+        return {
             ...createDefaultError(error.response.data.message),
         };
     }

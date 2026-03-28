@@ -1,12 +1,15 @@
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CustomDropdown from "@/components/ui/dropdown";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import RatingPopup from "@/components/ui/rating-popup";
 import { logout } from "@/services/auth/auth";
 import { router } from "expo-router";
+import { useAppContext } from "@/context/AppContext";
+import { editStudentDetail } from "@/services/student/student";
+import { toast } from "sonner-native";
 
 const dropdownValue = [
   {label: "Light", value: "light"},
@@ -16,18 +19,37 @@ const dropdownValue = [
 export default function SettingsScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {user, setUser} = useAppContext();
 
   const [showRating, setShowRating] = useState(false);
 
-  const [name, setName] = useState("Ellis");
-  const [mode, setMode] = useState("light");
+  const [name, setName] = useState(user?.firstName);
+  const [mode, setMode] = useState(user?.appearance ? "light" : "dark");
   const [isEditing, setIsEditing] = useState(false);
   const [tempName, setTempName] = useState(name);
   const inputRef = useRef<TextInput>(null);
 
-  const saveName = () => {
+  const saveName = async () => {
+    if (!user || !tempName) return;
+
     setName(tempName);
     setIsEditing(false);
+
+    const response = await editStudentDetail({
+      firstName: tempName,
+      appearance: user.appearance,
+    });
+
+    if(!response.success) {
+      toast.error(response.message);
+      return;
+    }else{
+      toast.success(response.message);
+      setUser({
+        ...user,
+        firstName: tempName,
+      });
+    }
   };
 
   const cancelEdit = () => {
@@ -39,6 +61,34 @@ export default function SettingsScreen() {
     const res = await logout();
     alert(res.message);
     if(res.success) router.push("/(auth)/login");
+  };
+
+  useEffect(() => {
+    if (user) {
+      setMode(user.appearance ? "light" : "dark");
+    }
+  }, [user]);
+
+  const handleThemeChange = async (value: string) => {
+    if (!user) return;
+    const isLight = value === "light";
+    setMode(value);
+
+    const response = await editStudentDetail({
+      firstName: user.firstName,
+      appearance: isLight,
+    });
+
+    if(!response.success) {
+      toast.error(response.message);
+      return;
+    }else{
+      toast.success(response.message);
+      setUser({
+        ...user,
+        appearance: isLight,
+      });
+    }
   };
 
   return (
@@ -53,7 +103,7 @@ export default function SettingsScreen() {
 
       {/* Avatar */}
       <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{name[0]}</Text>
+        <Text style={styles.avatarText}>{name? name[0] : "-"}</Text>
       </View>
 
       {/* First Name */}
@@ -79,7 +129,7 @@ export default function SettingsScreen() {
                 }, 50);
               }}
             >
-              <Ionicons name="pencil" size={20} color="#000" />
+              <Ionicons name="pencil" size={20} color={theme.blackText} />
             </TouchableOpacity>
           ) : (
             <View style={styles.iconContainer}>
@@ -99,7 +149,7 @@ export default function SettingsScreen() {
       <View style={styles.section}>
         <Text style={styles.label}>Mode</Text>
 
-        <CustomDropdown data={dropdownValue} value={mode} placeholder='Select mode' onSelect={setMode}/>
+        <CustomDropdown data={dropdownValue} value={mode} placeholder='Select mode' onSelect={handleThemeChange}/>
       </View>
 
       {/* General Info */}

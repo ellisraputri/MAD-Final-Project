@@ -80,7 +80,7 @@ export const updateDetail = async (req, res) => {
 
     await userRef.update({
       ...(firstName && { firstName }),
-      ...(appearance && { appearance }),
+      ...(appearance !== undefined && { appearance }),
     });
 
     return res.status(200).json({
