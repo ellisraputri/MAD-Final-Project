@@ -2,7 +2,7 @@ import { db } from '../config/firestore.js';
 
 const updateScoresAndOutcomes = async () => {
   try {
-    const snapshot = await db.collection('results').get();
+    const snapshot = await db.collection('teams').get();
 
     const batch = db.batch();
     let count = 0;
@@ -10,19 +10,9 @@ const updateScoresAndOutcomes = async () => {
     snapshot.forEach((doc) => {
       const data = doc.data();
 
-      if (data.score !== undefined) {
-        let score = data.score;
-        const newScore = score / 100;
-
-        const outcomes = [
-          newScore / 3,
-          newScore / 3,
-          newScore / 3,
-        ];
-
+      if (data.logo === undefined || data.logo === null) {
         batch.update(doc.ref, {
-          score: newScore,
-          outcomes: outcomes,
+          logo: "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg",
         });
 
         count++;

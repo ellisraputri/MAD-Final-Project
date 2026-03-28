@@ -127,10 +127,29 @@ export const getTopRanking = async (req, res) => {
     const grouped = groupByTeam(filtered);
     const ranking = sortAndRank(computeHighest(grouped));
 
+    const teamIds = [...new Set(ranking.map(r => r.teamId))];
+
+    const teamDocs = await Promise.all(
+      teamIds.map(id => db.collection("teams").doc(id).get())
+    );
+
+    const teamMap = {};
+    teamDocs.forEach(doc => {
+      if (doc.exists) {
+        teamMap[doc.id] = doc.data();
+      }
+    });
+
+    const enrichedRanking = ranking.map(item => ({
+      ...item,
+      teamName: teamMap[item.teamId]?.name || "Unknown",
+      imageUrl: teamMap[item.teamId]?.logo || null,
+    }));
+
     return res.status(200).json({
       success: true,
       message: "result retrieved successfully",
-      data: ranking.slice(0, 100),
+      data: enrichedRanking.slice(0, 100),
     });
 
   } catch (error) {

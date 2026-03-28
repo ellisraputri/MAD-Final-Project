@@ -16,6 +16,7 @@ export default function Loading() {
 export const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
         container: {
+            backgroundColor: theme.background,
             flex: 1,
             marginTop: 50,
             justifyContent: "center",  
