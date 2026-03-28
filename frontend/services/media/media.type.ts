@@ -4,6 +4,11 @@ export type MediaRequest = {
     additional?: string,
 }
 
+export type Media45Request = {
+    text: string,
+    type: string,
+}
+
 export type MediaResponse = {
     id: string,
     success: boolean,

@@ -9,6 +9,7 @@ import { useAppContext } from "@/context/AppContext";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
+import { uploadMedia45 } from "@/services/media/media";
 
 export default function ActivityFourScreen() {
   const theme = useAppTheme();
@@ -119,17 +120,27 @@ export default function ActivityFourScreen() {
     }
     
     setSubmitLoading(true);
+    const uploads = vibrations.map((vib, index) => {
+      return uploadMedia45({
+        text: vib.duration,
+        type: "string",
+      });
+    });
+    const medias = await Promise.all(uploads);
+
+    const ids = medias.map((media,_) => {
+      return media.id
+    })
     const predictions = vibrations.map((vib, _) => {
       return {
         prediction: vib.movement,
       }
     })
-    const durations = vibrations.map((vib,_) => (vib.duration));
 
     const response = await submitResult({
       activityId: "4", 
       teamId: team?.id, 
-      medias: durations, 
+      medias: ids, 
       predictions: predictions
     })
     if(!response.success){

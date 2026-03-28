@@ -1,6 +1,6 @@
 import { createDefaultError } from "@/constants/error";
 import { apiClient } from "../firebase";
-import { CloudinaryUploadResponse, MediaRequest, MediaResponse, RNFile } from "./media.type";
+import { CloudinaryUploadResponse, Media45Request, MediaRequest, MediaResponse, RNFile } from "./media.type";
 
 export const uploadToCloudinary = async (file: RNFile): Promise<CloudinaryUploadResponse> => {
     try {
@@ -43,6 +43,23 @@ export const uploadMedia = async (req: MediaRequest): Promise<MediaResponse> => 
         });
         return res2.data;
 
+
+    } catch (error: any) {
+        console.log(error);
+        return {
+            id: "",
+            ...createDefaultError(error.response.data.message),
+        };
+    }
+}
+
+export const uploadMedia45 = async (req: Media45Request): Promise<MediaResponse> => { 
+    try {
+        const res2 = await apiClient.post("/api/media/upload", {
+            type: req.type,
+            content: req.text
+        });
+        return res2.data;
 
     } catch (error: any) {
         console.log(error);
