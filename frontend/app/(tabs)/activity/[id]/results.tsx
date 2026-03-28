@@ -22,11 +22,18 @@ export default function ExplanationScreen(){
 
 	const {id} = useGlobalSearchParams();
 	const [detailsVisible, setDetailsVisible] = useState(false);
+	const [resultId, setResultId] = useState<string>();
 	const [results, setResults] = useState<ResultList[]>([]);
 	const [loading, setLoading] = useState(false);
 
+	const onPressCard = (resId: string) => {
+		setResultId(resId);
+		setDetailsVisible(true);
+	}
+
 	const fetchResults = async() =>{
 		if(!team?.id || typeof id !== "string") return;
+		setLoading(true);
 
 		const response = await getResultList({
 			teamId: team?.id,
@@ -37,6 +44,7 @@ export default function ExplanationScreen(){
 		}
 
 		setResults(response.data);
+		setLoading(false);
 	}
 
 	useFocusEffect(
@@ -68,7 +76,7 @@ export default function ExplanationScreen(){
 									key={index}
 									index={item.attempt}
 									score={item.score}
-									onPress={() => setDetailsVisible(true)}
+									onPress={() => onPressCard(item.resultId)}
 								/>
 							))}
 					</View>
@@ -76,31 +84,31 @@ export default function ExplanationScreen(){
 			)}
 
 			{detailsVisible && Number(id) === 1 && (
-				<ActivityOneResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityOneResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 2 && (
-				<ActivityTwoResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityTwoResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 3 && (
-				<ActivityThreeResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityThreeResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 4 && (
-				<ActivityFourResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityFourResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 5 && (
-				<ActivityFiveResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivityFiveResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 6 && (
-				<ActivitySixResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivitySixResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 
 			{detailsVisible && Number(id) === 7 && (
-				<ActivitySevenResultsScreen onBack={() => setDetailsVisible(false)} />
+				<ActivitySevenResultsScreen resultId={resultId?? ""} onBack={() => setDetailsVisible(false)} />
 			)}
 		</ScrollView>
 	);

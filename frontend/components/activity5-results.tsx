@@ -5,6 +5,10 @@ import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { ResultDetail } from '@/services/result/result.type';
+import { getResultDetail } from '@/services/result/result';
+import { toast } from 'sonner-native';
+import Loading from './ui/loading';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -50,30 +54,32 @@ function ActivityFiveResultCard(props: {
     )
 }
 
-const data = [
-    {
-        "predicted": 20,
-        "outcome": 10,
-        "vibrationTime": 100
-    },
-    {
-        "predicted": 20,
-        "outcome": 10,
-        "vibrationTime": 100
-    },
-    {
-        "predicted": 20,
-        "outcome": 10,
-        "vibrationTime": 100
-    }
-]
-
-export default function ActivityFiveResultsScreen(props: {onBack: ()=>void}) {
+export default function ActivityFiveResultsScreen(props: {resultId: string, onBack: ()=>void}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
 
-  return (
+  const [data, setData] = useState<ResultDetail>();
+  const [loading, setLoading] = useState(false);
+
+  const fetchDetail = async() => {
+    setLoading(true);
+
+    const response = await getResultDetail({resultId: props.resultId});
+    if(!response.success || response.data === null){
+        toast.error(response.message);
+        setLoading(false);
+        return;
+    }
+    setData(response.data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchDetail();
+  }, []);
+
+  return loading? <Loading/> : (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
       {/* Theory */}
       <Section title="Theory">
@@ -81,15 +87,22 @@ export default function ActivityFiveResultsScreen(props: {onBack: ()=>void}) {
       </Section>
 
       {/* Results */}
-      <Section title="Results">
-        {data?.map((d, idx) => (
+      {data && 
+        <Section title="Results">
           <ActivityFiveResultCard 
-            key={idx}
-            item={idx+1} vibrateTime={d.vibrationTime}
-            valueCalculated={d.outcome} valuePredict={d.predicted} 
-            />
-        ))}
-      </Section>
+            item={1} vibrateTime={Number(data.medias[0].content)}
+            valueCalculated={data.outcomes[0]} valuePredict={data.predictions[0].prediction} 
+          />
+          <ActivityFiveResultCard 
+            item={2} vibrateTime={Number(data.medias[1].content)}
+            valueCalculated={data.outcomes[1]} valuePredict={data.predictions[1].prediction} 
+          />
+          <ActivityFiveResultCard 
+            item={3} vibrateTime={Number(data.medias[2].content)}
+            valueCalculated={data.outcomes[2]} valuePredict={data.predictions[2].prediction} 
+          />
+        </Section>
+      }
 
       <Button 
         width={250} onPress={()=>alert("see leaderboard")}

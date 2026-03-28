@@ -183,10 +183,10 @@ export default function ActivitySixScreen() {
     })
 
     const predictions = [
-      {prediction: userInput[1], outcome: reactionTimes["dominant"]},
-      {prediction: userInput[2], outcome: reactionTimes["nonDominant"]},
-      {prediction: userInput[3], outcome: traceMetrics.time},
-      {prediction: userInput[4], outcome: traceMetrics.accuracy}
+      {prediction: Number(userInput[1]), outcome: Number(reactionTimes["dominant"])},
+      {prediction: Number(userInput[2]), outcome: Number(reactionTimes["nonDominant"])},
+      {prediction: Number(userInput[3]), outcome: Number(traceMetrics.time)},
+      {prediction: Number(userInput[4]), outcome: Number(traceMetrics.accuracy)}
     ]
 
     const response = await submitResult({

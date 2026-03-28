@@ -10,6 +10,9 @@ import { router } from "expo-router";
 import { toast } from "sonner-native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@/components/ui/button";
+import { MyRankDetail } from "@/services/result/result.type";
+import { getHighestRank } from "@/services/result/result";
+import Loading from "@/components/ui/loading";
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
@@ -19,6 +22,8 @@ export default function HomeScreen() {
   const {user, setUser, team, setTeam} = useAppContext();
 
   const rankings = [1,2,3,4,5,6,7];
+  const [results, setResults] = useState<(MyRankDetail | undefined)[]>([]);
+
   const scrollRef = useRef<ScrollView>(null);
   const members = ["Ellis","Ella","Ello","Ellu"];
   const carouselMembers = [...members, ...members];
@@ -26,6 +31,10 @@ export default function HomeScreen() {
   const [teamName, setTeamName] = useState(team?.name);
   const [editingName, setEditingName] = useState(false);
   const [loadingEditName, setLoadingEditName] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+
 
   useEffect(() => {
     let position = 0;
@@ -54,21 +63,40 @@ export default function HomeScreen() {
     checkTeam();
   }, []);
   
-  const checkTeam = async() => {
+  const checkTeam = async () => {
     const userResponse = await getStudentDetail();
-    if(!userResponse.success){
-      toast.error(userResponse.message)
+    if (!userResponse.success) {
+      toast.error(userResponse.message);
       return;
     }
     setUser(userResponse.user);
 
-    if(userResponse.user?.teamId === null || !userResponse.user?.teamId) {
-      router.push("/(auth)/team_confirmation"); 
-    } else{
-      fetchTeamDetail(userResponse.user.teamId);
+    if (!userResponse.user?.teamId) {
+      router.push("/(auth)/team_confirmation");
+    } else {
+      setLoading(true);
+      const teamId = userResponse.user.teamId;
+      await fetchTeamDetail(teamId);
+
+      const fetches = Array.from({ length: 8 }, (_, i) => {
+        const type = i === 0 ? undefined : i.toString();
+        return fetchResult(teamId, type);
+      });
+
+      const allResults = await Promise.all(fetches);
+      setResults(allResults);
+      setLoading(false);
     }
-    
-  }
+  };
+
+  const fetchResult = async (teamId: string, type?: string): Promise<MyRankDetail | undefined> => {
+    try {
+      const res = await getHighestRank({ teamId, activityType: type });
+      if (res?.data) return res.data;
+    } catch (err) {
+      console.log("Fetch error:", err);
+    }
+  };
 
   const fetchTeamDetail = async(id: string) => {
     const teamResponse = await getTeamDetail(id);
@@ -140,6 +168,12 @@ export default function HomeScreen() {
     
   
   };
+
+  if (loading) {
+    return (
+      <Loading/>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -226,10 +260,10 @@ export default function HomeScreen() {
         {/* GLOBAL RANKING */}
         <Text style={styles.section}>Global Ranking:</Text>
         <RankingCard 
-          rank="1"
-          score="100%"
-          teamName="Kita Menang Yey"
-          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+          rank={results[0]?.rank?.toString() || "-"}
+          score={results[0] ? `${Math.round(results[0].score * 100)}%` : "-"}
+          teamName={team?.name || "-"}
+          imageUrl={team?.logo || defaultLogo}
         />
 
         {rankings.map((item) => (
@@ -239,10 +273,10 @@ export default function HomeScreen() {
             </Text>
 
             <RankingCard 
-              rank="1"
-              score="100%"
-              teamName="Kita Menang Yey"
-              imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+              rank={results[item]?.rank?.toString() || "-"}
+              score={results[item] ? `${Math.round(results[item].score * 100)}%` : "-"}
+              teamName={team?.name || "-"}
+              imageUrl={team?.logo || defaultLogo}
             />
           </View>
         ))}

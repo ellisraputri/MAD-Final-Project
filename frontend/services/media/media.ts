@@ -69,3 +69,18 @@ export const uploadMedia45 = async (req: Media45Request): Promise<MediaResponse>
         };
     }
 }
+
+export const parseMediaContent = (content: string) => {
+    if (!content) return { url: "", levels: [] };
+
+    const [url, levelsString] = content.split("####");
+
+    const levels = levelsString
+      ? levelsString.split(",").map((n) => Number(n))
+      : [];
+
+    return {
+      url,
+      levels,
+    };
+};

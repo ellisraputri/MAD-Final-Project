@@ -104,7 +104,7 @@ export default function ActivitySevenScreen() {
       })
       const predictions = Object.values(userInput).map((inp, _) => {
         return {
-          prediction: inp,
+          prediction: Number(inp),
         }
       })
   

@@ -140,7 +140,7 @@ export default function ActivityTwoScreen() {
     })
     const predictions = audios.map((audio, _) => {
       return {
-        prediction: audio.input,
+        prediction: Number(audio.input),
       }
     })
 
