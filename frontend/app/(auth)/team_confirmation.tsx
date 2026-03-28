@@ -66,6 +66,8 @@ export default function TeamConfirmationScreen() {
   }
 
   const handleCreateTeam = async() => {
+    if(newTeamModalLoading) return;
+
     setNewTeamModalLoading(true);
 
     const response = await createTeam({
@@ -84,6 +86,7 @@ export default function TeamConfirmationScreen() {
   }
 
   const handleJoinTeam = async() => {
+    if(joinTeamModalLoading) return;
     setJoinTeamModalLoading(true);
 
     const response = await joinTeam({

@@ -308,6 +308,15 @@ export const submitResult = async (req, res) => {
   try {
     const { activityId, teamId, medias, predictions } = req.body;
 
+    let preds = predictions;
+    if(activityId == "6"){
+      preds = predictions.map((p, _) => {
+        return {
+          prediction: p.prediction
+        }
+      })
+    }
+
     const resultRef = db.collection("results");
 
     const newAttemptNo = await db.runTransaction(async (transaction) => {
@@ -330,6 +339,7 @@ export const submitResult = async (req, res) => {
 
     let score = 0;
     // TODO: model scoring
+    // activity 6 = loop predictions, ambil predictions[i].outcome
 
     const resultData = resultModel({
       activityId,
@@ -337,7 +347,7 @@ export const submitResult = async (req, res) => {
       attemptNo: newAttemptNo,
       score,
       medias,
-      predictions,
+      predictions: preds,
     });
 
     await resultRef.add(resultData);

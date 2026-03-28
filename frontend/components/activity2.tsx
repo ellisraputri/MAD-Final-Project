@@ -6,6 +6,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { useAppContext } from "@/context/AppContext";
+import { uploadMedia } from "@/services/media/media";
+import { submitResult } from "@/services/result/result";
+import { toast } from "sonner-native";
+import Button from "./ui/button";
 
 type audioType = {
 	uri: string;
@@ -20,6 +25,8 @@ const isAudioTypeEmpty = (obj: audioType) => {
 export default function ActivityTwoScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {team} = useAppContext();
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const [screen, setScreen] = useState<"record" | "submission">("record");
   const [result, setResult] =  useState<Record<number, any>>({
@@ -99,7 +106,9 @@ export default function ActivityTwoScreen() {
     });
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
+    if(!team?.id || submitLoading) return;
+
     const invalid = audios.some(v => v.uri !== "" && !v.input);
     if (invalid) {
       alert("Please fill all prediction fields.");
@@ -109,10 +118,47 @@ export default function ActivityTwoScreen() {
 		if(filledCount < 3){
 			alert(`You can only submit when there are 3 audios. Please continue to record ${3-filledCount} more videos.`)
 		}
-    else{
-      alert(`Successfully submitted the videos! \n ${audios[0].input} ${audios[1].input} ${audios[2].input}`)
-			router.push("/activity/[id]/results")
+
+    setSubmitLoading(true);
+    const uploads = audios.map((audio, index) => {
+      const file = {
+        uri: audio.uri,
+        name: `audio_${index}_${Math.random().toString(36).substring(2, 7)}.mp3`,
+        type: "audio/mp3",
+      };
+
+      return uploadMedia({
+        file: file,
+        type: "audio",
+        additional: audio.levels.toString(),
+      });
+    });
+
+    const medias = await Promise.all(uploads);
+    const ids = medias.map((media,_) => {
+      return media.id
+    })
+    const predictions = audios.map((audio, _) => {
+      return {
+        prediction: audio.input,
+      }
+    })
+
+    const response = await submitResult({
+      activityId: "2", 
+      teamId: team?.id, 
+      medias: ids, 
+      predictions: predictions
+    })
+    if(!response.success){
+      toast.error(response.message);
+      setSubmitLoading(false);
+      return;
     }
+
+    setSubmitLoading(false);
+    alert("Successfully submitted the audios and predictions!");
+    router.push("/activity/[id]/results")
   }
 
 	const handleAfterRecording = () => {
@@ -196,9 +242,8 @@ export default function ActivityTwoScreen() {
               </TouchableOpacity>
             )}
       
-            <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-              <Text style={styles.btnText}>Submit</Text>
-            </TouchableOpacity>
+            <Button onPress={handleSubmit} width={150} fontSize={18} 
+                marginTop={20} marginBottom={50} text="Submit" isLoading={submitLoading}/>
           </View>
         </>
       )}

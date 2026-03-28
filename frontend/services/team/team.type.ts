@@ -1,3 +1,5 @@
+import { RNFile } from "../media/media.type"
+
 export type TeamDetail = {
     id: string,
     grade: number,
@@ -18,6 +20,13 @@ export type CreateTeamRequest = {
 
 export type JoinTeamRequest = {
     teamId: string
+}
+
+export type EditTeamRequest = {
+    teamId: string,
+    name: string,
+    file?: RNFile,
+    logoUrl: string,
 }
 
 export type TeamBaseResponse = {

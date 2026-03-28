@@ -34,14 +34,23 @@ export const uploadMedia = async (req, res) => {
 export const uploadToCloudinary = async (req, res) => {
   try {
     const file = req.file;
+    const isAudio = file.mimetype.startsWith("audio");
 
     if (!file) {
       return error400(res, "No file uploaded");
     }
 
+    let streamOptions = {}
+    if (isAudio){
+      streamOptions = { folder: "users", resource_type: "video", format: "mp3" }
+    }
+    else{
+      streamOptions = { folder: "users", resource_type: "auto" }
+    }
+
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({ folder: "users" }, (err, result) => {
+        .upload_stream(streamOptions, (err, result) => {
           if (err) reject(err);
           else resolve(result);
         })

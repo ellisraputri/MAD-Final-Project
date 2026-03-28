@@ -5,9 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { getStudentDetail } from "@/services/student/student";
 import { useAppContext } from "@/context/AppContext";
-import { getTeamDetail } from "@/services/team/team";
+import { editTeam, getTeamDetail } from "@/services/team/team";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
+import * as ImagePicker from "expo-image-picker";
+import Button from "@/components/ui/button";
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
@@ -21,8 +23,9 @@ export default function HomeScreen() {
   const members = ["Ellis","Ella","Ello","Ellu"];
   const carouselMembers = [...members, ...members];
 
-  const [teamName, setTeamName] = useState("Kita Menang Yey");
-  const [editing, setEditing] = useState(false);
+  const [teamName, setTeamName] = useState(team?.name);
+  const [editingName, setEditingName] = useState(false);
+  const [loadingEditName, setLoadingEditName] = useState(false);
 
   useEffect(() => {
     let position = 0;
@@ -75,6 +78,68 @@ export default function HomeScreen() {
     }
     setTeam(teamResponse.team);
   }
+
+  const handleEditName = async() => {
+    if (!team?.id || !teamName || !team.logo || loadingEditName) return;
+
+    setLoadingEditName(true);
+
+    const response = await editTeam({
+      teamId: team.id,
+      name: teamName,
+      logoUrl: team.logo,
+    })
+    if(!response.success) {
+      toast.error(response.message);
+      return;
+    }
+
+    await fetchTeamDetail(team.id);
+    setEditingName(false);
+    setLoadingEditName(false);
+  }
+
+  const handleEditLogo = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      alert("Permission required!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    });
+
+    if (result.canceled) return;
+
+    const asset = result.assets[0];
+    const file = {
+      uri: asset.uri,
+      name: asset.fileName || "upload.jpg",
+      type: asset.mimeType || "image/jpeg",
+    };
+
+    if (!team?.id || !team?.name || !team.logo) return;
+
+    const response = await editTeam({
+      teamId: team.id,
+      name: team.name,
+      logoUrl: team.logo,
+      file: file
+    })
+    if(!response.success) {
+      toast.error(response.message);
+      return;
+    }
+
+    await fetchTeamDetail(team.id);
+    } catch (error) {
+      console.error(error);
+    }
+    
+  
+  };
 
   return (
     <View style={styles.container}>
@@ -132,7 +197,7 @@ export default function HomeScreen() {
                 name="pencil"
                 size={18}
                 color={theme.text}
-                onPress={() => setEditing(true)}
+                onPress={()=>setEditingName(true)}
               />
             </>
           </View>
@@ -153,6 +218,7 @@ export default function HomeScreen() {
               name="pencil"
               size={20}
               style={styles.editIcon}
+              onPress={handleEditLogo}
             />
           </TouchableOpacity>
         </View>
@@ -183,7 +249,7 @@ export default function HomeScreen() {
 
 
         <Modal
-          visible={editing}
+          visible={editingName}
           transparent
           animationType="fade"
         >
@@ -194,7 +260,7 @@ export default function HomeScreen() {
               <View style={styles.headerPopup}>
                 <Text style={styles.title}>Team Name</Text>
   
-                <TouchableOpacity onPress={() => setEditing(false)}>
+                <TouchableOpacity onPress={() => {setTeamName(team?.name); setEditingName(false)}}>
                   <Text style={styles.close}>✕</Text>
                 </TouchableOpacity>
               </View>
@@ -208,11 +274,14 @@ export default function HomeScreen() {
               />
   
               {/* OK Button */}
-              <View style={styles.buttonContainer}>
-                  <TouchableOpacity style={styles.buttonPopup}>
-                      <Text style={styles.buttonText}>OK</Text>
-                  </TouchableOpacity>
-              </View>
+              <Button
+                fontSize={16}
+                marginTop={10}
+                width={150}
+                text="OK"
+                onPress={handleEditName}
+                isLoading={loadingEditName}
+              />
   
             </View>
           </View>
@@ -392,26 +461,6 @@ export const createStyles = (theme: any) => {
       backgroundColor: "rgba(0,0,0,0.3)",
       justifyContent: "center",
       alignItems: "center",
-    },
-    buttonPopup: {
-      marginTop: 20,
-      borderWidth: 2,
-      borderColor: theme.text,
-      borderRadius: 50,
-      paddingVertical: 6,
-      alignItems: 'center',
-      width: 150,
-    },
-    buttonText: {
-      fontSize: 16,
-      color: theme.text,
-      fontWeight: '500',
-      fontFamily: "Nunito_700Bold",
-    },
-    buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginTop: 10,
     },
     input: {
       borderBottomWidth: 1,
