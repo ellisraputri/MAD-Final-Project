@@ -1,5 +1,5 @@
 import { db } from "../config/firestore.js";
-import { error400, error500 } from "../config/error.js";
+import { error500 } from "../config/error.js";
 import { activityModel } from "../models/activity.js";
 
 
@@ -19,6 +19,7 @@ export const getList = async (req, res) => {
       name: doc.data().name,
       type: doc.data().type,
       imageUrl: doc.data().imageUrl,
+      description: doc.data().description
     })));
 
     return res.status(200).json({

@@ -1,36 +1,32 @@
 import { db } from '../config/firestore.js';
 
-const getTeamsWhoFinishedAll = async () => {
-  const TOTAL_ACTIVITIES = 7;
-  
+const updateScoresAndOutcomes = async () => {
   try {
-    // 1. Fetch all result records (only need teamId and activityId)
-    const snapshot = await db.collection('results').get();
-    
-    // 2. Map of TeamID -> Set of unique ActivityIDs
-    const completionMap = {};
+    const snapshot = await db.collection('teams').get();
 
-    snapshot.forEach(doc => {
-      const { teamId, activityId } = doc.data();
-      
-      if (!completionMap[teamId]) {
-        completionMap[teamId] = new Set();
+    const batch = db.batch();
+    let count = 0;
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      if (data.logo === undefined || data.logo === null) {
+        batch.update(doc.ref, {
+          logo: "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg",
+        });
+
+        count++;
       }
-      
-      completionMap[teamId].add(activityId);
     });
 
-    // 3. Filter for teams that have 7 unique activities
-    const finishedTeams = Object.keys(completionMap).filter(teamId => {
-      return completionMap[teamId].size === TOTAL_ACTIVITIES;
-    });
+    await batch.commit();
 
-    console.log("Teams who finished everything:", finishedTeams);
-    return finishedTeams;
-
+    console.log(`Updated ${count} documents successfully!`);
+    process.exit();
   } catch (error) {
-    console.error("Error building query:", error);
+    console.error("Update failed:", error);
+    process.exit(1);
   }
 };
 
-getTeamsWhoFinishedAll();
+updateScoresAndOutcomes();

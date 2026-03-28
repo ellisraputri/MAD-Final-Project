@@ -1,37 +1,124 @@
+import Loading from "@/components/ui/loading";
 import PodiumCard from "@/components/ui/podium-card";
 import RankingCard from "@/components/ui/ranking-card";
+import { useAppContext } from "@/context/AppContext";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { getHighestRank, getLatestRank, getTopRanking } from "@/services/result/result";
+import { MyRankDetail, MyRankDetailParams, RankDetail } from "@/services/result/result.type";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
 const dropdownData = [
-  { label: "Global", value: "global" },
-  { label: "Activity 1", value: "activity1" },
-  { label: "Activity 2", value: "activity2" },
-  { label: "Activity 3", value: "activity3" },
-  { label: "Activity 4", value: "activity4" },
-  { label: "Activity 5", value: "activity5" },
-  { label: "Activity 6", value: "activity6" },
-  { label: "Activity 7", value: "activity7" },
+  { label: "Global", value: "global", params: "" },
+  { label: "Activity 1", value: "activity1", params: "1" },
+  { label: "Activity 2", value: "activity2", params: "2" },
+  { label: "Activity 3", value: "activity3", params: "3" },
+  { label: "Activity 4", value: "activity4", params: "4" },
+  { label: "Activity 5", value: "activity5", params: "5" },
+  { label: "Activity 6", value: "activity6", params: "6" },
+  { label: "Activity 7", value: "activity7", params: "7" },
 ];
 
 export default function LeaderboardScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const { team } = useAppContext();
+
+  const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
   const [dropdownValue, setDropdownValue] = useState("global");
-  const [results, setResult] = useState([
-    {rank: "4", teamName: "hehe1", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
-    {rank: "5", teamName: "ooopp", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
-    {rank: "6", teamName: "coba lihat", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
-    {rank: "7", teamName: "wink", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
-    {rank: "8", teamName: "fffff", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
-    {rank: "9", teamName: "askaks", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
-    {rank: "10", teamName: "fasaffff", score: "80%", imageUrl: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"},
-  
-  ])
+  const [results, setResult] = useState<RankDetail[]>([]);
+  const [myTeamBest, setMyTeamBest] = useState<MyRankDetail | null>(null);
+  const [myTeamLatest, setMyTeamLatest] = useState<MyRankDetail| null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  const calculateDisplayScore = (score: number) => {
+    const num = Math.round(score * 100); 
+    return `${num}%`
+  }
+
+  const fetchRanking = async (activityParam?: string) => {
+    try {
+      const res = await getTopRanking(activityParam);
+      if (res?.data) {
+        setResult(res.data);
+      }
+    } catch (err) {
+      console.log("Fetch error:", err);
+    } 
+  };
+
+  const fetchMyTeamBestResult = async (inputParams: MyRankDetailParams) => {
+    try {
+      const res = await getHighestRank(inputParams);
+      if (res?.data) {
+        setMyTeamBest(res.data);
+      }
+    } catch (err) {
+      console.log("Fetch error:", err);
+    }
+  };
+
+  const fetchMyTeamLatestResult = async (inputParams: MyRankDetailParams) => {
+    try {
+      const res = await getLatestRank(inputParams);
+      if (res?.data) {
+        setMyTeamLatest(res.data);
+      }
+    } catch (err) {
+      console.log("Fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    const run = async () => {
+      const param = dropdownData.find(item => item.value === dropdownValue)?.params;
+      const activityParam = param || undefined; 
+
+      setLoading(true);
+      setMyTeamBest(null);
+      setMyTeamLatest(null);
+
+      try {
+        await Promise.all([
+          fetchRanking(activityParam),
+          
+          team?.id
+            ? fetchMyTeamBestResult({
+                teamId: team.id,
+                activityType: activityParam,
+              })
+            : Promise.resolve(null), 
+
+          (team?.id && dropdownValue !== "global")
+            ? fetchMyTeamLatestResult({
+                teamId: team.id,
+                activityType: activityParam,
+              })
+            : Promise.resolve(null),
+        ]);
+      } 
+      finally {
+        setLoading(false);
+      }
+    };
+
+    run();
+  }, [dropdownValue, team?.id]);
+
+  const top1 = results[0];
+  const top2 = results[1];
+  const top3 = results[2];
+
+
+  if (loading) {
+    return (
+      <Loading/>
+    );
+  }
 
   return (
     <ScrollView 
@@ -65,35 +152,44 @@ export default function LeaderboardScreen() {
       </View>
 
       <View style={styles.podiumContainer}>
-        <PodiumCard
-          rank={3}
-          name="Ayam"
-          score="95%"
-          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
-        />
-        <View style={{ marginBottom: 30 }}>
+        {top3 && (
           <PodiumCard
-            rank={1}
-            name="Kita Menang Yey"
-            score="100%"
-            imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+            rank={3}
+            name={results[2].teamName}
+            score={calculateDisplayScore(results[2].score)}
+            imageUrl={results[2].imageUrl}
           />
-        </View>
-        <PodiumCard
-          rank={2}
-          name="Api"
-          score="98%"
-          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
-        />
+        )}
+
+        
+        {top1 && (
+          <View style={{ marginBottom: 30 }}>
+              <PodiumCard
+                rank={1}
+                name={results[0].teamName}
+                score={calculateDisplayScore(results[0].score)}
+                imageUrl={results[0].imageUrl}
+              />
+          </View>
+        )}
+        
+        {top2 && (
+          <PodiumCard
+            rank={2}
+            name={results[1].teamName}
+            score={calculateDisplayScore(results[1].score)}
+            imageUrl={results[1].imageUrl}
+          />
+        )}
       </View>
 
       {/* Your ranking list below */}
       <View style={styles.rankingList}>
-          {results.map((item, i) => (
+          {results.slice(3).map((item, i) => (
               <RankingCard 
               key={i}
-                rank={item.rank}
-                score={item.score}
+                rank={item.rank.toString()}
+                score={calculateDisplayScore(item.score)}
                 teamName={item.teamName}
                 imageUrl={item.imageUrl}
               />
@@ -106,10 +202,10 @@ export default function LeaderboardScreen() {
         </Text>
 
         <RankingCard 
-          rank="1"
-          score="100%"
-          teamName="Kita Menang Yey"
-          imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+          rank={myTeamBest?.rank?.toString() || "-"}
+          score={myTeamBest ? calculateDisplayScore(myTeamBest.score) : "-"}
+          teamName={team?.name || "-"}
+          imageUrl={team?.logo || defaultLogo}
         />
       </View>
 
@@ -120,10 +216,10 @@ export default function LeaderboardScreen() {
           </Text>
 
           <RankingCard 
-            rank="1"
-            score="100%"
-            teamName="Kita Menang Yey"
-            imageUrl="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/456e/live/08bb1170-3f6c-11ef-abf4-9dcdb3140a6f.jpg"
+            rank={myTeamLatest?.rank?.toString() || "-"}
+            score={myTeamLatest ? calculateDisplayScore(myTeamLatest.score) : "-"}
+            teamName={team?.name || "-"}
+            imageUrl={team?.logo || defaultLogo}
           />
         </View>
       }
