@@ -25,7 +25,7 @@ export const register = async (req, res) => {
       const studentData = studentModel({
         email: user.email,
         firstName: req.body.firstName,
-        grade: req.body.grade,
+        grade: Number(req.body.grade),
         appearance: true,
         teamId: null,
       });
