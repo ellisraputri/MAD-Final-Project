@@ -1,7 +1,7 @@
 import { db } from "../config/firestore.js";
 import { error400, error500 } from "../config/error.js";
 import { mediaModel } from "../models/media.js";
-
+import cloudinary from "../config/cloudinary.js";
 
 export const uploadMedia = async (req, res) => {
   try {
@@ -25,6 +25,34 @@ export const uploadMedia = async (req, res) => {
       message: "Media uploaded successfully",
     });
 
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const uploadToCloudinary = async (req, res) => {
+  try {
+    const file = req.file;
+
+    if (!file) {
+      return error400(res, "No file uploaded");
+    }
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: "users" }, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        })
+        .end(file.buffer); // ✅ from multer
+    });
+
+    return res.json({
+      url: uploadResult.secure_url,
+      success: true,
+      message: "Upload to cloud success"
+    });
   } catch (error) {
     console.error(error);
     return error500(res);
