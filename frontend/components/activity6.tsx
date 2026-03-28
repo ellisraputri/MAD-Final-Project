@@ -5,6 +5,11 @@ import Signature from "react-native-signature-canvas";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { useAppContext } from "@/context/AppContext";
+import { submitResult } from "@/services/result/result";
+import { toast } from "sonner-native";
+import { uploadMedia } from "@/services/media/media";
+import { base64ToRNFile } from "@/services/base64";
 
 type CardActivitySixProps = {
   title: string;
@@ -68,6 +73,8 @@ function CardActivitySix(props: CardActivitySixProps) {
 export default function ActivitySixScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {team} = useAppContext();
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const [phase, setPhase] = useState<1 | 2 | 3 | 4>(4); 
   const [isWaiting, setIsWaiting] = useState<1 | 2 | 3>(1);
@@ -164,24 +171,46 @@ export default function ActivitySixScreen() {
     startTime.current = 0;
   }
 
-  const handleSubmit = () => {
-    alert(`time_phase_1: ${userInput[1]}, time_phase_2: ${userInput[2]}, time_phase_3: ${userInput[3]}, accuracy_phase_3: ${userInput[4]}`)
+  const handleSubmit = async() => {
+    if(!team?.id || !traceData) return;
+    
+    setSubmitLoading(true);
+
+    const file = await base64ToRNFile(traceData);
+    const uploadResponse = await uploadMedia({
+      file: file,
+      type: "image",
+    })
+
+    const predictions = [
+      {prediction: userInput[1], outcome: reactionTimes["dominant"]},
+      {prediction: userInput[2], outcome: reactionTimes["nonDominant"]},
+      {prediction: userInput[3], outcome: traceMetrics.time},
+      {prediction: userInput[4], outcome: traceMetrics.accuracy}
+    ]
+
+    const response = await submitResult({
+      activityId: "6", 
+      teamId: team?.id, 
+      medias: [uploadResponse.id], 
+      predictions: predictions
+    })
+    if(!response.success){
+      toast.error(response.message);
+      setSubmitLoading(false);
+      return;
+    }
+
+    setSubmitLoading(false);
+    alert("Successfully submitted the results and predictions!");
     router.push("/activity/[id]/results")
   }
 
   useEffect(() => {
-  if (traceData) {
-    setPhase(4);
-
-    console.log("Reaction times:", reactionTimes);
-    console.log("Trace metrics:", traceMetrics);
-    console.log("Tracing data:", traceData);
-
-    // alert(
-    //   `Results:\nReaction Dominant: ${reactionTimes.dominant} ms\nReaction Non-Dominant: ${reactionTimes.nonDominant} ms\nTrace Time: ${traceMetrics.time} ms\nAccuracy: ${traceMetrics.accuracy}%`
-    // );
-  }
-}, [traceData]);
+    if (traceData) {
+      setPhase(4);
+    }
+  }, [traceData]);
 
   return (
     <KeyboardAwareScrollView
@@ -279,6 +308,7 @@ export default function ActivitySixScreen() {
               fontSize={18}
               marginTop={10}
               text={"Confirm"}
+              isLoading={submitLoading}
             />
           </View>
         </>

@@ -80,7 +80,7 @@ export default function HomeScreen() {
   }
 
   const handleEditName = async() => {
-    if (!team?.id || !teamName || !team.logo) return;
+    if (!team?.id || !teamName || !team.logo || loadingEditName) return;
 
     setLoadingEditName(true);
 

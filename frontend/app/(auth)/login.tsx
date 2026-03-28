@@ -27,6 +27,8 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async() => {
+    if(isLoading) return;
+    
     if(email==="" || password===""){
       alert("Fields cannot be empty");
     }
