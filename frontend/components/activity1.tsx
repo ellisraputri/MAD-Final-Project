@@ -172,7 +172,7 @@ export default function ActivityOneScreen() {
     });
 
     const medias = await Promise.all(uploads);
-    const urls = medias.map((media,_) => {
+    const ids = medias.map((media,_) => {
       return media.id
     })
     const predictions = videos.map((video, _) => {
@@ -185,7 +185,7 @@ export default function ActivityOneScreen() {
     const response = await submitResult({
       activityId: "1", 
       teamId: team?.id, 
-      medias: urls, 
+      medias: ids, 
       predictions: predictions
     })
     if(!response.success){

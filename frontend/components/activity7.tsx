@@ -99,7 +99,7 @@ export default function ActivitySevenScreen() {
 
       const medias = await Promise.all(uploads.filter(Boolean));
 
-      const urls = medias.map((media,_) => {
+      const ids = medias.map((media,_) => {
         return media.id
       })
       const predictions = Object.values(userInput).map((inp, _) => {
@@ -111,7 +111,7 @@ export default function ActivitySevenScreen() {
       const response = await submitResult({
         activityId: "7", 
         teamId: team?.id, 
-        medias: urls, 
+        medias: ids, 
         predictions: predictions
       })
       if(!response.success){

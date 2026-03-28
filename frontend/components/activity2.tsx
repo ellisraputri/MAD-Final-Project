@@ -135,7 +135,7 @@ export default function ActivityTwoScreen() {
     });
 
     const medias = await Promise.all(uploads);
-    const urls = medias.map((media,_) => {
+    const ids = medias.map((media,_) => {
       return media.id
     })
     const predictions = audios.map((audio, _) => {
@@ -147,7 +147,7 @@ export default function ActivityTwoScreen() {
     const response = await submitResult({
       activityId: "2", 
       teamId: team?.id, 
-      medias: urls, 
+      medias: ids, 
       predictions: predictions
     })
     if(!response.success){

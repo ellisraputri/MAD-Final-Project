@@ -5,11 +5,17 @@ import { Ionicons } from "@expo/vector-icons";
 import ActivityFiveSubmissionCard from "./ui/activity5-submission-card";
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { useAppContext } from "@/context/AppContext";
+import { submitResult } from "@/services/result/result";
+import { toast } from "sonner-native";
+import { router } from "expo-router";
 
 export default function ActivityFiveScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {team} = useAppContext();
 
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [screen, setScreen] = useState<"record" | "submission">("record");
   
   const [vibrations, setVibrations] = useState<{
@@ -98,7 +104,9 @@ export default function ActivityFiveScreen() {
     });
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
+    if(!team?.id || submitLoading) return;
+
     const invalid = vibrations.some(v => !v.movement);
     if (invalid) {
       alert("Please fill all fields.");
@@ -107,11 +115,32 @@ export default function ActivityFiveScreen() {
 
     const currLength = vibrations.length;
     if(currLength < 3){
-      alert(`You can only submit when there are 3 videos. Please continue to record ${3-currLength} more videos.`)
+      alert(`You can only submit when there are 3 inputs. Please continue to record ${3-currLength} more videos.`)
     }
-    else{
-      alert(`Successfully submitted the videos! \n ${vibrations[0].duration} ${vibrations[0].movement}`)
+    
+    setSubmitLoading(true);
+    const predictions = vibrations.map((vib, _) => {
+      return {
+        prediction: vib.movement,
+      }
+    })
+    const durations = vibrations.map((vib,_) => (vib.duration));
+
+    const response = await submitResult({
+      activityId: "5", 
+      teamId: team?.id, 
+      medias: durations, 
+      predictions: predictions
+    })
+    if(!response.success){
+      toast.error(response.message);
+      setSubmitLoading(false);
+      return;
     }
+
+    setSubmitLoading(false);
+    alert("Successfully submitted the vibrations and predictions!");
+    router.push("/activity/[id]/results")
   }
 
   const confirmDisabled = (elapsedTime === 0) || (rerecordIndex === null && vibrations.length >= 3);
@@ -195,7 +224,7 @@ export default function ActivityFiveScreen() {
             )}
       
             <Button onPress={handleSubmit} width={150} fontSize={18} 
-                marginTop={20} marginBottom={50} text="Submit"/>
+                marginTop={20} marginBottom={50} text="Submit" isLoading={submitLoading} />
           </View>
         </>
       )}
