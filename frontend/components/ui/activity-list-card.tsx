@@ -1,8 +1,6 @@
-import { useAppContext } from "@/context/AppContext";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { socket } from "@/services/socket";
-import { Link, useRouter } from "expo-router";
-import React, { useEffect, useRef } from "react";
+import { Link } from "expo-router";
+import React from "react";
 import { View, Text, StyleSheet, ImageBackground, Pressable } from "react-native";
 
 type ActivityProps = {
@@ -16,21 +14,6 @@ type ActivityProps = {
 export default function ActivityListCard(props: ActivityProps) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const isAllOnline = useRef(false);
-  const {team} = useAppContext();
-
-  useEffect(() => {
-    socket.on("team_active_users", ({ teamId, users }) => {
-      console.log("users in activity list", users);
-      if(team?.members.length === users.length) isAllOnline.current = true;
-    });
-
-    return () => {
-      socket.off("team_active_users"); 
-    };
-  }, []);
-
-  const isClickable = (props.index!==6 && props.index!==7) || (isAllOnline);
 
   return (
     <View style={styles.container}>
@@ -65,16 +48,8 @@ export default function ActivityListCard(props: ActivityProps) {
           }}
           asChild
         >
-          <Pressable
-            disabled={!isClickable}
-            onPress={(e) => {
-              if (!isClickable) {
-                e.preventDefault(); 
-                alert("All team members need to be online to play this game.")
-              }
-            }}
-          >
-            <Text style={[styles.link, !isClickable && { color: "gray" }]}>
+          <Pressable>
+            <Text style={[styles.link]}>
               Find out more...
             </Text>
           </Pressable>

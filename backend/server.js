@@ -8,7 +8,6 @@ import { db } from './config/firestore.js';
 import studentRouter from './router/student.js';
 import teamRouter from './router/team.js';
 import resultRouter from './router/result.js';
-import activityRouter from './router/activity.js';
 import mediaRouter from './router/media.js';
 import { registerTeamSocket } from './config/socket.js';
 
