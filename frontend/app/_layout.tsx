@@ -11,6 +11,8 @@ import { Lato_400Regular, Lato_700Bold } from '@expo-google-fonts/lato';
 import { AppProvider } from '@/context/AppContext';
 import { Toaster } from "sonner-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useEffect } from 'react';
+import { socket } from '@/services/socket';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -21,6 +23,22 @@ export default function RootLayout() {
     Lato_400Regular,
     Lato_700Bold,
   });
+
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Connected:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   if (!fontsLoaded) {
     return (

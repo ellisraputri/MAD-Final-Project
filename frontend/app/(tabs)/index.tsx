@@ -13,6 +13,7 @@ import Button from "@/components/ui/button";
 import { MyRankDetail } from "@/services/result/result.type";
 import { getHighestRank } from "@/services/result/result";
 import Loading from "@/components/ui/loading";
+import { socket } from "@/services/socket";
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
@@ -25,8 +26,8 @@ export default function HomeScreen() {
   const [results, setResults] = useState<(MyRankDetail | undefined)[]>([]);
 
   const scrollRef = useRef<ScrollView>(null);
-  const members = ["Ellis","Ella","Ello","Ellu"];
-  const carouselMembers = [...members, ...members];
+  const [members, setMembers] = useState<string[]>([]);
+  const [carouselMembers, setCarouselMembers] = useState<string[]>([]);
 
   const [teamName, setTeamName] = useState(team?.name);
   const [editingName, setEditingName] = useState(false);
@@ -34,7 +35,7 @@ export default function HomeScreen() {
 
   const [loading, setLoading] = useState(false);
   const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-
+  const hasJoinedRef = useRef(false);
 
   useEffect(() => {
     let position = 0;
@@ -105,6 +106,7 @@ export default function HomeScreen() {
       return;
     }
     setTeam(teamResponse.team);
+    hasJoinedRef.current = false;
   }
 
   const handleEditName = async() => {
@@ -169,13 +171,58 @@ export default function HomeScreen() {
   
   };
 
-  if (loading) {
-    return (
-      <Loading/>
-    );
-  }
+  
 
-  return (
+  useEffect(() => {
+    if (!user?.id || !team?.id) {console.log("not complete", user, team); return};
+
+    const tryJoin = () => {
+      if (hasJoinedRef.current) return;
+
+      if (!socket.connected) {
+        console.log("⏳ socket not ready");
+        return;
+      }
+
+      console.log("🔥 JOINING TEAM");
+
+      socket.emit("join_team", {
+        teamId: team.id,
+        user: {
+          userId: user.id,
+          name: user.firstName,
+        },
+      });
+
+      hasJoinedRef.current = true;
+    };
+
+    // try immediately
+    tryJoin();
+
+    // also retry when socket connects
+    socket.on("connect", tryJoin);
+
+    return () => {
+      socket.off("connect", tryJoin);
+    };
+  }, [user?.id, team?.id]);
+
+  useEffect(() => {
+    socket.on("team_active_users", ({ teamId, users }) => {
+      console.log("users", users);
+      const names = users.map((u: any) => u.name);
+      setMembers(names);
+      setCarouselMembers([...names, ...names]); 
+    });
+
+    return () => {
+      socket.off("team_active_users"); 
+    };
+  }, []);
+
+
+  return loading? <Loading/> : (
     <View style={styles.container}>
       
       {/* HEADER */}
