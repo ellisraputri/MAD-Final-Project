@@ -38,6 +38,18 @@ export const registerTeamSocket = (io) => {
             });
         });
 
+        socket.on("get_team_active_users", ({ teamId }) => {
+            if (!teamId) return;
+
+            const teamMap = teamMembers.get(teamId);
+            const users = teamMap ? Array.from(teamMap.values()) : [];
+
+            socket.emit("team_active_users", {
+                teamId,
+                users,
+            });
+        });
+
         socket.on("disconnect", () => {
             const data = socketToTeam.get(socket.id);
             if (!data) return;

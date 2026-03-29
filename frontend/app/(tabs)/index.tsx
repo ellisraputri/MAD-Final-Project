@@ -209,11 +209,15 @@ export default function HomeScreen() {
   }, [user?.id, team?.id]);
 
   useEffect(() => {
+    socket.emit("get_team_active_users", {
+      teamId: team?.id,
+    });
+
     socket.on("team_active_users", ({ teamId, users }) => {
       console.log("users", users);
       const names = users.map((u: any) => u.name);
       setMembers(names);
-      setCarouselMembers([...names, ...names]); 
+      setCarouselMembers([...names]); 
     });
 
     return () => {
@@ -266,6 +270,8 @@ export default function HomeScreen() {
         
         {/* TEAM INFO */}
         <Text style={styles.label}>Team ID: {team?.id}</Text>
+
+        <Text style={styles.label}>Team Class Grade: {team?.grade}</Text>
 
         <View style={styles.row}>
           <Text style={styles.label}>Team Name:</Text>
