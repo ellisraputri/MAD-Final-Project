@@ -4,9 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import Button from "./button";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { submitRating } from "@/services/result/result";
+import { toast } from "sonner-native";
 
 export default function RatingPopup(props: { 
-    id: string;
+    activityId: string;
+    resultId: string;
     showModal: boolean; 
     onClose: () => void; 
 }) {
@@ -16,9 +19,36 @@ export default function RatingPopup(props: {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
 
-    const handleSubmitRating = () => {
-        alert(`Rating: ${rating}, comment: ${comment}`);
-    }
+    const [submitLoading, setSubmitLoading] = useState(false);
+
+    const handleSubmitRating = async () => {
+        if(props.resultId === "") return;
+        if (rating === 0) {
+            alert("Please provide the star rating!");
+            return;
+        }
+
+        try {
+            setSubmitLoading(true);
+            const response = await submitRating({
+                resultId: props.resultId,
+                ratings: rating,
+                comments: comment.trim(),
+            });
+            if (!response.success) {
+                toast.error(response.message);
+                return;
+            }
+            alert("Successfully rate this activity!");
+            props.onClose();
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong");
+        } finally {
+            setSubmitLoading(false);
+        }
+    };
 
     return (
         <Modal visible={props.showModal} animationType="fade" transparent={true}>
@@ -33,7 +63,7 @@ export default function RatingPopup(props: {
                             <Ionicons name="close" size={35} color={theme.text} />
                         </TouchableOpacity>
 
-                        <Text style={styles.title}>Rate Activity {props.id}</Text>
+                        <Text style={styles.title}>Rate Activity {props.activityId}</Text>
 
                         <View style={styles.starRow}>
                             {[1, 2, 3, 4, 5].map((item) => (
@@ -54,7 +84,8 @@ export default function RatingPopup(props: {
                         <Text style={styles.label}>Comment</Text>
                         <TextInput style={styles.commentBox} value={comment} onChangeText={setComment} multiline={true} />
 
-                        <Button onPress={handleSubmitRating} width={200} fontSize={20} marginTop={30} text="Submit"/>
+                        <Button onPress={handleSubmitRating} width={200} fontSize={20} 
+                            marginTop={30} text="Submit" isLoading={submitLoading}/>
 
                     </SafeAreaView>
                 </KeyboardAvoidingView>

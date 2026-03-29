@@ -1,5 +1,5 @@
 import { createDefaultError } from "@/constants/error";
-import { GetResultDetailRequest, GetResultDetailResponse, GetResultListRequest, GetResultListResponse, ResultBaseResponse, SubmitResultRequest } from "./result.type";
+import { GetResultDetailRequest, GetResultDetailResponse, GetResultListRequest, GetResultListResponse, ResultBaseResponse, SubmitRatingRequest, SubmitResultRequest, SubmitResultResponse } from "./result.type";
 import {apiClient} from "../firebase.js"
 import { MyRankDetailParams, MyRankDetailResponse, RankDetailResponse } from "./result.type.js";
 
@@ -58,13 +58,16 @@ export const getLatestRank = async(inputParams: MyRankDetailParams)
     }
 }
 
-export const submitResult = async(req: SubmitResultRequest): Promise<ResultBaseResponse> => {
+export const submitResult = async(req: SubmitResultRequest): Promise<SubmitResultResponse> => {
     try {
         const response = await apiClient.post("/api/result/submit", req);
         return response.data;
 
     } catch (error: any) {
-        return createDefaultError(error.response.data.message);
+        return {
+            resultId: "",
+            ...createDefaultError(error.response.data.message)
+        }
     }
 }
 
@@ -91,5 +94,15 @@ export const getResultDetail = async(req: GetResultDetailRequest): Promise<GetRe
             data: null,
             ...createDefaultError(error.response.data.message)
         };
+    }
+}
+
+export const submitRating = async(req: SubmitRatingRequest): Promise<ResultBaseResponse> => {
+    try {
+        const response = await apiClient.post("/api/result/rating", req);
+        return response.data;
+
+    } catch (error: any) {
+        return createDefaultError(error.response.data.message);
     }
 }

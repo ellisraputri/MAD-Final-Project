@@ -2,7 +2,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import LiveRecorder from "./ui/audio-recording";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import AudioPlayer from "./ui/audio-player";
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
@@ -10,6 +10,7 @@ import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
+import RatingPopup from "./ui/rating-popup";
 
 type CardActivitySevenProps = {
   title: string;
@@ -61,6 +62,9 @@ export default function ActivitySevenScreen() {
     const styles = createStyles(theme);
     const {team} = useAppContext();
     const  [submitLoading, setSubmitLoading] = useState(false);
+
+    const [showRating, setShowRating] = useState(false);
+    const [currResultId, setCurrResultId] = useState<string>("");
 
     const [phase, setPhase] = useState<1|2|3|4>(1);
     const [result, setResult] =  useState<Record<number, any>>({
@@ -121,7 +125,23 @@ export default function ActivitySevenScreen() {
       }
   
       setSubmitLoading(false);
-      alert("Successfully submitted the audios and predictions!");
+      Alert.alert(
+        "Success",
+        "Successfully submitted the audios and predictions!",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              setCurrResultId(response.resultId);
+              setShowRating(true); 
+            },
+          },
+        ]
+      );
+    }
+  
+    const onCloseRating = () => {
+      setShowRating(false);
       router.push("/activity/[id]/results")
     }
 
@@ -209,6 +229,13 @@ export default function ActivitySevenScreen() {
                           isLoading={submitLoading}
 											/>
                     </View>
+
+                    <RatingPopup
+                      activityId={'7'}
+                      resultId={currResultId}
+                      showModal={showRating}
+                      onClose={onCloseRating}
+                    />
                 </>
 								:
 								<>

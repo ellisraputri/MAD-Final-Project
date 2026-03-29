@@ -1,4 +1,5 @@
 import { MediaDetail } from "../media/media.type"
+
 export type MyRankDetail = {
     teamId: string,
     score: number,
@@ -32,6 +33,10 @@ export type MyRankDetailParams = {
 export type ResultBaseResponse = {
     success: boolean,
     message: string,
+}
+
+export type SubmitResultResponse = ResultBaseResponse & {
+    resultId: string,
 }
 
 export type SubmitResultRequest = {
@@ -79,4 +84,10 @@ export type GetResultDetailResponse = {
     success: boolean,
     message: string,
     data: ResultDetail | null
+}
+
+export type SubmitRatingRequest = {
+    resultId: string,
+    ratings?: number,
+    comments?: string,
 }

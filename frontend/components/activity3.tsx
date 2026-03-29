@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Alert } from "react-native";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,6 +12,7 @@ import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner-native";
+import RatingPopup from "./ui/rating-popup";
 
 export default function ActivityThreeScreen() {
   const theme = useAppTheme();
@@ -28,6 +29,9 @@ export default function ActivityThreeScreen() {
 
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  const [showRating, setShowRating] = useState(false);
+  const [currResultId, setCurrResultId] = useState<string>("");
 
   const [rerecordIndex, setRerecordIndex] = useState<number | null>(null);
 
@@ -151,6 +155,7 @@ export default function ActivityThreeScreen() {
     const currLength = videos.length;
     if(currLength < 3){
       alert(`You can only submit when there are 3 videos. Please continue to record ${3-currLength} more videos.`)
+      return;
     }
 
     setSubmitLoading(true);
@@ -190,8 +195,23 @@ export default function ActivityThreeScreen() {
     }
 
     setSubmitLoading(false);
+    Alert.alert(
+      "Success",
+      "Successfully submitted the videos and predictions!",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            setCurrResultId(response.resultId);
+            setShowRating(true); 
+          },
+        },
+      ]
+    );
+  }
 
-    alert(`Successfully submitted the videos and predictions!`)
+  const onCloseRating = () => {
+    setShowRating(false);
     router.push("/activity/[id]/results")
   }
 
@@ -330,6 +350,13 @@ export default function ActivityThreeScreen() {
         </View>
         </SafeAreaView>
       </Modal>
+
+      <RatingPopup
+        activityId={'3'}
+        resultId={currResultId}
+        showModal={showRating}
+        onClose={onCloseRating}
+      />
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, TextInput } from "react-native";
+import { View, Text, Pressable, StyleSheet, TextInput, Alert } from "react-native";
 import Signature from "react-native-signature-canvas";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "./ui/button";
@@ -10,6 +10,7 @@ import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import { uploadMedia } from "@/services/media/media";
 import { base64ToRNFile } from "@/services/base64";
+import RatingPopup from "./ui/rating-popup";
 
 type CardActivitySixProps = {
   title: string;
@@ -90,6 +91,8 @@ export default function ActivitySixScreen() {
     time: null as number | null,
     accuracy: null as number | null
   });
+  const [showRating, setShowRating] = useState(false);
+  const [currResultId, setCurrResultId] = useState<string>("");
 
   const [userInput, setUserInput] = useState<Record<number,string>>({1:"", 2:"", 3:"", 4:""});  //1 = time_phase_1, 2 = time_phase_2, 3 = time_phase_3, 4 = accuracy_phase_3
 
@@ -202,7 +205,23 @@ export default function ActivitySixScreen() {
     }
 
     setSubmitLoading(false);
-    alert("Successfully submitted the results and predictions!");
+    Alert.alert(
+      "Success",
+      "Successfully submitted the results and predictions!",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            setCurrResultId(response.resultId);
+            setShowRating(true); 
+          },
+        },
+      ]
+    );
+  }
+
+  const onCloseRating = () => {
+    setShowRating(false);
     router.push("/activity/[id]/results")
   }
 
@@ -311,6 +330,13 @@ export default function ActivitySixScreen() {
               isLoading={submitLoading}
             />
           </View>
+
+          <RatingPopup
+            activityId={'6'}
+            resultId={currResultId}
+            showModal={showRating}
+            onClose={onCloseRating}
+          />
         </>
       )}
     </View>
