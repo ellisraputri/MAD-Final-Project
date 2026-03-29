@@ -34,7 +34,6 @@ app.get('/', (req, res) => res.send("Firebase API working"));
 app.use("/api/auth", studentRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/result", resultRouter);
-app.use("/api/activity", activityRouter);
 app.use("/api/media", mediaRouter);
 
 server.listen(PORT, "0.0.0.0", () => {
