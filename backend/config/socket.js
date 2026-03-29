@@ -1,9 +1,14 @@
+import {saveTeamResult67} from "../controller/result.js";
+
 export const registerTeamSocket = (io) => {
     const teamMembers = new Map(); 
     // teamId -> Map(userId -> { userId, name })
 
     const socketToTeam = new Map(); 
     // socket.id -> { teamId, userId }
+
+    const teamToResult = new Map();
+    // teamId -> Map<userId, result>
 
     io.on("connection", (socket) => {
         socket.on("join_team", ({ teamId, user }) => {
@@ -48,6 +53,55 @@ export const registerTeamSocket = (io) => {
                 teamId,
                 users,
             });
+        });
+
+        socket.on("submit_result_user", async ({ teamId, activityId, result }) => {
+            if (!teamId || !activityId) return;
+
+            // init maps
+            if (!teamToResult.has(teamId)) {
+                teamToResult.set(teamId, new Map());
+            }
+
+            const activityMap = teamToResult.get(teamId);
+
+            if (!activityMap.has(activityId)) {
+                activityMap.set(activityId, new Map());
+            }
+
+            const resultsMap = activityMap.get(activityId);
+
+            // ✅ prevent duplicate per user
+            resultsMap.set(result.userId, result);
+
+            const teamMap = teamMembers.get(teamId);
+            const users = teamMap ? Array.from(teamMap.values()) : [];
+
+            const isDone = resultsMap.size === users.length;
+
+            // ✅ broadcast progress
+            io.to(teamId).emit("submit_result_done", {
+                activityId,
+                isDone,
+            });
+
+            // 🔥 ONLY BACKEND SAVES (ONCE)
+            if (isDone) {
+                try {
+                const allResults = Array.from(resultsMap.values());
+
+                // 👉 call your controller / service directly
+                await saveTeamResult67({
+                    teamId,
+                    activityId,
+                    results: allResults,
+                });
+
+                console.log("✅ Team result saved once");
+                } catch (err) {
+                console.error("❌ Failed to save team result", err);
+                }
+            }
         });
 
         socket.on("disconnect", () => {

@@ -308,15 +308,6 @@ export const submitResult = async (req, res) => {
   try {
     const { activityId, teamId, medias, predictions } = req.body;
 
-    let preds = predictions;
-    if(activityId == "6"){
-      preds = predictions.map((p, _) => {
-        return {
-          prediction: p.prediction
-        }
-      })
-    }
-
     const resultRef = db.collection("results");
 
     const newAttemptNo = await db.runTransaction(async (transaction) => {
@@ -350,7 +341,7 @@ export const submitResult = async (req, res) => {
       score,
       outcomes,
       medias,
-      predictions: preds,
+      predictions,
     });
 
     await resultRef.add(resultData);
@@ -364,6 +355,46 @@ export const submitResult = async (req, res) => {
     console.error(error);
     return error500(res);
   }
+};
+
+export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
+  const resultRef = db.collection("results");
+
+  const newAttemptNo = await db.runTransaction(async (transaction) => {
+    const query = resultRef
+      .where("teamId", "==", teamId)
+      .where("activityId", "==", activityId)
+      .orderBy("attemptNo", "desc")
+      .limit(1);
+
+    const snapshot = await transaction.get(query);
+
+    let latestAttemptNo = 0;
+
+    if (!snapshot.empty) {
+      latestAttemptNo = snapshot.docs[0].data().attemptNo || 0;
+    }
+
+    return latestAttemptNo + 1;
+  });
+
+  let score = 0;
+  // TODO: model scoring
+  // activity 6 = loop predictions, ambil predictions[i].outcome
+
+  const outcomes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  const resultData = resultModel({
+    activityId,
+    teamId,
+    attemptNo: newAttemptNo,
+    score: 0,
+    outcomes: outcomes,
+    medias: results.flatMap(r => r.medias || []),
+    predictions: results.flatMap(r => r.predictions),
+  });
+
+  await resultRef.add(resultData);
 };
 
 export const rate = async (req, res) => {

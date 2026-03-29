@@ -10,6 +10,7 @@ import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import { uploadMedia } from "@/services/media/media";
 import { base64ToRNFile } from "@/services/base64";
+import { socket } from "@/services/socket";
 
 type CardActivitySixProps = {
   title: string;
@@ -73,7 +74,7 @@ function CardActivitySix(props: CardActivitySixProps) {
 export default function ActivitySixScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const {team} = useAppContext();
+  const {user, team} = useAppContext();
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const [phase, setPhase] = useState<1 | 2 | 3 | 4>(4); 
@@ -90,6 +91,7 @@ export default function ActivitySixScreen() {
     time: null as number | null,
     accuracy: null as number | null
   });
+  const [isWaitingResult, setIsWaitingResult] = useState(false);
 
   const [userInput, setUserInput] = useState<Record<number,string>>({1:"", 2:"", 3:"", 4:""});  //1 = time_phase_1, 2 = time_phase_2, 3 = time_phase_3, 4 = accuracy_phase_3
 
@@ -171,6 +173,22 @@ export default function ActivitySixScreen() {
     startTime.current = 0;
   }
 
+  useEffect(() => {
+    const handler = ({ activityId, isDone }: any) => {
+      if (activityId !== "6") return;
+
+      if (isDone) {
+        router.push(`/(tabs)/activity/6/results`);
+      }
+    };
+
+    socket.on("submit_result_done", handler);
+
+    return () => {
+      socket.off("submit_result_done", handler);
+    };
+  }, []);
+
   const handleSubmit = async() => {
     if(!team?.id || !traceData) return;
     
@@ -189,21 +207,20 @@ export default function ActivitySixScreen() {
       {prediction: Number(userInput[4]), outcome: Number(traceMetrics.accuracy)}
     ]
 
-    const response = await submitResult({
-      activityId: "6", 
-      teamId: team?.id, 
-      medias: [uploadResponse.id], 
-      predictions: predictions
-    })
-    if(!response.success){
-      toast.error(response.message);
-      setSubmitLoading(false);
-      return;
-    }
+    socket.emit("submit_result_user", {
+      teamId: team.id,
+      activityId: "6",
+      result: {
+        userId: user?.id, 
+        predictions: predictions,
+        medias: [uploadResponse.id], 
+      }
+    });
 
     setSubmitLoading(false);
     alert("Successfully submitted the results and predictions!");
-    router.push("/activity/[id]/results")
+    
+    setIsWaitingResult(true);
   }
 
   useEffect(() => {
@@ -211,6 +228,17 @@ export default function ActivitySixScreen() {
       setPhase(4);
     }
   }, [traceData]);
+
+  if (isWaitingResult) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Waiting for teammates...</Text>
+        <Text style={{ textAlign: "center", marginTop: 10 }}>
+          All team members must submit before viewing results.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAwareScrollView

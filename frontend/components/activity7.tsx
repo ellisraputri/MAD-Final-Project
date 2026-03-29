@@ -1,5 +1,5 @@
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import LiveRecorder from "./ui/audio-recording";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -10,6 +10,7 @@ import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
+import { socket } from "@/services/socket";
 
 type CardActivitySevenProps = {
   title: string;
@@ -59,7 +60,7 @@ function CardActivitySeven(props: CardActivitySevenProps) {
 export default function ActivitySevenScreen() {
     const theme = useAppTheme();
     const styles = createStyles(theme);
-    const {team} = useAppContext();
+    const {user, team} = useAppContext();
     const  [submitLoading, setSubmitLoading] = useState(false);
 
     const [phase, setPhase] = useState<1|2|3|4>(1);
@@ -72,12 +73,29 @@ export default function ActivitySevenScreen() {
 		const [isEditing, setIsEditing] = useState({
 			title:"", type:0
 		});
+    const [isWaitingResult, setIsWaitingResult] = useState(false);
 
     const handleRetry =() =>{
         setPhase(1);
         setResult({1:null, 2:null, 3:null});
         setUserInput({1:"", 2:"", 3:""});
     }
+    
+    useEffect(() => {
+      const handler = ({ activityId, isDone }: any) => {
+        if (activityId !== "7") return;
+  
+        if (isDone) {
+          router.push(`/(tabs)/activity/7/results`);
+        }
+      };
+  
+      socket.on("submit_result_done", handler);
+  
+      return () => {
+        socket.off("submit_result_done", handler);
+      };
+    }, []);
 
     const handleSubmit = async() =>{
       if(!team?.id) return;
@@ -108,22 +126,32 @@ export default function ActivitySevenScreen() {
         }
       })
   
-      const response = await submitResult({
-        activityId: "7", 
-        teamId: team?.id, 
-        medias: ids, 
-        predictions: predictions
-      })
-      if(!response.success){
-        toast.error(response.message);
-        setSubmitLoading(false);
-        return;
-      }
+      socket.emit("submit_result_user", {
+        teamId: team.id,
+        activityId: "7",
+        result: {
+          userId: user?.id, 
+          predictions: predictions,
+          medias: ids, 
+        }
+      });
   
       setSubmitLoading(false);
       alert("Successfully submitted the audios and predictions!");
-      router.push("/activity/[id]/results")
+      setIsWaitingResult(true);
     }
+
+    if (isWaitingResult) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Waiting for teammates...</Text>
+          <Text style={{ textAlign: "center", marginTop: 10 }}>
+            All team members must submit before viewing results.
+          </Text>
+        </View>
+      );
+    }
+    
 
     return(
         <KeyboardAwareScrollView
@@ -231,7 +259,10 @@ export default function ActivitySevenScreen() {
 
 const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
-      cardTitle: {
+    container: { flex: 1}, 
+    title: { fontSize: 20, fontWeight: "600", color: theme.text, lineHeight: 28, marginBottom: 15 },
+
+    cardTitle: {
       fontSize: 18,
       fontFamily: "Lato_700Bold",
       color: theme.text,
