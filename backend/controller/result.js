@@ -31,12 +31,6 @@ const groupByTeamAndActivity = (results) => {
 const getBestRecord = (records) =>
   records.reduce((best, r) => (r.score > best.score ? r : best), records[0]);
 
-const getLatestRecord = (records) =>
-  records.reduce((latest, r) =>
-    r.attemptNo > latest.attemptNo ? r : latest,
-    records[0]
-  );
-
 const sortAndRank = (ranking) => {
   ranking.sort((a, b) => b.score - a.score);
   let currentRank = 1;
@@ -344,11 +338,12 @@ export const submitResult = async (req, res) => {
       predictions,
     });
 
-    await resultRef.add(resultData);
+    const docRef = await resultRef.add(resultData);
 
     return res.status(200).json({
       success: true,
       message: "Result saved successfully",
+      resultId: docRef.id,
     });
 
   } catch (error) {

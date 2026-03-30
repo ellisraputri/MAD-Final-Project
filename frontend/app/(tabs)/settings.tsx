@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import CustomDropdown from "@/components/ui/dropdown";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import RatingPopup from "@/components/ui/rating-popup";
 import { logout } from "@/services/auth/auth";
 import { router } from "expo-router";
 import { useAppContext } from "@/context/AppContext";
@@ -20,8 +19,6 @@ export default function SettingsScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const {user, setUser} = useAppContext();
-
-  const [showRating, setShowRating] = useState(false);
 
   const [name, setName] = useState(user?.firstName);
   const [mode, setMode] = useState(user?.appearance ? "light" : "dark");
@@ -173,23 +170,6 @@ export default function SettingsScreen() {
         fontSize={20}
         marginTop={60}
       />
-
-      {/* Modal */}
-      <Button
-        onPress={() => setShowRating(true)}
-        text='Setttt'
-        width={300}
-        fontSize={20}
-        marginTop={60}
-      />
-
-      <RatingPopup
-        id={'1'}
-        showModal={showRating}
-        onClose={() => setShowRating(false)}
-      />
-
-
     </ScrollView>
   );
 }

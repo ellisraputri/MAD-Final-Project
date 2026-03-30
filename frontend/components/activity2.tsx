@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import LiveRecorder from "./ui/audio-recording";
 import ActivityTwoSubmissionCard from "./ui/activity2-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,6 +11,7 @@ import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import Button from "./ui/button";
+import RatingPopup from "./ui/rating-popup";
 
 type audioType = {
 	uri: string;
@@ -27,6 +28,9 @@ export default function ActivityTwoScreen() {
   const styles = createStyles(theme);
   const {team} = useAppContext();
   const [submitLoading, setSubmitLoading] = useState(false);
+
+  const [showRating, setShowRating] = useState(false);
+  const [currResultId, setCurrResultId] = useState<string>("");
 
   const [screen, setScreen] = useState<"record" | "submission">("record");
   const [result, setResult] =  useState<Record<number, any>>({
@@ -117,6 +121,7 @@ export default function ActivityTwoScreen() {
 
 		if(filledCount < 3){
 			alert(`You can only submit when there are 3 audios. Please continue to record ${3-filledCount} more videos.`)
+      return;
 		}
 
     setSubmitLoading(true);
@@ -157,12 +162,48 @@ export default function ActivityTwoScreen() {
     }
 
     setSubmitLoading(false);
-    alert("Successfully submitted the audios and predictions!");
-    router.push("/activity/[id]/results")
+    Alert.alert(
+      "Success",
+      "Successfully submitted the audios and predictions!",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            setCurrResultId(response.resultId);
+            setShowRating(true); 
+          },
+        },
+      ]
+    );
   }
+
+  const onCloseRating = () => {
+    resetState();
+    setShowRating(false);
+    router.push({
+      pathname: "/activity/[id]/results",
+      params: { id: '2' }, 
+    });
+  }
+
+  const resetState = () => {
+    setAudios([
+      { uri: "", levels: [], input: ""}, 
+      { uri: "", levels: [], input: ""}, 
+      { uri: "", levels: [], input: ""}
+    ]);
+
+    setResult({ 0: null, 1: null, 2: null });
+    setNumNow(0);
+    setRerecordIndex(null);
+    setScreen("record");
+    setSubmitLoading(false);
+    setCurrResultId("");
+  };
 
 	const handleAfterRecording = () => {
 		const index = rerecordIndex !== null ? rerecordIndex : numNow;
+    if (!result[index]) return;
 		setAudios((prev) => {
 			const updated = [...prev];
 			updated[index] = result[index];
@@ -292,6 +333,13 @@ export default function ActivityTwoScreen() {
         </View>
         </SafeAreaView>
       </Modal>
+
+      <RatingPopup
+        activityId={'2'}
+        resultId={currResultId}
+        showModal={showRating}
+        onClose={onCloseRating}
+      />
     </View>
   );
 }

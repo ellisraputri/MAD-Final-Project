@@ -1,12 +1,14 @@
-import { useColorScheme } from "react-native";
 import { useThemeColor } from "./use-theme-color";
+import { useAppContext } from "@/context/AppContext";
 
 
 export function useAppTheme() {
-  const scheme = useColorScheme();
+  const { user } = useAppContext();
+  const theme = user?.appearance ?? true; 
+  const mode = theme ? 'light' : 'dark';
 
   return {
-    isDark: scheme==="dark",
+    isDark: mode==="dark",
     text: useThemeColor({}, 'text'),
     darkText: useThemeColor({}, 'darkText'),
     lightText: useThemeColor({}, 'lightText'),

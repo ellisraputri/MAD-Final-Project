@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Vibration } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Vibration, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import ActivityFourSubmissionCard from "./ui/activity4-submission-card";
@@ -10,6 +10,7 @@ import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { uploadMedia45 } from "@/services/media/media";
+import RatingPopup from "./ui/rating-popup";
 
 export default function ActivityFourScreen() {
   const theme = useAppTheme();
@@ -30,6 +31,8 @@ export default function ActivityFourScreen() {
 
   const [showModal, setShowModal] = useState(false);
   const [rerecordIndex, setRerecordIndex] = useState<number | null>(null);
+  const [showRating, setShowRating] = useState(false);
+  const [currResultId, setCurrResultId] = useState<string>("");
 
   const handleVibration = () => {
     if (isVibrating) {
@@ -117,6 +120,7 @@ export default function ActivityFourScreen() {
     const currLength = vibrations.length;
     if(currLength < 3){
       alert(`You can only submit when there are 3 inputs. Please continue to record ${3-currLength} more videos.`)
+      return;
     }
     
     setSubmitLoading(true);
@@ -150,8 +154,43 @@ export default function ActivityFourScreen() {
     }
 
     setSubmitLoading(false);
-    alert("Successfully submitted the vibrations and predictions!");
-    router.push("/activity/[id]/results")
+    Alert.alert(
+      "Success",
+      "Successfully submitted the vibrations and predictions!",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            setCurrResultId(response.resultId);
+            setShowRating(true); 
+          },
+        },
+      ]
+    );
+  }
+
+  const onCloseRating = () => {
+    resetState();
+    setShowRating(false);
+    router.push({
+      pathname: "/activity/[id]/results",
+      params: { id: '4' }, 
+    });
+  }
+
+  const resetState = () => {
+    if (intervalId) clearInterval(intervalId); 
+    Vibration.cancel();
+
+    setVibrations([]);
+    setIsVibrating(false);
+    setStartTime(null);
+    setElapsedTime(0);
+    setIntervalId(null);
+    setRerecordIndex(null);
+    setScreen('record');
+    setSubmitLoading(false);
+    setCurrResultId("");
   }
 
   const confirmDisabled = (elapsedTime === 0) || (rerecordIndex === null && vibrations.length >= 3);
@@ -281,6 +320,13 @@ export default function ActivityFourScreen() {
         </View>
         </SafeAreaView>
       </Modal>
+
+      <RatingPopup
+        activityId={'4'}
+        resultId={currResultId}
+        showModal={showRating}
+        onClose={onCloseRating}
+      />
     </View>
   );
 }
