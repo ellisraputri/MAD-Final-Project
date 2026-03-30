@@ -141,9 +141,24 @@ export default function ActivitySevenScreen() {
     }
   
     const onCloseRating = () => {
+      resetState();
       setShowRating(false);
-      router.push("/activity/[id]/results")
+      router.push({
+        pathname: "/activity/[id]/results",
+        params: { id: '7' }, 
+      });
     }
+
+    const resetState = () => {
+      setPhase(1);
+      setResult({1:null, 2:null, 3:null});
+      setUserInput({1:"", 2:"", 3:""});
+
+      setIsEditing({ title: "", type: 0 });
+      setSubmitLoading(false);
+      setCurrResultId("");
+    };
+    
 
     return(
         <KeyboardAwareScrollView

@@ -221,9 +221,36 @@ export default function ActivitySixScreen() {
   }
 
   const onCloseRating = () => {
+    resetState();
     setShowRating(false);
-    router.push("/activity/[id]/results")
+    router.push({
+      pathname: "/activity/[id]/results",
+      params: { id: '6' }, 
+    });
   }
+
+  const resetState = () => {
+    // phase + flow
+    setPhase(1);
+    setIsWaiting(1);
+
+    // reaction test
+    setReactionTimes({ dominant: null, nonDominant: null });
+    startTime.current = 0;
+
+    // tracing
+    setTraceData(null);
+    setTraceMetrics({
+      time: null,
+      accuracy: null,
+    });
+    traceStartTime.current = null;
+
+    setUserInput({1:"", 2:"", 3:"", 4:""});
+    signatureRef.current?.clearSignature();
+    setSubmitLoading(false);
+    setCurrResultId("");
+  };
 
   useEffect(() => {
     if (traceData) {

@@ -178,12 +178,32 @@ export default function ActivityTwoScreen() {
   }
 
   const onCloseRating = () => {
+    resetState();
     setShowRating(false);
-    router.push("/activity/[id]/results")
+    router.push({
+      pathname: "/activity/[id]/results",
+      params: { id: '2' }, 
+    });
   }
+
+  const resetState = () => {
+    setAudios([
+      { uri: "", levels: [], input: ""}, 
+      { uri: "", levels: [], input: ""}, 
+      { uri: "", levels: [], input: ""}
+    ]);
+
+    setResult({ 0: null, 1: null, 2: null });
+    setNumNow(0);
+    setRerecordIndex(null);
+    setScreen("record");
+    setSubmitLoading(false);
+    setCurrResultId("");
+  };
 
 	const handleAfterRecording = () => {
 		const index = rerecordIndex !== null ? rerecordIndex : numNow;
+    if (!result[index]) return;
 		setAudios((prev) => {
 			const updated = [...prev];
 			updated[index] = result[index];

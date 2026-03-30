@@ -214,8 +214,26 @@ export default function ActivityOneScreen() {
   }
 
   const onCloseRating = () => {
+    resetState();
     setShowRating(false);
-    router.push("/activity/[id]/results")
+    router.push({
+      pathname: "/activity/[id]/results",
+      params: { id: '1' }, 
+    });
+  }
+
+  const resetState = () => {
+    if (recording) {
+      cameraRef.current?.stopRecording(); 
+    }
+
+    setVideos([]);
+    setVideoUri(null);
+    setRecording(false);
+    setRerecordIndex(null);
+    setScreen('record');
+    setSubmitLoading(false);
+    setCurrResultId("");
   }
 
   const confirmDisabled = !videoUri || (rerecordIndex === null && videos.length >= 3);

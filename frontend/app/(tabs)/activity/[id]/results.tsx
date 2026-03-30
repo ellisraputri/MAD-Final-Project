@@ -5,6 +5,7 @@ import ActivityFourResultsScreen from "@/components/activity4-results";
 import ActivityFiveResultsScreen from "@/components/activity5-results";
 import ActivitySixResultsScreen from "@/components/activity6-results";
 import ActivitySevenResultsScreen from "@/components/activity7-results";
+import Loading from "@/components/ui/loading";
 import ResultCard from "@/components/ui/result-card";
 import { useAppContext } from "@/context/AppContext";
 import { useAppTheme } from "@/hooks/use-app-theme";
@@ -24,44 +25,43 @@ export default function ExplanationScreen(){
 	const [detailsVisible, setDetailsVisible] = useState(false);
 	const [resultId, setResultId] = useState<string>();
 	const [results, setResults] = useState<ResultList[]>([]);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	const onPressCard = (resId: string) => {
 		setResultId(resId);
 		setDetailsVisible(true);
 	}
 
-	const fetchResults = async() =>{
-		if(!team?.id || typeof id !== "string") return;
-		setLoading(true);
-
-		const response = await getResultList({
-			teamId: team?.id,
-			activityId: id,
-		})
-		if(!response.success){
-			toast.error(response.message);
-		}
-
-		setResults(response.data);
-		setLoading(false);
-	}
-
 	useFocusEffect(
 		useCallback(() => {
 			setDetailsVisible(false);
+			setLoading(true);
+			setResults([]); // ← reset before fetching
 
-			if (team?.id && typeof id === "string") {
-				fetchResults();
+			if (!team?.id || typeof id !== "string") {
+				setLoading(false);
+				return;
 			}
+
+			const load = async () => {
+				const response = await getResultList({ teamId: team.id, activityId: id });
+
+				if (!response.success) {
+					toast.error(response.message);
+					setLoading(false);
+					return; 
+				}
+				setResults(response.data ?? []); 
+				setLoading(false);
+			};
+
+			load();
 		}, [team?.id, id])
 	);
 
-	return loading ? (
-	<View>
-		<Text>Loading...</Text>
-	</View>
-	) : (
+	if (loading) return <Loading />;
+
+	return (
 		<ScrollView style={styles.container}>
 			{!detailsVisible && (
 				<View>
@@ -69,7 +69,7 @@ export default function ExplanationScreen(){
 					<View style={{ height: 1, backgroundColor: theme.blackText, marginVertical: 10 }} />
 
 					<View style={{ marginTop: 10 }}>
-						{results.length === 0 && <Text>No attempt yet</Text>}
+						{results.length === 0 && <Text style={{color: theme.blackText}}>No attempt yet</Text>}
 						{results.length > 0 &&
 							results.map((item, index) => (
 								<ResultCard

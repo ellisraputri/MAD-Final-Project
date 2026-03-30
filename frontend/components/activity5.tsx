@@ -170,8 +170,27 @@ export default function ActivityFiveScreen() {
   }
 
   const onCloseRating = () => {
+    resetState();
     setShowRating(false);
-    router.push("/activity/[id]/results")
+    router.push({
+      pathname: "/activity/[id]/results",
+      params: { id: '5' }, 
+    });
+  }
+
+  const resetState = () => {
+    if (intervalId) clearInterval(intervalId); 
+    Vibration.cancel();
+
+    setVibrations([]);
+    setIsVibrating(false);
+    setStartTime(null);
+    setElapsedTime(0);
+    setIntervalId(null);
+    setRerecordIndex(null);
+    setScreen('record');
+    setSubmitLoading(false);
+    setCurrResultId("");
   }
 
   const confirmDisabled = (elapsedTime === 0) || (rerecordIndex === null && vibrations.length >= 3);
