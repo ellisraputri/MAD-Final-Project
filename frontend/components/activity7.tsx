@@ -206,25 +206,64 @@ export default function ActivitySevenScreen() {
                         title="Breathing at Rest" type={1}
                         input={userInput} setInput={setUserInput}
                         uri={result[1].uri} levels={result[1].levels}
-												setIsEditing={() => setIsEditing({
-													title:"Breathing at Rest", type:1
-												})}
+												setIsEditing={() => 
+                          Alert.alert(
+                            "Confirm Action",
+                            "This will permanently remove the current progress. Are you sure you want to continue?",
+                            [
+                              {
+                                text: "Cancel",
+                                style: "cancel",
+                              },
+                              {
+                                text: "OK",
+                                onPress: () => setIsEditing({title:"Breathing at Rest", type:1}),
+                              },
+                            ]
+                          )
+                        }
                     />
                     <CardActivitySeven 
                         title="Breathing after Exercise 1" type={2}
                         input={userInput} setInput={setUserInput}
                         uri={result[2].uri} levels={result[2].levels}
-												setIsEditing={() => setIsEditing({
-													title:"Breathing after Exercise 1", type:2
-												})}
+                        setIsEditing={() => 
+                          Alert.alert(
+                            "Confirm Action",
+                            "This will permanently remove the current progress. Are you sure you want to continue?",
+                            [
+                              {
+                                text: "Cancel",
+                                style: "cancel",
+                              },
+                              {
+                                text: "OK",
+                                onPress: () => setIsEditing({title:"Breathing after Exercise 1", type:2}),
+                              },
+                            ]
+                          )
+                        }
                     />
                     <CardActivitySeven 
                         title="Breathing after Exercise 2" type={3}
                         input={userInput} setInput={setUserInput}
                         uri={result[3].uri} levels={result[3].levels}
-												setIsEditing={() => setIsEditing({
-													title:"Breathing after Exercise 2", type:3
-												})}
+                        setIsEditing={() => 
+                          Alert.alert(
+                            "Confirm Action",
+                            "This will permanently remove the current progress. Are you sure you want to continue?",
+                            [
+                              {
+                                text: "Cancel",
+                                style: "cancel",
+                              },
+                              {
+                                text: "OK",
+                                onPress: () => setIsEditing({title:"Breathing after Exercise 2", type:3}),
+                              },
+                            ]
+                          )
+                        }
                     />
 
                     <View style={{ flexDirection: "row", gap: 10, alignItems: "center", justifyContent: "center" }}>

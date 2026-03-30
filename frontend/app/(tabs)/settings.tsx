@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import CustomDropdown from "@/components/ui/dropdown";
@@ -55,9 +55,24 @@ export default function SettingsScreen() {
   };
 
   const handleLogout = async() => {
-    const res = await logout();
-    alert(res.message);
-    if(res.success) router.push("/(auth)/login");
+    Alert.alert(
+      "Confirm Action",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async() => {
+            const res = await logout();
+            alert(res.message);
+            if(res.success) router.push("/(auth)/login");
+          },
+        },
+      ]
+    )
   };
 
   useEffect(() => {
