@@ -1,8 +1,8 @@
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import LiveRecorder from "./ui/audio-recording";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import AudioPlayer from "./ui/audio-player";
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
@@ -10,7 +10,7 @@ import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
-import RatingPopup from "./ui/rating-popup";
+import { socket } from "@/services/socket";
 
 type CardActivitySevenProps = {
   title: string;
@@ -60,11 +60,8 @@ function CardActivitySeven(props: CardActivitySevenProps) {
 export default function ActivitySevenScreen() {
     const theme = useAppTheme();
     const styles = createStyles(theme);
-    const {team} = useAppContext();
+    const {user, team} = useAppContext();
     const  [submitLoading, setSubmitLoading] = useState(false);
-
-    const [showRating, setShowRating] = useState(false);
-    const [currResultId, setCurrResultId] = useState<string>("");
 
     const [phase, setPhase] = useState<1|2|3|4>(1);
     const [result, setResult] =  useState<Record<number, any>>({
@@ -76,12 +73,29 @@ export default function ActivitySevenScreen() {
 		const [isEditing, setIsEditing] = useState({
 			title:"", type:0
 		});
+    const [isWaitingResult, setIsWaitingResult] = useState(false);
 
     const handleRetry =() =>{
         setPhase(1);
         setResult({1:null, 2:null, 3:null});
         setUserInput({1:"", 2:"", 3:""});
     }
+    
+    useEffect(() => {
+      const handler = ({ activityId, isDone }: any) => {
+        if (activityId !== "7") return;
+  
+        if (isDone) {
+          router.push(`/(tabs)/activity/7/results`);
+        }
+      };
+  
+      socket.on("submit_result_done", handler);
+  
+      return () => {
+        socket.off("submit_result_done", handler);
+      };
+    }, []);
 
     const handleSubmit = async() =>{
       if(!team?.id) return;
@@ -112,52 +126,31 @@ export default function ActivitySevenScreen() {
         }
       })
   
-      const response = await submitResult({
-        activityId: "7", 
-        teamId: team?.id, 
-        medias: ids, 
-        predictions: predictions
-      })
-      if(!response.success){
-        toast.error(response.message);
-        setSubmitLoading(false);
-        return;
-      }
+      socket.emit("submit_result_user", {
+        teamId: team.id,
+        activityId: "7",
+        result: {
+          userId: user?.id, 
+          predictions: predictions,
+          medias: ids, 
+        }
+      });
   
       setSubmitLoading(false);
-      Alert.alert(
-        "Success",
-        "Successfully submitted the audios and predictions!",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              setCurrResultId(response.resultId);
-              setShowRating(true); 
-            },
-          },
-        ]
+      alert("Successfully submitted the audios and predictions!");
+      setIsWaitingResult(true);
+    }
+
+    if (isWaitingResult) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Waiting for teammates...</Text>
+          <Text style={{ textAlign: "center", marginTop: 10 }}>
+            All team members must submit before viewing results.
+          </Text>
+        </View>
       );
     }
-  
-    const onCloseRating = () => {
-      resetState();
-      setShowRating(false);
-      router.push({
-        pathname: "/activity/[id]/results",
-        params: { id: '7' }, 
-      });
-    }
-
-    const resetState = () => {
-      setPhase(1);
-      setResult({1:null, 2:null, 3:null});
-      setUserInput({1:"", 2:"", 3:""});
-
-      setIsEditing({ title: "", type: 0 });
-      setSubmitLoading(false);
-      setCurrResultId("");
-    };
     
 
     return(
@@ -244,13 +237,6 @@ export default function ActivitySevenScreen() {
                           isLoading={submitLoading}
 											/>
                     </View>
-
-                    <RatingPopup
-                      activityId={'7'}
-                      resultId={currResultId}
-                      showModal={showRating}
-                      onClose={onCloseRating}
-                    />
                 </>
 								:
 								<>
@@ -273,7 +259,10 @@ export default function ActivitySevenScreen() {
 
 const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
-      cardTitle: {
+    container: { flex: 1}, 
+    title: { fontSize: 20, fontWeight: "600", color: theme.text, lineHeight: 28, marginBottom: 15 },
+
+    cardTitle: {
       fontSize: 18,
       fontFamily: "Lato_700Bold",
       color: theme.text,

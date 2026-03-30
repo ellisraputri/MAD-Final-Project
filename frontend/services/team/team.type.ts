@@ -1,10 +1,12 @@
 import { RNFile } from "../media/media.type"
+import { StudentDetail } from "../student/student.type"
 
 export type TeamDetail = {
     id: string,
     grade: number,
     name: string,
     logo: string,
+    members: StudentDetail[],
 }
 
 export type TeamDetailResponse = {

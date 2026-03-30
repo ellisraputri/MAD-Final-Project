@@ -14,8 +14,8 @@ const seedData = async () => {
   let teams = [];
   
   for (let i = 1; i <= 12 ; i++){
-    teams.push({ name: `Team ${i}A`, grade: i, logo: null });
-    teams.push({ name: `Team ${i}B`, grade: i, logo: null });
+    teams.push({ name: `Team ${i}A`, grade: i, logo: "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg" });
+    teams.push({ name: `Team ${i}B`, grade: i, logo: "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg" });
   }
 
   try {

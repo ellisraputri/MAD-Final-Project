@@ -118,10 +118,18 @@ export const getDetail = async (req, res) => {
       return error400(res, "Team not found");
     }
 
+    const studentsRef = db.collection("students");
+    const snapshot = await studentsRef.where("teamId", "==", teamId).get();
+    const members = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
     return res.status(200).json({
       team: {
         id: teamDoc.id,
         ...teamDoc.data(),
+        members: members,
       },
       success: true,
       message: "Team found",

@@ -9,6 +9,8 @@ import { ResultDetail } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
+import { useAppContext } from '@/context/AppContext';
+import { MediaDetail } from '@/services/media/media.type';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -25,11 +27,11 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 
 function ActivitySixResultCard(props: {
     item: number; 
-    timePredict: number;
-    timeCalculated: number;
-    accuracyPredict: number;
-    accuracyCalculated: number;
-    url?: string;
+    timePredict: any[];
+    timeCalculated: number[];
+    accuracyPredict?: any[];
+    accuracyCalculated?: number[];
+    medias?: MediaDetail[];
 }){
   const theme = useAppTheme();
   const resultStyles = createStyles(theme);
@@ -44,32 +46,44 @@ function ActivitySixResultCard(props: {
             </Text>
           </View>
 
-          {props.item===3 && 
-            <View style={resultStyles.padContainer}>
-              <Image
-                source={{
-                  uri: "https://coloringlib.com/wp-content/uploads/2024/01/truck-tracing-sheet-coloring.jpg",
-                }}
-                style={resultStyles.image}
-              />
+          {props.item===3 && (
+            <>
+              {props.medias?.map((m, idx) => (
+                <>
+                  <Text style={resultStyles.subtitleText}>Trace Result Member {idx+1}: </Text>
+                  <View style={resultStyles.padContainer} key={idx}>
+                    <Image
+                      source={{
+                        uri: "https://coloringlib.com/wp-content/uploads/2024/01/truck-tracing-sheet-coloring.jpg",
+                      }}
+                      style={resultStyles.image}
+                    />
 
-              <Image
-                source={{ uri: props.url }} // from Cloudinary
-                style={[resultStyles.image, resultStyles.overlay]}
-              />
-            </View>
-          }
+                    <Image
+                      source={{ uri: m.content }} // from Cloudinary
+                      style={[resultStyles.image, resultStyles.overlay]}
+                    />
+                  </View>
+                </>
+              ))}
+            </>
+          )}
 
           <Text style={resultStyles.subtitleText}>
               Time used 
           </Text>
           <View style={resultStyles.list}>
-              <Text style={resultStyles.listItem}>
-                  • Predicted: {props.timePredict}
+              {props.timePredict.map((p, idx) => (
+                <Text style={resultStyles.listItem} key={idx}>
+                    • Prediction from Member {idx+1}: {p.prediction}
+                </Text>
+              ))}
+              
+              {props.timeCalculated.map((p,idx) => (
+                <Text style={resultStyles.listItem} key={idx}>
+                  • Outcome from Member {idx+1}: {p}
               </Text>
-              <Text style={resultStyles.listItem}>
-                  • Outcome: {props.timeCalculated}
-              </Text>
+              ))}
           </View>
 
           {props.item===3 && 
@@ -78,12 +92,17 @@ function ActivitySixResultCard(props: {
                   Accuracy
               </Text>
               <View style={resultStyles.list}>
-                <Text style={resultStyles.listItem}>
-                    • Predicted: {props.accuracyPredict}
-                </Text>
-                <Text style={resultStyles.listItem}>
-                    • Outcome: {props.accuracyCalculated}
-                </Text>
+                {props.accuracyPredict && props.accuracyPredict.map((p, idx) => (
+                  <Text style={resultStyles.listItem}>
+                      • Prediction from Member {idx+1}: {p.prediction}
+                  </Text>
+                ))}
+                
+                {props.accuracyCalculated && props.accuracyCalculated.map((p,idx) => (
+                  <Text style={resultStyles.listItem}>
+                    • Outcome from Member {idx+1}: {p}
+                  </Text>
+                ))}
               </View>
             </>
           }
@@ -97,11 +116,15 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
+  const {team} = useAppContext();
 
   const [data, setData] = useState<ResultDetail>();
+  const [predictions, setPredictions] = useState<object[][]>();
+  const [outcomes, setOutcomes] = useState<number[][]>();
   const [loading, setLoading] = useState(false);
 
   const fetchDetail = async() => {
+    if(!team) return;
     setLoading(true);
 
     const response = await getResultDetail({resultId: props.resultId});
@@ -111,6 +134,17 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
         return;
     }
     setData(response.data);
+
+    const grouped_preds = [];
+    const grouped_outs = [];
+
+    for (let i = 0; i < response.data.predictions.length; i += team?.members.length) {
+      grouped_preds.push(response.data.predictions.slice(i, i + team.members.length));
+      grouped_outs.push(response.data.outcomes.slice(i, i + team.members.length));
+    }
+    setPredictions(grouped_preds);
+    setOutcomes(grouped_outs);
+
     setLoading(false);
   }
 
@@ -126,22 +160,20 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
       </Section>
 
       {/* Results */}
-      {data &&
+      {data && predictions && outcomes &&
         <Section title="Results">
           <ActivitySixResultCard 
             item={1} 
-            timePredict={data.predictions[0].prediction} timeCalculated={data.outcomes[0]}
-            accuracyPredict={0} accuracyCalculated={0} 
+            timePredict={predictions[0]} timeCalculated={outcomes[0]}
           />
           <ActivitySixResultCard 
             item={2} 
-            timePredict={data.predictions[1].prediction} timeCalculated={data.outcomes[1]}
-            accuracyPredict={0} accuracyCalculated={0} 
+            timePredict={predictions[1]} timeCalculated={outcomes[1]}
           />
           <ActivitySixResultCard 
-            item={3} url={data.medias[0].content}
-            timePredict={data.predictions[2].prediction} timeCalculated={data.outcomes[2]}
-            accuracyPredict={data.predictions[3].prediction} accuracyCalculated={data.outcomes[3]} 
+            item={3} medias={data.medias}
+            timePredict={predictions[2]} timeCalculated={outcomes[2]}
+            accuracyPredict={predictions[3]} accuracyCalculated={outcomes[3]} 
           />
         </Section>
       }
