@@ -1,7 +1,7 @@
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import React from "react";
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, StyleSheet, ImageBackground, Pressable } from "react-native";
 
 type ActivityProps = {
   name: string;
@@ -14,7 +14,6 @@ type ActivityProps = {
 export default function ActivityListCard(props: ActivityProps) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -47,10 +46,15 @@ export default function ActivityListCard(props: ActivityProps) {
             pathname: "/(tabs)/activity/[id]/instructions",
             params: { id: props.index.toString() }
           }}
+          asChild
         >
-            <Text style={styles.link}>Find out more...</Text>
+          <Pressable>
+            <Text style={[styles.link]}>
+              Find out more...
+            </Text>
+          </Pressable>
         </Link>
-        
+
       </View>
 
     </View>

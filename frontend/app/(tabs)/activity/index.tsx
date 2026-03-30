@@ -1,10 +1,51 @@
 import ActivityListCard from "@/components/ui/activity-list-card";
-import Loading from "@/components/ui/loading";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { getActivityList } from "@/services/activity/activity";
-import { useEffect, useState } from "react";
 import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
 
+const activityList = [
+  {
+    name: "Parachute Drop Challenge", 
+    description:"Students design, build, and test a parachute for a small toy to reduce its landing speed and impact force",
+    image: require("../../../assets/images/header.png"),
+    type: "Engineering"
+  },
+  {
+    name: "Sound Pollution Hunter", 
+    description:"Students measure and compare sound levels in different classroom activities.",
+    image: require("../../../assets/images/header.png"),
+    type: "Engineering"
+  },
+  {
+    name: "Hand Fan Challenge", 
+    description:"Students test how air movement affects flexible materials.",
+    image: require("../../../assets/images/header.png"),
+    type: "Engineering"
+  },
+  {
+    name: "Earthquake Resistant Structure", 
+    description:"Students design structures that withstand vibration, simulating earthquakes.",
+    image: require("../../../assets/images/header.png"),
+    type: "Engineering"
+  },
+  {
+    name: "Human Performance Lab", 
+    description:"Students investigate how the human body moves by measuring speed, smoothness...",
+    image: require("../../../assets/images/header.png"),
+    type: "Medical"
+  },
+  {
+    name: "Reaction Board Challenge", 
+    description:"Students measure reaction time, coordination, and improvement through...",
+    image: require("../../../assets/images/header.png"),
+    type: "Medical"
+  },
+  {
+    name: "Breathing Pace Trainer", 
+    description:"Students analyse breathing patterns at rest and after exercise.",
+    image: require("../../../assets/images/header.png"),
+    type: "Medical"
+  },
+]
 
 const imageMap: Record<string, any> = {
   "header.png": require("../../../assets/images/header.png"),
@@ -13,27 +54,6 @@ const imageMap: Record<string, any> = {
 export default function ActivityListScreen(){
   const theme = useAppTheme();
   const styles = createStyles(theme);
-
-  const [activityList, setActivityList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const res = await getActivityList();
-
-        if (res?.activities) {
-          setActivityList(res.activities);
-        }
-      } catch (err) {
-        console.log("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActivities();
-  }, []);
 
   return(
     <View style={styles.container}>
@@ -61,24 +81,20 @@ export default function ActivityListScreen(){
         style={{ backgroundColor: theme.background }}
         contentContainerStyle={{ paddingVertical: 20, paddingBottom: 80 }}
       >
-        {loading ? (
-          <Loading/>
-        ) : (
-          activityList.map((row, idx) => (
-            <ActivityListCard 
-              key={row.id}
-              name={row.name}
-              type={row.type}
-              image={
-                row.imageUrl && imageMap[row.imageUrl]
-                  ? imageMap[row.imageUrl]
-                  : require("../../../assets/images/header.png")
-              }
-              description={row.description}
-              index={idx + 1}
-            />
-          ))
-        )}
+        {activityList.map((row, idx) => (
+          <ActivityListCard 
+            name={row.name}
+            type={row.type}
+            image={
+              row.image && imageMap[row.image]
+                ? imageMap[row.image]
+                : require("../../../assets/images/header.png")
+            }
+            description={row.description}
+            index={idx+1}
+            key={idx}
+          />
+        ))}
       </ScrollView>
       
     </View>

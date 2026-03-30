@@ -56,7 +56,10 @@ export const getDetail = async (req, res) => {
     }
 
     return res.status(200).json({
-      user: doc.data(), 
+      user: {
+        id: doc.id,
+        ...doc.data()
+      }, 
       success: true,
       message: "User found",
     });

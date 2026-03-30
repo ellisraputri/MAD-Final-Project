@@ -21,7 +21,7 @@ const seedData = async () => {
                 email: `student${i}@mail.com`,
                 firstName: `Name${i}`,
                 grade: parseInt(teamDict[key][5]),
-                appearance: Math.random() < 0.5 ? "light" : "dark",
+                appearance: Math.random() < 0.5 ? true : false,
                 teamId: key
             });
             i++;

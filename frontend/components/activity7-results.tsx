@@ -10,6 +10,8 @@ import { ResultDetail } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import { parseMediaContent } from '@/services/media/media';
+import Loading from './ui/loading';
+import { useAppContext } from '@/context/AppContext';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -26,10 +28,9 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 
 function ActivitySevenResultCard(props: {
     item: number; 
-    audioUri: string | null;
-    levels: Array<Number>;
-    valuePredict: number;
-    valueCalculated: number;
+    contents: any[];
+    valuePredict: any[];
+    valueCalculated: number[];
 }){
   const theme = useAppTheme();
   const resultStyles = createStyles(theme);
@@ -43,23 +44,33 @@ function ActivitySevenResultCard(props: {
           </View>
 
           <View style={resultStyles.subsContainer}>
-            {props.audioUri ? (
-                <AudioPlayer uri={props.audioUri} levels={props.levels}/>
-            ) : (
-                <Text style={resultStyles.descText}>No audio</Text>
-            )}
+            {props.contents?.map((content, idx) => (
+              <View key={idx} style={resultStyles.viewAudio}>
+                <Text style={resultStyles.subtitle2Text}>Audio from Member {idx}</Text>
+                {content.url ? (
+                  <AudioPlayer uri={content.url} levels={content.levels}/>
+                ) : (
+                  <Text style={resultStyles.descText}>No audio</Text>
+                )}
+              </View>
+            ))}
           </View>
 
           <Text style={resultStyles.subtitleText}>
               Breath per minute
           </Text>
           <View style={resultStyles.list}>
-              <Text style={resultStyles.listItem}>
-                  • Predicted: {props.valuePredict}
+              {props.valuePredict.map((p, idx) => (
+                <Text style={resultStyles.listItem} key={idx}>
+                    • Prediction from Member {idx+1}: {p.prediction}
+                </Text>
+              ))}
+              
+              {props.valueCalculated.map((p,idx) => (
+                <Text style={resultStyles.listItem} key={idx}>
+                  • Outcome from Member {idx+1}: {p}
               </Text>
-              <Text style={resultStyles.listItem}>
-                  • Outcome: {props.valueCalculated}
-              </Text>
+              ))}
           </View>
 
           <Text style={resultStyles.descText}>This is the results of calculation..</Text>
@@ -71,12 +82,16 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
+  const {team} = useAppContext();
 
   const [data, setData] = useState<ResultDetail>();
-  const [contents, setContents] = useState<ContentAudio[]>();
+  const [contents, setContents] = useState<ContentAudio[][]>();
+  const [predictions, setPredictions] = useState<object[][]>();
+  const [outcomes, setOutcomes] = useState<number[][]>();
   const [loading, setLoading] = useState(false);
 
   const fetchDetail = async() => {
+    if(!team) return;
     setLoading(true);
 
     const response = await getResultDetail({resultId: props.resultId});
@@ -86,11 +101,26 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
         return;
     }
 
-    const contents = response.data.medias.map((m, _) => {
+    const parsedContents = response.data.medias.map((m, _) => {
       return parseMediaContent(m.content);
     })
 
-    setContents(contents);
+    const grouped_preds = [];
+    const grouped_outs = [];
+    const grouped_contents = [];
+
+    for (let i = 0; i < response.data.predictions.length; i += team?.members.length) {
+      grouped_preds.push(response.data.predictions.slice(i, i + team.members.length));
+      grouped_outs.push(response.data.outcomes.slice(i, i + team.members.length));
+    }
+    setPredictions(grouped_preds);
+    setOutcomes(grouped_outs);
+
+    for (let i = 0; i < parsedContents.length; i += team?.members.length) {
+      grouped_contents.push(parsedContents.slice(i, i + team.members.length));
+    }
+    setContents(grouped_contents);
+
     setData(response.data);
     setLoading(false);
   }
@@ -99,7 +129,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
     fetchDetail();
   }, []);
 
-  return (
+  return loading? <Loading/> : (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
       {/* Theory */}
       <Section title="Theory">
@@ -107,19 +137,19 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
       </Section>
 
       {/* Results */}
-      {data && contents &&
+      {data && contents && outcomes && predictions &&
         <Section title="Results">
           <ActivitySevenResultCard 
-            item={1} audioUri={contents[0].url} levels={contents[0].levels}
-            valueCalculated={data.outcomes[0]} valuePredict={data.predictions[0].prediction} 
+            item={1} contents={contents[0]} 
+            valueCalculated={outcomes[0]} valuePredict={predictions[0]} 
           />
           <ActivitySevenResultCard 
-            item={2} audioUri={contents[1].url} levels={contents[1].levels}
-            valueCalculated={data.outcomes[1]} valuePredict={data.predictions[1].prediction} 
+            item={2} contents={contents[1]} 
+            valueCalculated={outcomes[1]} valuePredict={predictions[1]} 
           />
           <ActivitySevenResultCard 
-            item={3} audioUri={contents[2].url} levels={contents[2].levels}
-            valueCalculated={data.outcomes[2]} valuePredict={data.predictions[2].prediction} 
+            item={3} contents={contents[2]} 
+            valueCalculated={outcomes[2]} valuePredict={predictions[2]} 
           />
         </Section>
       }
@@ -189,7 +219,7 @@ const createStyles = (theme:any) => {
           elevation: 3,
       },
       title: {
-          marginBottom: 20,
+          marginBottom: 10,
           fontFamily: "Lato_700Bold",
           color: theme.text,
           fontSize: 20,
@@ -215,6 +245,14 @@ const createStyles = (theme:any) => {
           fontFamily: "Lato_400Regular",
           marginBottom: 5,
           color: theme.blackText,
+      },
+      subtitle2Text:{
+          fontFamily: "Lato_700Bold",
+          fontSize: 16,
+          color: theme.blackText,
+      },
+      viewAudio : {
+        marginBottom: 10,
       }
   });
 
