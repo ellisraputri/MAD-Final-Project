@@ -2,7 +2,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import LiveRecorder from "./ui/audio-recording";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import AudioPlayer from "./ui/audio-player";
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";

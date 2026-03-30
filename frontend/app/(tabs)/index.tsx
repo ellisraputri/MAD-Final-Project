@@ -213,7 +213,7 @@ export default function HomeScreen() {
       teamId: team?.id,
     });
 
-    socket.on("team_active_users", ({ teamId, users }) => {
+    socket.on("team_active_users", ({ teamId, users }: any) => {
       console.log("users", users);
       const names = users.map((u: any) => u.name);
       setMembers(names);
