@@ -249,7 +249,22 @@ export default function ActivityFiveScreen() {
                 movement={item.movement}
                 onChangeMovement={(value) => handleFieldChange(value, index)}
                 onDelete={() => handleDelete(index)}
-                onRerecord={() => handleRerecord(index)}
+                onRerecord={() => 
+                  Alert.alert(
+                    "Confirm Action",
+                    "This will permanently remove the current progress. Are you sure you want to continue?",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "OK",
+                        onPress: () => handleRerecord(index),
+                      },
+                    ]
+                  )
+                }
               />
             ))}
       
@@ -299,10 +314,22 @@ export default function ActivityFiveScreen() {
                     handleDelete(index);
                     if (vibrations.length === 1) setShowModal(false);
                   }}
-                  onRerecord={() => {
-                    setShowModal(false);
-                    handleRerecord(index);
-                  }}
+                  onRerecord={() => 
+                    Alert.alert(
+                      "Confirm Action",
+                      "This will permanently remove the current progress. Are you sure you want to continue?",
+                      [
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                        {
+                          text: "OK",
+                          onPress: () => {setShowModal(false); handleRerecord(index)},
+                        },
+                      ]
+                    )
+                  }
                 />
               ))
             )}

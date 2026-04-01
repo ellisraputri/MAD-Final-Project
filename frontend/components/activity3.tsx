@@ -296,7 +296,22 @@ export default function ActivityThreeScreen() {
                 bend={item.bend}
                 onChangeBend={(value) => handleFieldChange(value, index)}
                 onDelete={() => handleDelete(index)}
-                onRerecord={() => handleRerecord(index)}
+                onRerecord={() => 
+                  Alert.alert(
+                    "Confirm Action",
+                    "This will permanently remove the current progress. Are you sure you want to continue?",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "OK",
+                        onPress: () => handleRerecord(index),
+                      },
+                    ]
+                  )
+                }
               />
             ))}
       
@@ -346,10 +361,22 @@ export default function ActivityThreeScreen() {
                     handleDelete(index);
                     if (videos.length === 1) setShowModal(false);
                   }}
-                  onRerecord={() => {
-                    setShowModal(false);
-                    handleRerecord(index);
-                  }}
+                  onRerecord={() => 
+                    Alert.alert(
+                      "Confirm Action",
+                      "This will permanently remove the current progress. Are you sure you want to continue?",
+                      [
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                        {
+                          text: "OK",
+                          onPress: () => {setShowModal(false); handleRerecord(index)},
+                        },
+                      ]
+                    )
+                  }
                 />
               ))
             )}

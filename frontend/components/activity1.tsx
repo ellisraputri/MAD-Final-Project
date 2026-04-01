@@ -302,7 +302,22 @@ export default function ActivityOneScreen() {
                 onChangeMass={(value) => handleFieldChange(value, index, 'mass')}
                 onChangeTime={(value) => handleFieldChange(value, index, 'time')}
                 onDelete={() => handleDelete(index)}
-                onRerecord={() => handleRerecord(index)}
+                onRerecord={() => 
+                  Alert.alert(
+                    "Confirm Action",
+                    "This will permanently remove the current progress. Are you sure you want to continue?",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "OK",
+                        onPress: () => handleRerecord(index),
+                      },
+                    ]
+                  )
+                }
               />
             ))}
       
@@ -355,8 +370,20 @@ export default function ActivityOneScreen() {
                     if (videos.length === 1) setShowModal(false);
                   }}
                   onRerecord={() => {
-                    setShowModal(false);
-                    handleRerecord(index);
+                    Alert.alert(
+                      "Confirm Action",
+                      "This will permanently remove the current progress. Are you sure you want to continue?",
+                      [
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                        {
+                          text: "OK",
+                          onPress: () => {setShowModal(false); handleRerecord(index);}
+                        },
+                      ]
+                    );
                   }}
                 />
               ))
