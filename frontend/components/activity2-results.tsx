@@ -11,6 +11,7 @@ import { toast } from 'sonner-native';
 import Loading from './ui/loading';
 import { ContentAudio } from '@/services/media/media.type';
 import { parseMediaContent } from '@/services/media/media';
+import RatingPopup from './ui/rating-popup';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -76,6 +77,7 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
   const [data, setData] = useState<ResultDetail>();
   const [contents, setContents] = useState<ContentAudio[]>();
   const [loading, setLoading] = useState(false);
+  const [showRating, setShowRating] = useState(false);
 
   const fetchDetail = async() => {
     setLoading(true);
@@ -93,6 +95,7 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
 
     setContents(contents);
     setData(response.data);
+    if(!response.data?.ratings) setShowRating(true);
     setLoading(false);
   }
 
@@ -104,40 +107,51 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
   (
     <Loading/>
   ) : (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
-      {/* Theory */}
-      <Section title="Theory">
-        <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory2"]}</Text>
-      </Section>
-
-      {/* Results */}
-      {contents && data && 
-        <Section title="Results">
-          <ActivityTwoResultCard 
-            item={1} audioUri={contents[0].url} levels={contents[0].levels}
-            valueCalculated={data?.outcomes[0]} valuePredict={data.predictions[0].prediction} 
-          />
-          <ActivityTwoResultCard 
-            item={2} audioUri={contents[1].url} levels={contents[1].levels}
-            valueCalculated={data?.outcomes[1]} valuePredict={data.predictions[1].prediction} 
-          />
-          <ActivityTwoResultCard 
-            item={3} audioUri={contents[2].url} levels={contents[2].levels}
-            valueCalculated={data?.outcomes[2]} valuePredict={data.predictions[2].prediction} 
-          />
+    <>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
+        {/* Theory */}
+        <Section title="Theory">
+          <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory2"]}</Text>
         </Section>
-      }
 
-      <Button 
-        width={250} onPress={()=>alert("see leaderboard")}
-        fontSize={20} marginTop={5} text='See Leaderboard'
-      />
-      <Button 
-        width={250} onPress={props.onBack}
-        fontSize={20} marginTop={5} text='Back'
-      />
+        {/* Results */}
+        {contents && data && 
+          <Section title="Results">
+            <ActivityTwoResultCard 
+              item={1} audioUri={contents[0].url} levels={contents[0].levels}
+              valueCalculated={data?.outcomes[0]} valuePredict={data.predictions[0].prediction} 
+            />
+            <ActivityTwoResultCard 
+              item={2} audioUri={contents[1].url} levels={contents[1].levels}
+              valueCalculated={data?.outcomes[1]} valuePredict={data.predictions[1].prediction} 
+            />
+            <ActivityTwoResultCard 
+              item={3} audioUri={contents[2].url} levels={contents[2].levels}
+              valueCalculated={data?.outcomes[2]} valuePredict={data.predictions[2].prediction} 
+            />
+          </Section>
+        }
 
-    </ScrollView>
+        <Button 
+          width={250} onPress={()=>alert("see leaderboard")}
+          fontSize={20} marginTop={5} text='See Leaderboard'
+        />
+        <Button 
+          width={250} onPress={props.onBack}
+          fontSize={20} marginTop={5} text='Back'
+        />
+
+      </ScrollView>
+
+      {data?.resultId && (
+          <RatingPopup
+            activityId={'2'}
+            resultId={data?.resultId}
+            showModal={showRating}
+            onClose={() => setShowRating(false)}
+          />
+        )}
+    </>
   );
 }
 

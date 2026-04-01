@@ -12,7 +12,6 @@ import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner-native";
-import RatingPopup from "./ui/rating-popup";
 
 export default function ActivityOneScreen() {
   const theme = useAppTheme();
@@ -30,8 +29,6 @@ export default function ActivityOneScreen() {
 
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showRating, setShowRating] = useState(false);
-  const [currResultId, setCurrResultId] = useState<string>("");
 
   const [rerecordIndex, setRerecordIndex] = useState<number | null>(null);
 
@@ -205,21 +202,15 @@ export default function ActivityOneScreen() {
         {
           text: "OK",
           onPress: () => {
-            setCurrResultId(response.resultId);
-            setShowRating(true); 
+            resetState();
+            router.push({
+              pathname: "/activity/[id]/results",
+              params: { id: '1' }, 
+            }); 
           },
         },
       ]
     );
-  }
-
-  const onCloseRating = () => {
-    resetState();
-    setShowRating(false);
-    router.push({
-      pathname: "/activity/[id]/results",
-      params: { id: '1' }, 
-    });
   }
 
   const resetState = () => {
@@ -233,7 +224,6 @@ export default function ActivityOneScreen() {
     setRerecordIndex(null);
     setScreen('record');
     setSubmitLoading(false);
-    setCurrResultId("");
   }
 
   const confirmDisabled = !videoUri || (rerecordIndex === null && videos.length >= 3);
@@ -375,13 +365,6 @@ export default function ActivityOneScreen() {
         </View>
         </SafeAreaView>
       </Modal>
-
-      <RatingPopup
-        activityId={'1'}
-        resultId={currResultId}
-        showModal={showRating}
-        onClose={onCloseRating}
-      />
     </View>
   );
 }

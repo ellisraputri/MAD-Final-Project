@@ -9,6 +9,7 @@ import { ResultDetail } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
+import RatingPopup from './ui/rating-popup';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -61,6 +62,7 @@ export default function ActivityFiveResultsScreen(props: {resultId: string, onBa
 
   const [data, setData] = useState<ResultDetail>();
   const [loading, setLoading] = useState(false);
+  const [showRating, setShowRating] = useState(false);
 
   const fetchDetail = async() => {
     setLoading(true);
@@ -72,6 +74,7 @@ export default function ActivityFiveResultsScreen(props: {resultId: string, onBa
         return;
     }
     setData(response.data);
+    if(!response.data?.ratings) setShowRating(true);
     setLoading(false);
   }
 
@@ -80,40 +83,50 @@ export default function ActivityFiveResultsScreen(props: {resultId: string, onBa
   }, []);
 
   return loading? <Loading/> : (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
-      {/* Theory */}
-      <Section title="Theory">
-        <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory5"]}</Text>
-      </Section>
-
-      {/* Results */}
-      {data && 
-        <Section title="Results">
-          <ActivityFiveResultCard 
-            item={1} vibrateTime={Number(data.medias[0].content)}
-            valueCalculated={data.outcomes[0]} valuePredict={data.predictions[0].prediction} 
-          />
-          <ActivityFiveResultCard 
-            item={2} vibrateTime={Number(data.medias[1].content)}
-            valueCalculated={data.outcomes[1]} valuePredict={data.predictions[1].prediction} 
-          />
-          <ActivityFiveResultCard 
-            item={3} vibrateTime={Number(data.medias[2].content)}
-            valueCalculated={data.outcomes[2]} valuePredict={data.predictions[2].prediction} 
-          />
+    <>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
+        {/* Theory */}
+        <Section title="Theory">
+          <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory5"]}</Text>
         </Section>
-      }
 
-      <Button 
-        width={250} onPress={()=>alert("see leaderboard")}
-        fontSize={20} marginTop={5} text='See Leaderboard'
-      />
-      <Button 
-        width={250} onPress={props.onBack}
-        fontSize={20} marginTop={5} text='Back'
-      />
+        {/* Results */}
+        {data && 
+          <Section title="Results">
+            <ActivityFiveResultCard 
+              item={1} vibrateTime={Number(data.medias[0].content)}
+              valueCalculated={data.outcomes[0]} valuePredict={data.predictions[0].prediction} 
+            />
+            <ActivityFiveResultCard 
+              item={2} vibrateTime={Number(data.medias[1].content)}
+              valueCalculated={data.outcomes[1]} valuePredict={data.predictions[1].prediction} 
+            />
+            <ActivityFiveResultCard 
+              item={3} vibrateTime={Number(data.medias[2].content)}
+              valueCalculated={data.outcomes[2]} valuePredict={data.predictions[2].prediction} 
+            />
+          </Section>
+        }
 
-    </ScrollView>
+        <Button 
+          width={250} onPress={()=>alert("see leaderboard")}
+          fontSize={20} marginTop={5} text='See Leaderboard'
+        />
+        <Button 
+          width={250} onPress={props.onBack}
+          fontSize={20} marginTop={5} text='Back'
+        />
+
+      </ScrollView>
+      {data?.resultId && (
+        <RatingPopup
+          activityId={'5'}
+          resultId={data?.resultId}
+          showModal={showRating}
+          onClose={() => setShowRating(false)}
+        />
+      )}
+    </>
   );
 }
 

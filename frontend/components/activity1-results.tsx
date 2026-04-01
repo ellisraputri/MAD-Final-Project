@@ -10,6 +10,7 @@ import { ResultDetail } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
+import RatingPopup from './ui/rating-popup';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -100,6 +101,7 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
   const { id } = useLocalSearchParams();
   const [data, setData] = useState<ResultDetail>();
   const [loading, setLoading] = useState(false);
+  const [showRating, setShowRating] = useState(false);
 
   const fetchDetail = async() => {
     setLoading(true);
@@ -111,6 +113,7 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
         return;
     }
     setData(response.data);
+    if(!response.data?.ratings) setShowRating(true);
     setLoading(false);
   }
 
@@ -122,38 +125,48 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
   return loading? (
     <Loading/>
   ) : (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
-      {/* Theory */}
-      <Section title="Theory">
-        <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory1"]}</Text>
-      </Section>
+    <>
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
+        {/* Theory */}
+        <Section title="Theory">
+            <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory1"]}</Text>
+        </Section>
 
-      {/* Results */}
-      <Section title="Results">
-        <ActivityOneResultCard 
-            item={1} mass={data?.predictions[0]?.mass} videoUri={data?.medias[0].content}
-            timeCalculated={data?.outcomes[0]} timePredict={data?.predictions[0].prediction} 
-        />
-        <ActivityOneResultCard 
-            item={2} mass={data?.predictions[1]?.mass} videoUri={data?.medias[1].content}
-            timeCalculated={data?.outcomes[1]} timePredict={data?.predictions[1].prediction} 
-        />
-        <ActivityOneResultCard 
-            item={3} mass={data?.predictions[2]?.mass} videoUri={data?.medias[2].content}
-            timeCalculated={data?.outcomes[2]} timePredict={data?.predictions[2].prediction} 
-        />
-      </Section>
+        {/* Results */}
+        <Section title="Results">
+            <ActivityOneResultCard 
+                item={1} mass={data?.predictions[0]?.mass} videoUri={data?.medias[0].content}
+                timeCalculated={data?.outcomes[0]} timePredict={data?.predictions[0].prediction} 
+            />
+            <ActivityOneResultCard 
+                item={2} mass={data?.predictions[1]?.mass} videoUri={data?.medias[1].content}
+                timeCalculated={data?.outcomes[1]} timePredict={data?.predictions[1].prediction} 
+            />
+            <ActivityOneResultCard 
+                item={3} mass={data?.predictions[2]?.mass} videoUri={data?.medias[2].content}
+                timeCalculated={data?.outcomes[2]} timePredict={data?.predictions[2].prediction} 
+            />
+        </Section>
 
-      <Button 
-        width={250} onPress={()=>alert("see leaderboard")}
-        fontSize={20} marginTop={5} text='See Leaderboard'
-      />
-      <Button 
-        width={250} onPress={props.onBack}
-        fontSize={20} marginTop={5} text='Back'
-      />
+        <Button 
+            width={250} onPress={()=>alert("see leaderboard")}
+            fontSize={20} marginTop={5} text='See Leaderboard'
+        />
+        <Button 
+            width={250} onPress={props.onBack}
+            fontSize={20} marginTop={5} text='Back'
+        />
+        </ScrollView>
 
-    </ScrollView>
+        {data?.resultId && (
+            <RatingPopup
+                activityId={'1'}
+                resultId={data?.resultId}
+                showModal={showRating}
+                onClose={() => setShowRating(false)}
+            />
+        )}
+    </>
   );
 }
 

@@ -10,7 +10,6 @@ import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { uploadMedia45 } from "@/services/media/media";
-import RatingPopup from "./ui/rating-popup";
 
 export default function ActivityFourScreen() {
   const theme = useAppTheme();
@@ -31,8 +30,6 @@ export default function ActivityFourScreen() {
 
   const [showModal, setShowModal] = useState(false);
   const [rerecordIndex, setRerecordIndex] = useState<number | null>(null);
-  const [showRating, setShowRating] = useState(false);
-  const [currResultId, setCurrResultId] = useState<string>("");
 
   const handleVibration = () => {
     if (isVibrating) {
@@ -161,21 +158,15 @@ export default function ActivityFourScreen() {
         {
           text: "OK",
           onPress: () => {
-            setCurrResultId(response.resultId);
-            setShowRating(true); 
+            resetState();
+            router.push({
+              pathname: "/activity/[id]/results",
+              params: { id: '4' }, 
+            });
           },
         },
       ]
     );
-  }
-
-  const onCloseRating = () => {
-    resetState();
-    setShowRating(false);
-    router.push({
-      pathname: "/activity/[id]/results",
-      params: { id: '4' }, 
-    });
   }
 
   const resetState = () => {
@@ -190,7 +181,6 @@ export default function ActivityFourScreen() {
     setRerecordIndex(null);
     setScreen('record');
     setSubmitLoading(false);
-    setCurrResultId("");
   }
 
   const confirmDisabled = (elapsedTime === 0) || (rerecordIndex === null && vibrations.length >= 3);
@@ -320,13 +310,6 @@ export default function ActivityFourScreen() {
         </View>
         </SafeAreaView>
       </Modal>
-
-      <RatingPopup
-        activityId={'4'}
-        resultId={currResultId}
-        showModal={showRating}
-        onClose={onCloseRating}
-      />
     </View>
   );
 }

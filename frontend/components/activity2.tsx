@@ -11,7 +11,6 @@ import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import Button from "./ui/button";
-import RatingPopup from "./ui/rating-popup";
 
 type audioType = {
 	uri: string;
@@ -28,9 +27,6 @@ export default function ActivityTwoScreen() {
   const styles = createStyles(theme);
   const {team} = useAppContext();
   const [submitLoading, setSubmitLoading] = useState(false);
-
-  const [showRating, setShowRating] = useState(false);
-  const [currResultId, setCurrResultId] = useState<string>("");
 
   const [screen, setScreen] = useState<"record" | "submission">("record");
   const [result, setResult] =  useState<Record<number, any>>({
@@ -169,21 +165,15 @@ export default function ActivityTwoScreen() {
         {
           text: "OK",
           onPress: () => {
-            setCurrResultId(response.resultId);
-            setShowRating(true); 
+            resetState();
+            router.push({
+              pathname: "/activity/[id]/results",
+              params: { id: '2' }, 
+            }); 
           },
         },
       ]
     );
-  }
-
-  const onCloseRating = () => {
-    resetState();
-    setShowRating(false);
-    router.push({
-      pathname: "/activity/[id]/results",
-      params: { id: '2' }, 
-    });
   }
 
   const resetState = () => {
@@ -198,7 +188,6 @@ export default function ActivityTwoScreen() {
     setRerecordIndex(null);
     setScreen("record");
     setSubmitLoading(false);
-    setCurrResultId("");
   };
 
 	const handleAfterRecording = () => {
@@ -333,13 +322,6 @@ export default function ActivityTwoScreen() {
         </View>
         </SafeAreaView>
       </Modal>
-
-      <RatingPopup
-        activityId={'2'}
-        resultId={currResultId}
-        showModal={showRating}
-        onClose={onCloseRating}
-      />
     </View>
   );
 }

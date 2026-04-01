@@ -12,6 +12,7 @@ import { toast } from 'sonner-native';
 import { parseMediaContent } from '@/services/media/media';
 import Loading from './ui/loading';
 import { useAppContext } from '@/context/AppContext';
+import RatingPopup from './ui/rating-popup';
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -89,6 +90,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
   const [predictions, setPredictions] = useState<object[][]>();
   const [outcomes, setOutcomes] = useState<number[][]>();
   const [loading, setLoading] = useState(false);
+  const [showRating, setShowRating] = useState(false);
 
   const fetchDetail = async() => {
     if(!team) return;
@@ -121,6 +123,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
     }
     setContents(grouped_contents);
 
+    if(!response.data?.ratings) setShowRating(true);
     setData(response.data);
     setLoading(false);
   }
@@ -130,40 +133,50 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
   }, []);
 
   return loading? <Loading/> : (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
-      {/* Theory */}
-      <Section title="Theory">
-        <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory7"]}</Text>
-      </Section>
-
-      {/* Results */}
-      {data && contents && outcomes && predictions &&
-        <Section title="Results">
-          <ActivitySevenResultCard 
-            item={1} contents={contents[0]} 
-            valueCalculated={outcomes[0]} valuePredict={predictions[0]} 
-          />
-          <ActivitySevenResultCard 
-            item={2} contents={contents[1]} 
-            valueCalculated={outcomes[1]} valuePredict={predictions[1]} 
-          />
-          <ActivitySevenResultCard 
-            item={3} contents={contents[2]} 
-            valueCalculated={outcomes[2]} valuePredict={predictions[2]} 
-          />
+    <>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}>
+        {/* Theory */}
+        <Section title="Theory">
+          <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory7"]}</Text>
         </Section>
-      }
 
-      <Button 
-        width={250} onPress={()=>alert("see leaderboard")}
-        fontSize={20} marginTop={5} text='See Leaderboard'
-      />
-      <Button 
-        width={250} onPress={props.onBack}
-        fontSize={20} marginTop={5} text='Back'
-      />
+        {/* Results */}
+        {data && contents && outcomes && predictions &&
+          <Section title="Results">
+            <ActivitySevenResultCard 
+              item={1} contents={contents[0]} 
+              valueCalculated={outcomes[0]} valuePredict={predictions[0]} 
+            />
+            <ActivitySevenResultCard 
+              item={2} contents={contents[1]} 
+              valueCalculated={outcomes[1]} valuePredict={predictions[1]} 
+            />
+            <ActivitySevenResultCard 
+              item={3} contents={contents[2]} 
+              valueCalculated={outcomes[2]} valuePredict={predictions[2]} 
+            />
+          </Section>
+        }
 
-    </ScrollView>
+        <Button 
+          width={250} onPress={()=>alert("see leaderboard")}
+          fontSize={20} marginTop={5} text='See Leaderboard'
+        />
+        <Button 
+          width={250} onPress={props.onBack}
+          fontSize={20} marginTop={5} text='Back'
+        />
+
+      </ScrollView>
+      {data?.resultId && (
+        <RatingPopup
+          activityId={'7'}
+          resultId={data?.resultId}
+          showModal={showRating}
+          onClose={() => setShowRating(false)}
+        />
+      )}
+    </>
   );
 }
 
