@@ -417,3 +417,47 @@ export const rate = async (req, res) => {
     return error500(res);
   }
 };
+
+export const generateDailySummary = async () => {
+  const now = new Date();
+
+  const snapshot = await db.collection("results").get();
+
+  const grouped = {};
+
+  // 🔹 Group by activityId
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const key = data.activityId;
+
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(data);
+  });
+
+  // 🔹 Process each activity
+  for (const activityId in grouped) {
+    const records = grouped[activityId];
+
+    // Sort by score DESC
+    records.sort((a, b) => b.score - a.score);
+
+    // Assign ranking
+    const rankings = records.map((item, index) => ({
+      teamId: item.teamId,
+      score: item.score,
+      rank: index + 1
+    }));
+
+    const dateStr = now.toISOString().split("T")[0];
+
+    // Save summary
+    await db.collection("summaries").doc(`${activityId}_${dateStr}`).set({
+      activityId,
+      date: dateStr,
+      rankings,
+      createdAt: now
+    });
+  }
+
+  console.log("✅ Daily summary generated");
+};

@@ -1,0 +1,16 @@
+name: Daily Summary Job
+
+on:
+  schedule:
+    - cron: "0 17 * * *" # every day at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  run-summary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Backend API
+        run: |
+          curl -X POST https://localhost:4000/api/result/generate-summary \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
