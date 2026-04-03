@@ -445,7 +445,8 @@ export const generateDailySummary = async () => {
     const rankings = records.map((item, index) => ({
       teamId: item.teamId,
       score: item.score,
-      rank: index + 1
+      rank: index + 1,
+      attemptNo: item.attemptNo,
     }));
 
     const dateStr = now.toISOString().split("T")[0];
