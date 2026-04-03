@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Call Backend API
         run: |
-          curl -X POST http://localhost:4000/api/result/generate-summary \
+          curl -k -X POST https://ea6b-2405-8180-203-4b20-6cfb-fc18-2e21-1977.ngrok-free.app/api/result/generate-summary \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
