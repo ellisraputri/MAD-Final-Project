@@ -487,7 +487,7 @@ export const generateDailySummary = async () => {
 
     return {
       teamId,
-      averageScore: avg,
+      score: avg,
       totalActivities: activities.length,
     };
   });
