@@ -420,9 +420,7 @@ export const rate = async (req, res) => {
 
 export const generateDailySummary = async () => {
   const now = new Date();
-
   const snapshot = await db.collection("results").get();
-
   const grouped = {};
 
   // 🔹 Group by activityId
@@ -449,16 +447,66 @@ export const generateDailySummary = async () => {
       attemptNo: item.attemptNo,
     }));
 
-    const dateStr = now.toISOString().split("T")[0];
-
     // Save summary
-    await db.collection("summaries").doc(`${activityId}_${dateStr}`).set({
+    await db.collection("summaries").doc(activityId).set({
       activityId,
-      date: dateStr,
       rankings,
-      createdAt: now
+      updatedAt: now
     });
   }
 
-  console.log("✅ Daily summary generated");
+  const teamMap = {};
+
+  // 🔹 Step 1: Group → teamId → activityId → best score
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const { teamId, activityId, score } = data;
+
+    if (!teamMap[teamId]) {
+      teamMap[teamId] = {};
+    }
+
+    if (!teamMap[teamId][activityId]) {
+      teamMap[teamId][activityId] = score;
+    } else {
+      // take BEST score per activity
+      teamMap[teamId][activityId] = Math.max(
+        teamMap[teamId][activityId],
+        score
+      );
+    }
+  });
+
+  // 🔹 Step 2: Compute averages
+  const rankings = Object.keys(teamMap).map(teamId => {
+    const activities = Object.values(teamMap[teamId]);
+
+    const avg =
+      activities.reduce((sum, val) => sum + val, 0) /
+      activities.length;
+
+    return {
+      teamId,
+      averageScore: avg,
+      totalActivities: activities.length,
+    };
+  });
+
+  // 🔹 Step 3: Sort (DESC)
+  rankings.sort((a, b) => b.averageScore - a.averageScore);
+
+  // 🔹 Step 4: Assign rank
+  const ranked = rankings.map((team, index) => ({
+    ...team,
+    rank: index + 1,
+  }));
+
+  // 🔹 Step 5: Save (overwrite)
+  await db.collection("summaries").doc("global").set({
+    activityId: "global",
+    rankings: ranked,
+    updatedAt: new Date(),
+  });
+
+  console.log("🌍 Daily summary ranking updated");
 };
