@@ -32,6 +32,7 @@ export const generateDailySummary = async () => {
       score: item.score,
       rank: index + 1,
       attemptNo: item.attemptNo,
+      timestamp: item.timestamp,
     }));
 
     // Save summary
@@ -97,3 +98,48 @@ export const generateDailySummary = async () => {
 
   console.log("🌍 Daily summary ranking updated");
 };
+
+export const getGlobalRank = async(req, res) => {
+    try {
+        const summaryRef = db.collection("summaries").doc("global");
+        const doc = await summaryRef.get();
+
+        if (!doc.exists) {
+            return error400(res, "Global rank not found");
+        }
+
+        return res.status(200).json({
+            rankings: doc.data().rankings, 
+            updatedAt: doc.data().updatedAt,
+            success: true,
+            message: "Global rank found",
+        });
+
+    } catch (error) {
+        console.error(error);
+        return error500(res);
+    }
+}
+
+export const getActivityRank = async(req, res) => {
+    try {
+        const {id} = req.params;
+        const summaryRef = db.collection("summaries").doc(id);
+        const doc = await summaryRef.get();
+
+        if (!doc.exists) {
+            return error400(res, `Activity ${id} rank not found`);
+        }
+
+        return res.status(200).json({
+            rankings: doc.data().rankings, 
+            updatedAt: doc.data().updatedAt,
+            success: true,
+            message: "Activity rank found",
+        });
+
+    } catch (error) {
+        console.error(error);
+        return error500(res);
+    }
+}
