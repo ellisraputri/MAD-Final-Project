@@ -1,6 +1,6 @@
 import { createDefaultError } from "@/constants/error";
 import { apiClient } from "../firebase";
-import { TeamBaseResponse, TeamDetailResponse, CreateTeamRequest, JoinTeamRequest, EditTeamRequest } from "./team.type";
+import { TeamBaseResponse, TeamDetailResponse, CreateTeamRequest, JoinTeamRequest, EditTeamRequest, TeamBatchDetailResponse, TeamBatchDetailRequest } from "./team.type";
 import { uploadToCloudinary } from "../media/media";
 
 export const getTeamDetail = async(teamId: string): Promise<TeamDetailResponse> => {
@@ -60,5 +60,19 @@ export const editTeam = async(req: EditTeamRequest): Promise<TeamBaseResponse> =
     } catch (error: any) {
         console.log(error);
         return createDefaultError(error.response.data.message);
+    }
+}
+
+export const getTeamDetailBatch = async(req: TeamBatchDetailRequest): Promise<TeamBatchDetailResponse> => {
+    try {
+       const response = await apiClient.post(`/api/team/detail-batch`, {teamIds: req.teamIds});
+       return response.data;
+
+    } catch (error: any) {
+        console.log(error);
+        return {
+            teams: [],
+            ...createDefaultError(error.response.data.message),
+        };
     }
 }

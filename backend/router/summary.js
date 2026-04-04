@@ -1,5 +1,6 @@
 import express from 'express';
-import { generateDailySummary } from '../controller/summary.js';
+import { generateDailySummary, getActivityRank, getGlobalRank } from '../controller/summary.js';
+import { authenticate } from '../middleware/auth.js';
 
 const summaryRouter = express.Router();
 
@@ -19,5 +20,8 @@ summaryRouter.post("/generate", async (req, res) => {
     res.status(500).send("Error generating summary");
   }
 });
+
+summaryRouter.get("/global", authenticate, getGlobalRank);
+summaryRouter.get("/activity/:id", authenticate, getActivityRank);
 
 export default summaryRouter;
