@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Call Backend API
         run: |
-          curl -k -X POST https://7d15-2405-8180-203-4b20-6cfb-fc18-2e21-1977.ngrok-free.app/api/result/generate-summary \
+          curl -k -X POST https://7d15-2405-8180-203-4b20-6cfb-fc18-2e21-1977.ngrok-free.app/api/summary/generate \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

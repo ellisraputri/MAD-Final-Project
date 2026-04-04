@@ -10,6 +10,7 @@ import teamRouter from './router/team.js';
 import resultRouter from './router/result.js';
 import mediaRouter from './router/media.js';
 import { registerTeamSocket } from './config/socket.js';
+import summaryRouter from './router/summary.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -34,6 +35,7 @@ app.use("/api/auth", studentRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/result", resultRouter);
 app.use("/api/media", mediaRouter);
+app.use("/api/summary", summaryRouter);
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server + Socket running on ${PORT}`);
