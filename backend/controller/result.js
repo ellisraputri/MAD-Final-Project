@@ -429,7 +429,10 @@ export const generateDailySummary = async () => {
     const key = data.activityId;
 
     if (!grouped[key]) grouped[key] = [];
-    grouped[key].push(data);
+    grouped[key].push({
+      ...data,
+      resultId: doc.id, 
+    });
   });
 
   // 🔹 Process each activity
@@ -441,6 +444,7 @@ export const generateDailySummary = async () => {
 
     // Assign ranking
     const rankings = records.map((item, index) => ({
+      resultId: item.resultId, 
       teamId: item.teamId,
       score: item.score,
       rank: index + 1,
