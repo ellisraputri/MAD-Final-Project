@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateDailySummary } from '../controller/summary';
+import { generateDailySummary } from '../controller/summary.js';
 
 const summaryRouter = express.Router();
 
