@@ -1,6 +1,7 @@
 import { studentModel } from "../models/student.js";
 import { db } from "../config/firestore.js";
 import { error400, error500 } from "../config/error.js";
+import cacheService from "../config/caching.js";
 
 export const login = (req, res) => {
   try {
@@ -48,12 +49,26 @@ export const getDetail = async (req, res) => {
   try {
     const user = req.user; // from middleware
 
+    const cached = cacheService.get(`student.${user.uid}`);
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        message: "User found",
+        data: cached,
+      });
+    }
+
     const userRef = db.collection("students").doc(user.uid);
     const doc = await userRef.get();
 
     if (!doc.exists) {
       return error400(res, "User not found");
     }
+
+    cacheService.set(`student.${user.uid}`, {
+      id: doc.id,
+      ...doc.data()
+    });
 
     return res.status(200).json({
       user: {

@@ -1,3 +1,4 @@
+import cacheService from "../config/caching.js";
 import { error400, error500 } from "../config/error.js";
 import { db } from "../config/firestore.js";
 
@@ -101,12 +102,27 @@ export const generateDailySummary = async () => {
 
 export const getGlobalRank = async(req, res) => {
     try {
+        const rankings = cacheService.get(`summary.global.rankings`);
+        const updatedAt = cacheService.get(`summary.global.updatedAt`);
+
+        if (rankings && updatedAt) {
+          return res.status(200).json({
+              rankings: rankings, 
+              updatedAt: updatedAt,
+              success: true,
+              message: "Global rank found",
+          });
+        }
+
         const summaryRef = db.collection("summaries").doc("global");
         const doc = await summaryRef.get();
 
         if (!doc.exists) {
             return error400(res, "Global rank not found");
         }
+
+        cacheService.set(`summary.global.rankings`, doc.data().rankings);
+        cacheService.set(`summary.global.updatedAt`, doc.data().updatedAt);
 
         return res.status(200).json({
             rankings: doc.data().rankings, 
@@ -124,12 +140,28 @@ export const getGlobalRank = async(req, res) => {
 export const getActivityRank = async(req, res) => {
     try {
         const {id} = req.params;
+
+        const rankings = cacheService.get(`summary.activity.${id}.rankings`);
+        const updatedAt = cacheService.get(`summary.activity.${id}.updatedAt`);
+
+        if (rankings && updatedAt) {
+          return res.status(200).json({
+              rankings: rankings, 
+              updatedAt: updatedAt,
+              success: true,
+              message: "Activity rank found",
+          });
+        }
+
         const summaryRef = db.collection("summaries").doc(id);
         const doc = await summaryRef.get();
 
         if (!doc.exists) {
             return error400(res, `Activity ${id} rank not found`);
         }
+
+        cacheService.set(`summary.activity.${id}.rankings`, doc.data().rankings);
+        cacheService.set(`summary.activity.${id}.updatedAt`, doc.data().updatedAt);
 
         return res.status(200).json({
             rankings: doc.data().rankings, 
