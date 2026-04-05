@@ -80,8 +80,11 @@ export const generateDailySummary = async () => {
     };
   });
 
+  console.log("rankings before", rankings);
+
   // 🔹 Step 3: Sort (DESC)
   rankings.sort((a, b) => b.averageScore - a.averageScore);
+  console.log("rankings after", rankings);
 
   // 🔹 Step 4: Assign rank
   const ranked = rankings.map((team, index) => ({
