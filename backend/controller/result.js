@@ -1,6 +1,9 @@
 import { error400, error500 } from "../config/error.js";
 import { db } from "../config/firestore.js";
 import { resultModel } from "../models/result.js";
+import { analyzeVideo } from "../utils/analyze_activity1.js";
+import path from 'path';
+import { fileURLToPath } from "url";
 
 const filterByActivity = (results, activityType) => {
   if (!activityType) return results;
@@ -322,11 +325,12 @@ export const submitResult = async (req, res) => {
       return latestAttemptNo + 1;
     });
 
-    let score = 0;
     // TODO: model scoring
     // activity 6 = loop predictions, ambil predictions[i].outcome
-
-    const outcomes = [0, 0, 0];
+    const outcomes = await scorePredictions(medias, predictions, activityId);
+    const score =
+      outcomes.reduce((sum, o) => sum + (o.score || 0), 0) /
+      (outcomes.length || 1);
 
     const resultData = resultModel({
       activityId,
@@ -351,6 +355,53 @@ export const submitResult = async (req, res) => {
     return error500(res);
   }
 };
+
+const calculateScore = (pred, actual) => {
+  const actualSafe = actual === 0? 0.00001 : actual;
+  let score = 1 - Math.abs(pred - actualSafe) / actualSafe;
+  score = Math.max(0, score);
+  return score;
+}
+
+const scorePredictions = async (medias, predictions, activityId) => {
+  let outcomes = [];
+
+  if (activityId === '1') {
+    for (let i = 0; i < medias.length; i++) {
+      try {
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        const videoPath = path.join(__dirname, "../scripts/video1.mp4");
+        const result = await analyzeVideo(videoPath);
+
+        const pred = predictions[i].prediction ?? 0; 
+        console.log('pred ', pred);
+        
+        const score = calculateScore(pred, result.touch_time);
+        const obj = {
+          touch_time: result.touch_time,
+          stop_time: result.stop_time,
+          score
+        };
+        outcomes.push(obj);
+
+      } catch (err) {
+        console.error("Python error:", err);
+
+        outcomes.push({
+          touch_time: null,
+          stop_time: null,
+          score: 0,
+          error: true
+        });
+      }
+    }
+  } else {
+    outcomes = [0, 0, 0];
+  }
+  return outcomes;
+};
+
 
 export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
   const resultRef = db.collection("results");
