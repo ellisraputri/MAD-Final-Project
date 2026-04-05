@@ -138,7 +138,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
       toast.error(`Failed to fetch leaderboard rank data: ${rankingRes.message}`);
     }
     for(let i=0; i<rankingRes.rankings.length; i++){
-      if(rankingRes.rankings[i].teamId === team.id){
+      if(rankingRes.rankings[i].resultId === props.resultId){
         setResult(rankingRes.rankings[i]);
         break;
       }
