@@ -162,6 +162,7 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
                 score={result ? `${Math.round(result.score * 100)}%` : "-"}
                 teamName={team?.name || "-"}
                 imageUrl={team?.logo || defaultLogo}
+                attemptNo={result.attemptNo.toString()}
             />
             }
         </Section>

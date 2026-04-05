@@ -361,6 +361,7 @@ export default function HomeScreen() {
               score={results[item] ? `${Math.round(results[item].score * 100)}%` : "-"}
               teamName={team?.name || "-"}
               imageUrl={team?.logo || defaultLogo}
+              attemptNo={results[item] && "attemptNo" in results[item] ? results[item].attemptNo.toString() : undefined}
             />
           </View>
         ))}

@@ -186,6 +186,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
               score={result ? `${Math.round(result.score * 100)}%` : "-"}
               teamName={team?.name || "-"}
               imageUrl={team?.logo || defaultLogo}
+              attemptNo={result.attemptNo.toString()}
             />
           }
         </Section>

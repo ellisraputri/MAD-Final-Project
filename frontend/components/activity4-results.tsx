@@ -137,6 +137,7 @@ export default function ActivityFourResultsScreen(props: {resultId: string, onBa
                 score={result ? `${Math.round(result.score * 100)}%` : "-"}
                 teamName={team?.name || "-"}
                 imageUrl={team?.logo || defaultLogo}
+                attemptNo={result.attemptNo.toString()}
             />
             }
         </Section>

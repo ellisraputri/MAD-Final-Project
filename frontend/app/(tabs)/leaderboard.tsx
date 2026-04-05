@@ -127,9 +127,9 @@ export default function LeaderboardScreen() {
       
       const results = await fetchRanking(activityParam);
       if (results && team?.id) {
-        fetchMyTeamBestResult(results);
+        await fetchMyTeamBestResult(results);
         if (dropdownValue !== "global") {
-          fetchMyTeamLatestResult(results as ActivityRankDetail[]);
+          await fetchMyTeamLatestResult(results as ActivityRankDetail[]);
         }
       }
     };
@@ -187,6 +187,7 @@ export default function LeaderboardScreen() {
             name={teamMap[results[2].teamId].name}
             score={calculateDisplayScore(results[2].score)}
             imageUrl={teamMap[results[2].teamId].logo}
+            attemptNo={results[2] && "attemptNo" in results[2] ? results[2].attemptNo.toString() : undefined}
           />
         )}
 
@@ -198,6 +199,7 @@ export default function LeaderboardScreen() {
                 name={teamMap[results[0].teamId].name}
                 score={calculateDisplayScore(results[0].score)}
                 imageUrl={teamMap[results[0].teamId].logo}
+                attemptNo={results[0] && "attemptNo" in results[0] ? results[0].attemptNo.toString() : undefined}
               />
           </View>
         )}
@@ -208,6 +210,7 @@ export default function LeaderboardScreen() {
             name={teamMap[results[1].teamId].name}
             score={calculateDisplayScore(results[1].score)}
             imageUrl={teamMap[results[1].teamId].logo}
+            attemptNo={results[1] && "attemptNo" in results[1] ? results[1].attemptNo.toString() : undefined}
           />
         )}
       </View>
@@ -216,11 +219,12 @@ export default function LeaderboardScreen() {
       <View style={styles.rankingList}>
           {results.slice(3).map((item, i) => (
               <RankingCard 
-              key={i}
+                key={i}
                 rank={item.rank.toString()}
                 score={calculateDisplayScore(item.score)}
                 teamName={teamMap[item.teamId].name}
                 imageUrl={teamMap[item.teamId].logo}
+                attemptNo={item && "attemptNo" in item ? item.attemptNo.toString() : undefined}
               />
           ))}
       </View>
@@ -235,6 +239,7 @@ export default function LeaderboardScreen() {
           score={myTeamBest ? calculateDisplayScore(myTeamBest.score) : "-"}
           teamName={team?.name || "-"}
           imageUrl={team?.logo || defaultLogo}
+          attemptNo={myTeamBest && "attemptNo" in myTeamBest ? myTeamBest.attemptNo.toString() : undefined}
         />
       </View>
 
@@ -249,6 +254,7 @@ export default function LeaderboardScreen() {
             score={myTeamLatest ? calculateDisplayScore(myTeamLatest.score) : "-"}
             teamName={team?.name || "-"}
             imageUrl={team?.logo || defaultLogo}
+            attemptNo={myTeamLatest?.attemptNo.toString()}
           />
         </View>
       }
