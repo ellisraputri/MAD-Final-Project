@@ -1,3 +1,4 @@
+import cacheService from "../config/caching.js";
 import { error400, error500 } from "../config/error.js";
 import { db } from "../config/firestore.js";
 import { resultModel } from "../models/result.js";
@@ -8,6 +9,15 @@ export const getResultList = async (req, res) => {
 
     if (!teamId || !activityId) {
       return error400(res, "teamId and activityId are required");
+    }
+
+    const cached = cacheService.get(`result.list.${teamId}.${activityId}`);
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: cached,
+        message: "Result list fetched successfully",
+      });
     }
 
     const snapshot = db
@@ -21,6 +31,8 @@ export const getResultList = async (req, res) => {
       score: doc.data().score,
       attempt: doc.data().attemptNo,
     }));
+
+    cacheService.set(`result.list.${teamId}.${activityId}`, results);
 
     return res.status(200).json({
       success: true,
@@ -37,6 +49,16 @@ export const getResultList = async (req, res) => {
 export const getResultDetail = async (req, res) => {
   try {
     const { resultId } = req.query;
+
+    const cached = cacheService.get(`result.${resultId}`);
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        message: "Result detail fetched successfully",
+        data: cached,
+      });
+    }
+
     const resultDoc = await db.collection("results").doc(resultId).get();
     if (!resultDoc.exists) {
       return error400(res, "Result not found");
@@ -61,6 +83,12 @@ export const getResultDetail = async (req, res) => {
 
       mediaList = result.medias.map(id => mediaMap.get(id) || null);
     }
+
+    cacheService.set(`result.${resultId}`, {
+      resultId: resultDoc.id,
+      ...result,
+      medias: mediaList
+    });
 
     return res.status(200).json({
       success: true,

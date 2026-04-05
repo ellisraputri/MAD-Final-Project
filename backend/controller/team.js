@@ -2,6 +2,7 @@ import { db } from "../config/firestore.js";
 import { error400, error500 } from "../config/error.js";
 import { teamModel } from "../models/team.js";
 import { FieldPath } from "firebase-admin/firestore";
+import cacheService from "../config/caching.js";
 
 
 const generateId = (length = 6) => {
@@ -112,6 +113,15 @@ export const getDetail = async (req, res) => {
   try {
     const teamId = req.params.id;
 
+    const cached = cacheService.get(`team.${teamId}`);
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        message: "Team found",
+        team: cached,
+      });
+    }
+
     const teamRef = db.collection("teams").doc(teamId);
     const teamDoc = await teamRef.get();
 
@@ -125,6 +135,12 @@ export const getDetail = async (req, res) => {
       id: doc.id,
       ...doc.data(),
     }));
+
+    cacheService.set(`team.${teamId}`, {
+      id: teamDoc.id,
+      ...teamDoc.data(),
+      members: members,
+    });
 
     return res.status(200).json({
       team: {
@@ -175,16 +191,34 @@ export const getDetailBatch = async (req, res) => {
   try {
     const {teamIds} = req.body;
 
+    let nowTeamIds = [];
+    let teams = [];
+
+    for (const teamId of teamIds){
+      const cached = cacheService.get(`team.${teamId}`);
+      if (cached) {
+        teams.push(cached);
+      } else {
+        nowTeamIds.push(teamId);
+      }
+    }
+
     const snapshot = await db
       .collection("teams")
-      .where(FieldPath.documentId(), "in", teamIds)
+      .where(FieldPath.documentId(), "in", nowTeamIds)
       .get();
 
-    const teams = snapshot.docs.map(doc => ({
-      id: doc.id,
-      name: doc.data().name,
-      logo: doc.data().logo
-    }));
+    const teams2 = snapshot.docs.map(doc => {
+      const teamDetail = {
+        id: doc.id,
+        name: doc.data().name,
+        logo: doc.data().logo
+      }
+
+      cacheService.set(`team.${doc.id}`, teamDetail);
+      return teamDetail;
+    });
+    teams.push(...teams2);
 
     return res.status(200).json({
       teams,
