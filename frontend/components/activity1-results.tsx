@@ -11,6 +11,13 @@ import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
 import RatingPopup from './ui/rating-popup';
+import { ActivityRankDetail } from '@/services/summary/summary.type';
+import { getActivityRank } from '@/services/summary/summary';
+import { useAppContext } from '@/context/AppContext';
+import RankingCard from './ui/ranking-card';
+
+const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -97,11 +104,13 @@ function ActivityOneResultCard(props: {
 export default function ActivityOneResultsScreen(props: {resultId: string, onBack: ()=>void}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
+  const {team} = useAppContext();
 
   const { id } = useLocalSearchParams();
   const [data, setData] = useState<ResultDetail>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
+  const [result, setResult] = useState<ActivityRankDetail>();
 
   const fetchDetail = async() => {
     setLoading(true);
@@ -114,6 +123,18 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
     }
     setData(response.data);
     if(!response.data?.ratings) setShowRating(true);
+    
+    const rankingRes = await getActivityRank({activityId: "1"});
+    if(!rankingRes.success){
+        toast.error(`Failed to fetch leaderboard rank data: ${rankingRes.message}`);
+    }
+    for(let i=0; i<rankingRes.rankings.length; i++){
+        if(rankingRes.rankings[i].teamId === team?.id){
+            setResult(rankingRes.rankings[i]);
+            break;
+        }
+    }
+
     setLoading(false);
   }
 
@@ -148,10 +169,19 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
             />
         </Section>
 
-        <Button 
-            width={250} onPress={()=>alert("see leaderboard")}
-            fontSize={20} marginTop={5} text='See Leaderboard'
-        />
+        <Section title="Leaderboard Rank">
+            {result===undefined?  
+            <Text style={styles.paragraph}>Still compiling leaderboard data. Please wait until tomorrow.</Text>
+            :
+            <RankingCard 
+                rank={result.rank?.toString() || "-"}
+                score={result ? `${Math.round(result.score * 100)}%` : "-"}
+                teamName={team?.name || "-"}
+                imageUrl={team?.logo || defaultLogo}
+            />
+            }
+        </Section>
+
         <Button 
             width={250} onPress={props.onBack}
             fontSize={20} marginTop={5} text='Back'

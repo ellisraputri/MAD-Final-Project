@@ -12,6 +12,12 @@ import Loading from './ui/loading';
 import { useAppContext } from '@/context/AppContext';
 import { MediaDetail } from '@/services/media/media.type';
 import RatingPopup from './ui/rating-popup';
+import { ActivityRankDetail } from '@/services/summary/summary.type';
+import { getActivityRank } from '@/services/summary/summary';
+import RankingCard from './ui/ranking-card';
+
+const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -124,6 +130,7 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
   const [outcomes, setOutcomes] = useState<number[][]>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
+  const [result, setResult] = useState<ActivityRankDetail>();
 
   const fetchDetail = async() => {
     if(!team) return;
@@ -147,6 +154,17 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
     }
     setPredictions(grouped_preds);
     setOutcomes(grouped_outs);
+
+    const rankingRes = await getActivityRank({activityId: "6"});
+    if(!rankingRes.success){
+      toast.error(`Failed to fetch leaderboard rank data: ${rankingRes.message}`);
+    }
+    for(let i=0; i<rankingRes.rankings.length; i++){
+      if(rankingRes.rankings[i].teamId === team?.id){
+        setResult(rankingRes.rankings[i]);
+        break;
+      }
+    }
 
     setLoading(false);
   }
@@ -182,10 +200,19 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
           </Section>
         }
 
-        <Button 
-          width={250} onPress={()=>alert("see leaderboard")}
-          fontSize={20} marginTop={5} text='See Leaderboard'
-        />
+        <Section title="Leaderboard Rank">
+            {result===undefined?  
+            <Text style={styles.paragraph}>Still compiling leaderboard data. Please wait until tomorrow.</Text>
+            :
+            <RankingCard 
+                rank={result.rank?.toString() || "-"}
+                score={result ? `${Math.round(result.score * 100)}%` : "-"}
+                teamName={team?.name || "-"}
+                imageUrl={team?.logo || defaultLogo}
+            />
+            }
+        </Section>
+
         <Button 
           width={250} onPress={props.onBack}
           fontSize={20} marginTop={5} text='Back'
