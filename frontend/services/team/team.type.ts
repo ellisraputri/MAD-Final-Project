@@ -35,3 +35,19 @@ export type TeamBaseResponse = {
     success: boolean,
     message: string,
 }
+
+export type TeamBatchDetailRequest = {
+    teamIds: string[]
+}
+
+export type TeamBasicDetail = {
+    id: string,
+    name: string,
+    logo: string,
+}
+
+export type TeamBatchDetailResponse = {
+    teams: TeamBasicDetail[],
+    success: boolean,
+    message: string,
+}

@@ -6,6 +6,7 @@ type RankingCardProps = {
     teamName: string
     rank: string 
     score: string 
+    attemptNo?: string
 }
 
 export default function RankingCard(props: RankingCardProps) {
@@ -21,7 +22,10 @@ export default function RankingCard(props: RankingCardProps) {
         style={styles.cardLogo}
       />
 
-      <Text style={styles.cardTeam}>{props.teamName}</Text>
+      <View style={styles.teamContainer}>
+        <Text style={styles.cardTeam}>{props.teamName}</Text>
+        {props.attemptNo && <Text style={styles.attemptNo}>Attempt {props.attemptNo}</Text> }
+      </View>
 
       <Text style={styles.score}>{props.score}</Text>
     </View>
@@ -64,6 +68,18 @@ export const createStyles = (theme: any) => {
             fontSize: 18,
             fontFamily: "Lato_700Bold",
             color: theme.blackText,
+        },
+
+        teamContainer: {
+            flex: 1,
+            justifyContent: "center",
+        },
+
+        attemptNo: {
+            fontSize: 14,
+            fontFamily: "Lato_400Regular",
+            color: theme.blackText,
+            opacity: 0.7,
         },
     })
     return styles

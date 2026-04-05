@@ -13,6 +13,11 @@ import { parseMediaContent } from '@/services/media/media';
 import Loading from './ui/loading';
 import { useAppContext } from '@/context/AppContext';
 import RatingPopup from './ui/rating-popup';
+import RankingCard from './ui/ranking-card';
+import { ActivityRankDetail } from '@/services/summary/summary.type';
+import { getActivityRank } from '@/services/summary/summary';
+
+const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -92,6 +97,8 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
 
+  const [result, setResult] = useState<ActivityRankDetail>();
+
   const fetchDetail = async() => {
     if(!team) return;
     setLoading(true);
@@ -125,6 +132,18 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
 
     if(!response.data?.ratings) setShowRating(true);
     setData(response.data);
+
+    const rankingRes = await getActivityRank({activityId: "7"});
+    if(!rankingRes.success){
+      toast.error(`Failed to fetch leaderboard rank data: ${rankingRes.message}`);
+    }
+    for(let i=0; i<rankingRes.rankings.length; i++){
+      if(rankingRes.rankings[i].resultId === props.resultId){
+        setResult(rankingRes.rankings[i]);
+        break;
+      }
+    }
+
     setLoading(false);
   }
 
@@ -158,13 +177,24 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
           </Section>
         }
 
-        <Button 
-          width={250} onPress={()=>alert("see leaderboard")}
-          fontSize={20} marginTop={5} text='See Leaderboard'
-        />
+        <Section title="Leaderboard Rank">
+          {result===undefined?  
+            <Text style={styles.paragraph}>Still compiling leaderboard data. Please wait until tomorrow.</Text>
+          :
+            <RankingCard 
+              rank={result.rank?.toString() || "-"}
+              score={result ? `${Math.round(result.score * 100)}%` : "-"}
+              teamName={team?.name || "-"}
+              imageUrl={team?.logo || defaultLogo}
+              attemptNo={result.attemptNo.toString()}
+            />
+          }
+        </Section>
+      
+        
         <Button 
           width={250} onPress={props.onBack}
-          fontSize={20} marginTop={5} text='Back'
+          fontSize={20} marginTop={30} text='Back'
         />
 
       </ScrollView>
@@ -266,7 +296,7 @@ const createStyles = (theme:any) => {
       },
       viewAudio : {
         marginBottom: 10,
-      }
+      },
   });
 
   return styles;

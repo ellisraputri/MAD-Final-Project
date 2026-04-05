@@ -10,10 +10,10 @@ import { router } from "expo-router";
 import { toast } from "sonner-native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@/components/ui/button";
-import { MyRankDetail } from "@/services/result/result.type";
-import { getHighestRank } from "@/services/result/result";
 import Loading from "@/components/ui/loading";
 import { socket } from "@/services/socket";
+import { ActivityRankDetail, GlobalRankDetail } from "@/services/summary/summary.type";
+import { getActivityRank, getGlobalRank } from "@/services/summary/summary";
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
@@ -23,7 +23,7 @@ export default function HomeScreen() {
   const {user, setUser, team, setTeam} = useAppContext();
 
   const rankings = [1,2,3,4,5,6,7];
-  const [results, setResults] = useState<(MyRankDetail | undefined)[]>([]);
+  const [results, setResults] = useState<(ActivityRankDetail | GlobalRankDetail | undefined)[]>([]);
 
   const scrollRef = useRef<ScrollView>(null);
   const [members, setMembers] = useState<string[]>([]);
@@ -81,19 +81,50 @@ export default function HomeScreen() {
 
       const fetches = Array.from({ length: 8 }, (_, i) => {
         const type = i === 0 ? undefined : i.toString();
-        return fetchResult(teamId, type);
+        return fetchActivityRank(teamId, type);
       });
 
+      const globalRes = await fetchGlobalRank(teamId);
       const allResults = await Promise.all(fetches);
-      setResults(allResults);
+
+      setResults([globalRes, ...allResults]);
       setLoading(false);
     }
   };
 
-  const fetchResult = async (teamId: string, type?: string): Promise<MyRankDetail | undefined> => {
+  const fetchActivityRank = async (teamId: string, type?: string) => {
+    if(type === undefined) return;
+
     try {
-      const res = await getHighestRank({ teamId, activityType: type });
-      if (res?.data) return res.data;
+      const res = await getActivityRank({ activityId: type });
+      if (!res.success){
+        toast.error("Failed to fetch leaderboard data");
+      }
+
+      for (let i=0; i<res.rankings.length; i++){
+        if (res.rankings[i].teamId === teamId){
+          return res.rankings[i];
+        }
+      }
+
+    } catch (err) {
+      console.log("Fetch error:", err);
+    }
+  };
+
+  const fetchGlobalRank = async (teamId: string) => {
+    try {
+      const res = await getGlobalRank();
+      if (!res.success){
+        toast.error("Failed to fetch leaderboard data");
+      }
+
+      for (let i=0; i<res.rankings.length; i++){
+        if (res.rankings[i].teamId === teamId){
+          return res.rankings[i];
+        }
+      }
+
     } catch (err) {
       console.log("Fetch error:", err);
     }
@@ -330,6 +361,7 @@ export default function HomeScreen() {
               score={results[item] ? `${Math.round(results[item].score * 100)}%` : "-"}
               teamName={team?.name || "-"}
               imageUrl={team?.logo || defaultLogo}
+              attemptNo={results[item] && "attemptNo" in results[item] ? results[item].attemptNo.toString() : undefined}
             />
           </View>
         ))}

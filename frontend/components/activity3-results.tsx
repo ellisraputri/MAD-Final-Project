@@ -11,6 +11,13 @@ import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
 import RatingPopup from './ui/rating-popup';
+import { useAppContext } from '@/context/AppContext';
+import { ActivityRankDetail } from '@/services/summary/summary.type';
+import { getActivityRank } from '@/services/summary/summary';
+import RankingCard from './ui/ranking-card';
+
+const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+
 
 function Section({title, children}: {title: string, children: React.ReactNode}) {
   const theme = useAppTheme();
@@ -95,10 +102,12 @@ export default function ActivityThreeResultsScreen(props: {resultId: string, onB
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { id } = useLocalSearchParams();
+  const {team} = useAppContext();
 
   const [data, setData] = useState<ResultDetail>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
+  const [result, setResult] = useState<ActivityRankDetail>();
 
   const fetchDetail = async() => {
     setLoading(true);
@@ -111,6 +120,19 @@ export default function ActivityThreeResultsScreen(props: {resultId: string, onB
     }
     setData(response.data);
     if(!response.data?.ratings) setShowRating(true);
+
+    
+    const rankingRes = await getActivityRank({activityId: "3"});
+    if(!rankingRes.success){
+      toast.error(`Failed to fetch leaderboard rank data: ${rankingRes.message}`);
+    }
+    for(let i=0; i<rankingRes.rankings.length; i++){
+      if(rankingRes.rankings[i].resultId === props.resultId){
+        setResult(rankingRes.rankings[i]);
+        break;
+      }
+    }
+
     setLoading(false);
   }
 
@@ -144,10 +166,20 @@ export default function ActivityThreeResultsScreen(props: {resultId: string, onB
           </Section>
         }
 
-        <Button 
-          width={250} onPress={()=>alert("see leaderboard")}
-          fontSize={20} marginTop={5} text='See Leaderboard'
-        />
+        <Section title="Leaderboard Rank">
+            {result===undefined?  
+            <Text style={styles.paragraph}>Still compiling leaderboard data. Please wait until tomorrow.</Text>
+            :
+            <RankingCard 
+                rank={result.rank?.toString() || "-"}
+                score={result ? `${Math.round(result.score * 100)}%` : "-"}
+                teamName={team?.name || "-"}
+                imageUrl={team?.logo || defaultLogo}
+                attemptNo={result.attemptNo.toString()}
+            />
+            }
+        </Section>
+
         <Button 
           width={250} onPress={props.onBack}
           fontSize={20} marginTop={5} text='Back'

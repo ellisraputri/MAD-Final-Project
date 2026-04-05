@@ -6,9 +6,10 @@ type Props = {
   name: string;
   score: string;
   imageUrl: string;
+  attemptNo?: string;
 };
 
-export default function PodiumCard({ rank, name, score, imageUrl }: Props) {
+export default function PodiumCard({ rank, name, score, imageUrl, attemptNo }: Props) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   
@@ -27,6 +28,7 @@ export default function PodiumCard({ rank, name, score, imageUrl }: Props) {
       </View>
 
       <Text style={styles.name}>{name}</Text>
+      {attemptNo && <Text style={styles.attempt}>Attempt {attemptNo}</Text>}
       <Text style={styles.score}>{score}</Text>
     </View>
   );
@@ -60,6 +62,15 @@ export const createStyles = (theme: any) => {
       marginTop: 5,
       fontSize: 18,
       fontWeight: "600",
+      width: 100,
+      fontFamily: "Lato_700Bold",
+      textAlign: "center",
+      color: theme.blackText
+    },
+
+    attempt: {
+      marginTop: 3,
+      fontSize: 16,
       width: 100,
       fontFamily: "Lato_700Bold",
       textAlign: "center",

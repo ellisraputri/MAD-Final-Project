@@ -1,6 +1,7 @@
 import { db } from "../config/firestore.js";
 import { error400, error500 } from "../config/error.js";
 import { teamModel } from "../models/team.js";
+import { FieldPath } from "firebase-admin/firestore";
 
 
 const generateId = (length = 6) => {
@@ -162,6 +163,33 @@ export const editDetail = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Team edited successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const getDetailBatch = async (req, res) => {
+  try {
+    const {teamIds} = req.body;
+
+    const snapshot = await db
+      .collection("teams")
+      .where(FieldPath.documentId(), "in", teamIds)
+      .get();
+
+    const teams = snapshot.docs.map(doc => ({
+      id: doc.id,
+      name: doc.data().name,
+      logo: doc.data().logo
+    }));
+
+    return res.status(200).json({
+      teams,
+      success: true,
+      message: "Team found",
     });
 
   } catch (error) {
