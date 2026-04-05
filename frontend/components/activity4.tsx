@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Vibration, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,6 +10,7 @@ import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { uploadMedia45 } from "@/services/media/media";
+import { Accelerometer } from 'expo-sensors';
 
 export default function ActivityFourScreen() {
   const theme = useAppTheme();
@@ -22,6 +23,7 @@ export default function ActivityFourScreen() {
   const [vibrations, setVibrations] = useState<{
     duration: string;
     movement: string;
+    avgSpeed: number;
   }[]>([]);
   const [isVibrating, setIsVibrating] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -30,23 +32,39 @@ export default function ActivityFourScreen() {
 
   const [showModal, setShowModal] = useState(false);
   const [rerecordIndex, setRerecordIndex] = useState<number | null>(null);
+  const [motionData, setMotionData] = useState<number[]>([]);
+  const accelSub = useRef<any>(null);
 
   const handleVibration = () => {
     if (isVibrating) {
       Vibration.cancel();
-      
-      if (startTime) {
-        const duration = Math.floor((Date.now() - startTime) / 1000);
-        setElapsedTime(duration);
+
+      if (accelSub.current) {
+        accelSub.current.remove();
+        accelSub.current = null;
       }
 
       if (intervalId) clearInterval(intervalId);
       setIsVibrating(false);
-    } 
+
+      if (startTime) {
+        const duration = Math.floor((Date.now() - startTime) / 1000);
+        setElapsedTime(duration);
+      }
+    }
     else {
-      Vibration.vibrate([0, 5000], true); 
+      Vibration.vibrate([0, 5000], true);
+
       const start = Date.now();
       setStartTime(start);
+      setMotionData([]); // reset motion log
+
+      Accelerometer.setUpdateInterval(100);
+
+      accelSub.current = Accelerometer.addListener(({ x, y, z }) => {
+        const magnitude = Math.sqrt(x*x + y*y + z*z);
+        setMotionData(prev => [...prev, magnitude]);
+      });
 
       const interval = setInterval(() => {
         setElapsedTime(Math.floor((Date.now() - start) / 1000));
@@ -73,11 +91,21 @@ export default function ActivityFourScreen() {
     } 
     else {
       if (vibrations.length >= 3) return;
+
+      const avgSpeed = motionData.reduce((a, b) => a + b, 0) / motionData.length;
+      const jerkValues = motionData.slice(1).map((v, i) =>
+        Math.abs(v - motionData[i])
+      );
+      const smoothness = jerkValues.reduce((a, b) => a + b, 0) / jerkValues.length;
+      const mean = avgSpeed;
+      const variance = motionData.reduce((acc, v) => acc + (v - mean) ** 2, 0) /motionData.length;
+
       setVibrations((prev) => [
         ...prev,
         {
           duration: elapsedTime.toString(),
           movement: "",
+          avgSpeed: avgSpeed,
         },
       ]);
     }
@@ -135,6 +163,7 @@ export default function ActivityFourScreen() {
     const predictions = vibrations.map((vib, _) => {
       return {
         prediction: Number(vib.movement),
+        outcome: Number(vib.avgSpeed * Number(vib.duration))
       }
     })
 
