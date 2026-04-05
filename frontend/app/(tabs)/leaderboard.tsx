@@ -69,21 +69,23 @@ export default function LeaderboardScreen() {
     const top10 = rankings.slice(0,10);
     const teamIds = top10.filter(t => !teamMap[t.teamId]).map(t => t.teamId);
     
-    const res = await getTeamDetailBatch({teamIds});
-    if(!res.success){
-      toast.error("Failed to fetch team data in the leaderboard");
-      return;
-    }
-    
-    const newMap: Record<string, any> = {};
-    res.teams.forEach(team => {
-      newMap[team.id] = team;
-    });
+    if(teamIds.length != 0){
+      const res = await getTeamDetailBatch({teamIds});
+      if(!res.success){
+        toast.error(res.message);
+        return;
+      }
 
-    setTeamMap(prev => ({
-      ...prev,
-      ...newMap,
-    }));
+      const newMap: Record<string, any> = {};
+      res.teams.forEach(team => {
+        newMap[team.id] = team;
+      });
+
+      setTeamMap(prev => ({
+        ...prev,
+        ...newMap,
+      }));
+    }
 
     setResult(top10);
     return rankings;
@@ -133,6 +135,7 @@ export default function LeaderboardScreen() {
     };
 
     run();
+    setLoading(false);
   }, [dropdownValue, team?.id]);
 
   const top1 = results[0];
