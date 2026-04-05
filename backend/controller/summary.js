@@ -83,7 +83,7 @@ export const generateDailySummary = async () => {
   console.log("rankings before", rankings);
 
   // 🔹 Step 3: Sort (DESC)
-  rankings.sort((a, b) => b.averageScore - a.averageScore);
+  rankings.sort((a, b) => b.score - a.score);
   console.log("rankings after", rankings);
 
   // 🔹 Step 4: Assign rank
