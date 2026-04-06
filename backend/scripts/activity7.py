@@ -48,10 +48,10 @@ times_list = times.tolist()
 result = {
     "breath_count": breath_count,
     "bpm": bpm,
-    "times": times_list,
-    "smooth": smooth_list,
-    "peaks": peaks_list,
-    "peak_values": peak_values
+    # "times": times_list,
+    # "smooth": smooth_list,
+    # "peaks": peaks_list,
+    # "peak_values": peak_values
 }
 
 print(json.dumps(result))
