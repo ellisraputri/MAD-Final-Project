@@ -2,6 +2,8 @@ import cacheService from "../config/caching.js";
 import { error400, error500 } from "../config/error.js";
 import { db } from "../config/firestore.js";
 import { resultModel } from "../models/result.js";
+import { analyzeVideo } from "../utils/analyze_activity1.js";
+import { scorePredictions } from "../utils/scoring.js";
 
 export const getResultList = async (req, res) => {
   try {
@@ -130,11 +132,12 @@ export const submitResult = async (req, res) => {
       return latestAttemptNo + 1;
     });
 
-    let score = 0;
     // TODO: model scoring
     // activity 6 = loop predictions, ambil predictions[i].outcome
-
-    const outcomes = [0, 0, 0];
+    const outcomes = await scorePredictions(medias, predictions, activityId);
+    const score =
+      outcomes.reduce((sum, o) => sum + (o.score || 0), 0) /
+      (outcomes.length || 1);
 
     const resultData = resultModel({
       activityId,
@@ -159,6 +162,7 @@ export const submitResult = async (req, res) => {
     return error500(res);
   }
 };
+
 
 export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
   const resultRef = db.collection("results");
