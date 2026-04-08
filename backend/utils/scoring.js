@@ -4,8 +4,10 @@ import fs from "fs";
 import { analyzeVideo } from "./analyze_activity1.js";
 import { downloadMedia } from "../temp/helper.js";
 import { analyzeBreathing } from "./analyze_activity7.js";
+import { analyzeVideo3 } from "./analyze_activity3.js";
 
 const calculateScore = (pred, actual) => {
+  if (actual == null || isNaN(actual)) return 0;
   const actualSafe = actual === 0 ? 0.00001 : actual;
   let score = 1 - Math.abs(pred - actualSafe) / actualSafe;
   return Math.max(0, score);
@@ -28,11 +30,13 @@ const getMedias = async (medias) => {
 
 export const scorePredictions = async (medias, predictions, activityId) => {
   const mediaList = await getMedias(medias);
-  console.log('medialis: ', mediaList);
+  console.log('medialist: ', mediaList);
 
   switch (activityId) {
     case '1':
       return await scoreActivity1(mediaList, predictions);
+    case '3':
+      return await scoreActivity3(mediaList, predictions);
     case '7':
       return await scoreActivity7(mediaList, predictions);
 
@@ -85,7 +89,7 @@ export const scoreActivity1 = async (mediaList, predictions) => {
     predictions,
 
     getTempPath: (i) =>
-      path.resolve(`./temp/video_${i}.mp4`),
+      path.resolve(`./temp/${Date.now()}_video3_${i}.mp4`),
 
     analyzeFn: analyzeVideo,
 
@@ -106,13 +110,38 @@ export const scoreActivity1 = async (mediaList, predictions) => {
   });
 };
 
+export const scoreActivity3 = async (mediaList, predictions) => {
+  return processMediaList({
+    mediaList,
+    predictions,
+
+    getTempPath: (i) =>
+      path.resolve(`./temp/${Date.now()}_video3_${i}.mp4`),
+
+    analyzeFn: analyzeVideo3,
+
+    mapSuccess: (result, pred) => ({
+      max_bend: result.max_bend,
+      prediction: pred,
+      score: calculateScore(pred, result.max_bend)
+    }),
+
+    mapError: (pred) => ({
+      max_bend: null,
+      prediction: pred,
+      score: 0,
+      error: true
+    })
+  });
+};
+
 export const scoreActivity7 = async (mediaList, predictions) => {
   return processMediaList({
     mediaList,
     predictions,
 
     getTempPath: (i) =>
-      path.resolve(`./temp/audio_${i}.mp4`),
+      path.resolve(`./temp/${Date.now()}_audio7_${i}.mp4`),
 
     analyzeFn: analyzeBreathing,
 
