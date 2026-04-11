@@ -101,6 +101,8 @@ export const updateDetail = async (req, res) => {
       ...(appearance !== undefined && { appearance }),
     });
 
+    cacheService.del(`student.${user.uid}`);
+
     return res.status(200).json({
       success: true,
       message: "User updated successfully",

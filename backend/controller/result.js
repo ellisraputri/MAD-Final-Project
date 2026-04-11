@@ -110,6 +110,8 @@ export const submitResult = async (req, res) => {
   try {
     const { activityId, teamId, medias, predictions } = req.body;
 
+    cacheService.del(`result.list.${teamId}.${activityId}`);
+
     const resultRef = db.collection("results");
 
     const newAttemptNo = await db.runTransaction(async (transaction) => {
@@ -162,6 +164,8 @@ export const submitResult = async (req, res) => {
 
 export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
   const resultRef = db.collection("results");
+
+  cacheService.del(`result.list.${teamId}.${activityId}`);
 
   const newAttemptNo = await db.runTransaction(async (transaction) => {
     const query = resultRef

@@ -52,6 +52,8 @@ export const createTeam = async (req, res) => {
       teamId: customId,
     });
 
+    cacheService.del(`student.${user.uid}`);
+
     return res.status(200).json({
       success: true,
       message: "Team created successfully",
@@ -97,6 +99,8 @@ export const joinTeam = async (req, res) => {
     await userRef.update({
       teamId: teamId,
     });
+
+    cacheService.del(`student.${user.uid}`);
 
     return res.status(200).json({
       success: true,
@@ -175,6 +179,8 @@ export const editDetail = async (req, res) => {
       name: name,
       logo: logoUrl
     });
+
+    cacheService.del(`team.${teamId}`);
 
     return res.status(200).json({
       success: true,

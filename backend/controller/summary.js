@@ -97,6 +97,13 @@ export const generateDailySummary = async () => {
     updatedAt: new Date(),
   });
 
+  cacheService.del(`summary.global.rankings`);
+  cacheService.del(`summary.global.updatedAt`);
+  for (let i=1; i<=7; i++){
+    cacheService.del(`summary.activity.${i}.rankings`);
+    cacheService.del(`summary.activity.${i}.updatedAt`);
+  }
+
   console.log("🌍 Daily summary ranking updated");
 };
 
