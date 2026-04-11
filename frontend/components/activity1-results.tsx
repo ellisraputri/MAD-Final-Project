@@ -16,6 +16,7 @@ import { getActivityRank } from '@/services/summary/summary';
 import { useAppContext } from '@/context/AppContext';
 import RankingCard from './ui/ranking-card';
 import Equation from './ui/equation';
+import Accordion from './ui/accordion';
 
 const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
@@ -39,11 +40,21 @@ function ActivityOneResultCard(props: {
     mass: number | undefined;
     timePredict: number | undefined;
     timeCalculated: number | undefined;
+    timeStop: number | undefined;
+    accuracy: number | undefined;
 }){
     const theme = useAppTheme();
     const resultStyles = createStyles(theme);
 
     const [showVideoModal, setShowVideoModal] = useState(false);
+    const condition = props.timeCalculated && props.timeCalculated > 0;
+
+    const finalVelocity = condition? 0.3 / props.timeCalculated! : undefined;
+    const acceleration = condition? finalVelocity! / props.timeCalculated! : undefined;
+
+    const netForce = acceleration && props.mass? props.mass * acceleration: undefined;
+    const weight = props.mass? props.mass * 9.8: undefined;
+    const dragForce = weight && netForce? weight - netForce: undefined;
 
     return(
         <View key={props.item} style={[resultStyles.card, {borderWidth:1, borderColor:"white"}]}>
@@ -96,7 +107,44 @@ function ActivityOneResultCard(props: {
                 </Text>
             </View>
 
-            <Text style={resultStyles.descText}>This is the results of calculation..</Text>
+            <Text style={resultStyles.subtitleText}>Time to stop (seconds): {props.timeStop?.toFixed(2)} </Text>
+            <Text style={resultStyles.subtitleText}>Score (accuracy): {props.accuracy?.toFixed(2)} </Text>
+
+            {/* CALCULATION */}
+            <Accordion title="Force Calculations">
+                <Text style={resultStyles.calculationText}>First, we know that the height is 30 cm or 0.3 m.</Text>
+                <Text style={resultStyles.calculationText}>Then, from the measurements, the time is {props.timeCalculated} s.</Text>
+                <Text style={resultStyles.calculationText}>Since the toy is dropped, the initial velocity is 0 m/s.</Text>
+
+                {condition &&
+                    (
+                    <>
+                        <Text style={[resultStyles.calculationText, {marginBottom: 2}]}>Final velocity calculation:</Text>
+                        <Equation latex='v_{final} = \\frac{distance}{time}' fontSize={14}/>
+                        <Equation latex={`v_{final} = \\\\frac{0.3}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`} fontSize={14}/>
+
+                        <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Acceleration calculation:</Text>
+                        <Equation latex='a = \\frac{v_{final} - v_0}{time}' fontSize={14}/>
+                        <Equation latex={`a = \\\\frac{${finalVelocity?.toFixed(3)} - 0}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`} fontSize={14}/>
+
+                        <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Net Force calculation:</Text>
+                        <Equation latex='F_N = mass \\times a' fontSize={14}/>
+                        <Equation latex={`F_N = ${props.mass} \\\\times ${acceleration?.toFixed(3)} = ${netForce?.toFixed(3)} \\\\text{ } N`} fontSize={14}/>
+
+                        <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Weight calculation:</Text>
+                        <Equation latex='w = mass \\times g' fontSize={14}/>
+                        <Equation latex={`w = ${props.mass} \\\\times 9.8 = ${weight} \\\\text{ } N`} fontSize={14}/>
+
+                        <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Drag Force calculation:</Text>
+                        <Equation latex='F_D = w - F_N' fontSize={14}/>
+                        <Equation latex={`F_D = ${weight} - ${netForce?.toFixed(3)} \\\\approx ${dragForce?.toFixed(3)} \\\\text{ } N`} fontSize={14}/>
+                    </>
+                    )
+                }
+
+                
+            </Accordion>
+            
         </View>
         </View>
     )
@@ -210,15 +258,18 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
         <Section title="Results">
             <ActivityOneResultCard 
                 item={1} mass={data?.predictions[0]?.mass} videoUri={data?.medias[0].content}
-                timeCalculated={data?.outcomes[0].touch_time} timePredict={data?.predictions[0].prediction} 
+                timeCalculated={data?.outcomes[0].touch_time} timePredict={data?.predictions[0].prediction}
+                timeStop={data?.outcomes[0].stop_time} accuracy={data?.outcomes[0].score}
             />
             <ActivityOneResultCard 
                 item={2} mass={data?.predictions[1]?.mass} videoUri={data?.medias[1].content}
                 timeCalculated={data?.outcomes[1].touch_time} timePredict={data?.predictions[1].prediction} 
+                timeStop={data?.outcomes[1].stop_time}  accuracy={data?.outcomes[1].score}
             />
             <ActivityOneResultCard 
                 item={3} mass={data?.predictions[2]?.mass} videoUri={data?.medias[2].content}
                 timeCalculated={data?.outcomes[2].touch_time} timePredict={data?.predictions[2].prediction} 
+                timeStop={data?.outcomes[2].stop_time} accuracy={data?.outcomes[2].score}
             />
         </Section>
 
@@ -437,6 +488,12 @@ const createStyles = (theme: any) => {
         fontSize: 15,
         fontFamily: "Lato_400Regular",
         marginBottom: 5,
+        color: theme.blackText
+    },
+    calculationText: {
+        fontSize: 15,
+        fontFamily: "Lato_400Regular",
+        marginBottom: 15,
         color: theme.blackText
     }
   });

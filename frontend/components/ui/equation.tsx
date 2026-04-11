@@ -1,9 +1,11 @@
+import { useAppTheme } from '@/hooks/use-app-theme';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 export default function Equation({ latex, fontSize=18 }: { latex: string, fontSize?: number }) {
   const [height, setHeight] = useState(40);
+  const theme = useAppTheme();
 
   const html = `
   <!DOCTYPE html>
@@ -22,6 +24,7 @@ export default function Equation({ latex, fontSize=18 }: { latex: string, fontSi
         background-color: transparent;
         font-size: ${fontSize}px; 
         text-align: center;
+        color: ${theme.blackText}
       }
     </style>
   </head>
