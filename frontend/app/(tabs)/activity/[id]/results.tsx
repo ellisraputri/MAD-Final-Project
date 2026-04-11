@@ -75,7 +75,7 @@ export default function ExplanationScreen(){
 								<ResultCard
 									key={index}
 									index={item.attempt}
-									score={item.score}
+									score={item.score * 100}
 									onPress={() => onPressCard(item.resultId)}
 								/>
 							))}

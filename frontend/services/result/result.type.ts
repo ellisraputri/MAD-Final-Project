@@ -44,7 +44,7 @@ export type ResultDetail = {
     attemptNo: number,
     score: number,
     medias: MediaDetail[],
-    outcomes: number[],
+    outcomes: any[],
     predictions: any[],
     ratings: number,
     comments: string,

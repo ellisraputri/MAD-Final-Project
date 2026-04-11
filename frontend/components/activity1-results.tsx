@@ -15,6 +15,7 @@ import { ActivityRankDetail } from '@/services/summary/summary.type';
 import { getActivityRank } from '@/services/summary/summary';
 import { useAppContext } from '@/context/AppContext';
 import RankingCard from './ui/ranking-card';
+import Equation from './ui/equation';
 
 const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
@@ -24,7 +25,7 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
   const styles = createStyles(theme);
 
   return (
-    <View>
+    <View style={{marginBottom: 50}}>
       <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.divider}/>
       {children}
@@ -151,21 +152,73 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
         {/* Theory */}
         <Section title="Theory">
             <Text style={[styles.paragraph, {marginBottom: 30}]}>{theoryActivity["theory1"]}</Text>
+            
+            <Text style={styles.subtitle}>
+                Forces Acting on the Toy
+            </Text>
+
+            <View style={styles.table}>
+                {/* Header */}
+                <View style={styles.tableRowHeader}>
+                    <View style={styles.colLeft}>
+                    <Text style={styles.tableHeader}>Force</Text>
+                    </View>
+                    <View style={styles.colRight}>
+                    <Text style={styles.tableHeader}>Formula</Text>
+                    </View>
+                </View>
+
+                {/* Row 1 */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                    <Text style={styles.tableCellText}>Downward (weight)</Text>
+                    </View>
+                    <View style={styles.colRight}>
+                        <Equation latex={'weight = mass \\\\times g'} fontSize={12}/>
+                    </View>
+                </View>
+
+                {/* Row 2 */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                    <Text style={styles.tableCellText}>Upward (drag)</Text>
+                    </View>
+                    <View style={styles.colRight}>
+                    <Text style={styles.tableCellText}>Drag force from the parachute</Text>
+                    </View>
+                </View>
+
+                {/* Row 3 */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                    <Text style={styles.tableCellText}>Net (total) force</Text>
+                    </View>
+                    <View style={styles.colRight}>
+                        <Text style={styles.tableCellText}>Net Force = Weight - Drag Force</Text>
+                    </View>
+                </View>
+            </View>
+
+            {/* Equation */}
+            <Text style={styles.subtitle}>
+                Newton's Second Law
+            </Text>
+            <Equation latex={"NetForce = mass \\\\times acceleration"} fontSize={14} />
         </Section>
 
         {/* Results */}
         <Section title="Results">
             <ActivityOneResultCard 
                 item={1} mass={data?.predictions[0]?.mass} videoUri={data?.medias[0].content}
-                timeCalculated={data?.outcomes[0]} timePredict={data?.predictions[0].prediction} 
+                timeCalculated={data?.outcomes[0].touch_time} timePredict={data?.predictions[0].prediction} 
             />
             <ActivityOneResultCard 
                 item={2} mass={data?.predictions[1]?.mass} videoUri={data?.medias[1].content}
-                timeCalculated={data?.outcomes[1]} timePredict={data?.predictions[1].prediction} 
+                timeCalculated={data?.outcomes[1].touch_time} timePredict={data?.predictions[1].prediction} 
             />
             <ActivityOneResultCard 
                 item={3} mass={data?.predictions[2]?.mass} videoUri={data?.medias[2].content}
-                timeCalculated={data?.outcomes[2]} timePredict={data?.predictions[2].prediction} 
+                timeCalculated={data?.outcomes[2].touch_time} timePredict={data?.predictions[2].prediction} 
             />
         </Section>
 
@@ -230,6 +283,62 @@ const createStyles = (theme: any) => {
       color: theme.blackText
     },
 
+    subtitle: {
+        marginTop: 20,
+        fontSize: 17,
+        fontFamily: "Lato_700Bold",
+        color: theme.text,
+        marginBottom: 20,
+    },
+
+    table: {
+        borderWidth: 1,
+        borderBottomWidth: 0,
+        borderColor: theme.text,
+        marginBottom: 20,
+    },
+
+    tableRowHeader: {
+        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderColor: theme.text,
+        backgroundColor: theme.hoverBackground,
+    },
+
+    tableRow: {
+        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderColor: theme.text,
+        alignItems: 'stretch',
+    },
+
+    colLeft: {
+        flex: 1,
+        padding: 12,
+        borderRightWidth: 1,
+        borderColor: theme.text,
+        justifyContent: "center",
+    },
+
+    colRight: {
+        flex: 1,
+        padding: 12,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    tableHeader: {
+        fontFamily: "Lato_700Bold",
+        color: theme.text,
+        textAlign: 'center'
+    },
+
+    tableCellText: {
+        fontFamily: "Lato_400Regular",
+        color: theme.blackText,
+        textAlign: 'center'
+    },
+
     grid:{
       flexDirection:"row",
       flexWrap:"wrap",
@@ -265,6 +374,7 @@ const createStyles = (theme: any) => {
     },
     subsContainer:{
         marginLeft: 20,
+        gap: 10,
     },
     titleRow:{
         marginBottom: 5,

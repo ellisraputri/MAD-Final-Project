@@ -10,16 +10,16 @@ type ResultCardProps = {
 
 export default function ResultCard(props: ResultCardProps) {
     const theme = useAppTheme();
-  const styles = createStyles(theme);
+    const styles = createStyles(theme);
 
-  return (
-    <Pressable style={[styles.card, {borderColor:theme.lightText, borderWidth:1}]} onPress={props.onPress}>
-      <Text style={styles.cardTeam}>Attempt {props.index}</Text>
+    return (
+        <Pressable style={[styles.card, {borderColor:theme.lightText, borderWidth:1}]} onPress={props.onPress}>
+        <Text style={styles.cardTeam}>Attempt {props.index}</Text>
 
-      <Text style={styles.score}>{props.score}%</Text>
-      <Ionicons name="chevron-forward-outline" size={20} color={theme.text}/>
-    </Pressable>
-  );
+        <Text style={styles.score}>{props.score.toFixed(3)}%</Text>
+        <Ionicons name="chevron-forward-outline" size={20} color={theme.text}/>
+        </Pressable>
+    );
 }
 
 const createStyles = (theme: any) => {
