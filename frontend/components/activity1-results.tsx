@@ -17,6 +17,7 @@ import { useAppContext } from '@/context/AppContext';
 import RankingCard from './ui/ranking-card';
 import Equation from './ui/equation';
 import Accordion from './ui/accordion';
+import Table from './ui/table';
 
 const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
@@ -223,47 +224,26 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
                 Forces Acting on the Toy
             </Text>
 
-            <View style={styles.table}>
-                {/* Header */}
-                <View style={styles.tableRowHeader}>
-                    <View style={styles.colLeft}>
-                    <Text style={styles.tableHeader}>Force</Text>
-                    </View>
-                    <View style={styles.colRight}>
-                    <Text style={styles.tableHeader}>Formula</Text>
-                    </View>
-                </View>
-
-                {/* Row 1 */}
-                <View style={styles.tableRow}>
-                    <View style={styles.colLeft}>
-                    <Text style={styles.tableCellText}>Downward (weight)</Text>
-                    </View>
-                    <View style={styles.colRight}>
-                        <Equation latex={'weight = mass \\\\times g'} fontSize={12}/>
-                    </View>
-                </View>
-
-                {/* Row 2 */}
-                <View style={styles.tableRow}>
-                    <View style={styles.colLeft}>
-                    <Text style={styles.tableCellText}>Upward (drag)</Text>
-                    </View>
-                    <View style={styles.colRight}>
-                    <Text style={styles.tableCellText}>Drag force from the parachute</Text>
-                    </View>
-                </View>
-
-                {/* Row 3 */}
-                <View style={styles.tableRow}>
-                    <View style={styles.colLeft}>
-                    <Text style={styles.tableCellText}>Net (total) force</Text>
-                    </View>
-                    <View style={styles.colRight}>
-                        <Text style={styles.tableCellText}>Net Force = Weight - Drag Force</Text>
-                    </View>
-                </View>
-            </View>
+            <Table
+                columns={[
+                    { key: "force", title: "Force", flex: 0.7 },
+                    { key: "formula", title: "Formula", flex: 1.3 },
+                ]}
+                data={[
+                    {
+                    force: "Downward (weight)",
+                    formula: <Equation latex={"weight = mass \\\\times g"} fontSize={12} />,
+                    },
+                    {
+                    force: "Upward (drag)",
+                    formula: "Drag force from the parachute",
+                    },
+                    {
+                    force: "Net (total) force",
+                    formula: "Net Force = Weight - Drag Force",
+                    },
+                ]}
+            />
 
             <Text style={[styles.paragraph, {fontFamily: 'Lato_700Bold', marginBottom: 5}]}>Newton's Second Law</Text>
             <Equation latex={"\\\\text{Net Force } (F_N) = mass \\\\times acceleration"} fontSize={13} />
@@ -273,57 +253,40 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
             <Text style={styles.paragraph}>G-force describes how quickly the object slows down when it hits the ground. It is measured in multiples of</Text>
                 <Equation latex='g = 9.8 m/s^2' fontSize={14}/>
 
-                <View style={styles.table}>
-                    <View style={styles.tableRowHeader}>
-                        <View style={styles.colLeft}>
-                        <Text style={styles.tableHeader}>G-Force Range</Text>
-                        </View>
-                        <View style={styles.colRight}>
-                        <Text style={styles.tableHeader}>Examples and Likely Effect</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.tableRow}>
-                        <View style={styles.colLeft}>
-                        <Text style={styles.tableCellText}>1-5 g</Text>
-                        </View>
-                        <View style={styles.colRight}>
-                            <Text style={styles.tableCellText}>Standing up quickly, elevators, amusement rides (no injury)</Text>
-                        </View>
-                    </View>
-                    <View style={styles.tableRow}>
-                        <View style={styles.colLeft}>
-                        <Text style={styles.tableCellText}>5-10 g</Text>
-                        </View>
-                        <View style={styles.colRight}>
-                            <Text style={styles.tableCellText}>Hard falls while running, minor car braking (possible bruise)</Text>
-                        </View>
-                    </View>
-                    <View style={styles.tableRow}>
-                        <View style={styles.colLeft}>
-                        <Text style={styles.tableCellText}>10-30 g</Text>
-                        </View>
-                        <View style={styles.colRight}>
-                            <Text style={styles.tableCellText}>Sports collisions, bicycle crashes, car crashes with seatbelts (serious injury)</Text>
-                        </View>
-                    </View>
-                    <View style={styles.tableRow}>
-                        <View style={styles.colLeft}>
-                        <Text style={styles.tableCellText}>30-50 g</Text>
-                        </View>
-                        <View style={styles.colRight}>
-                            <Text style={styles.tableCellText}>Severe car crashes, falls onto hard surfaces (High risk of severe injuries)</Text>
-                        </View>
-                    </View>
-                    <View style={styles.tableRow}>
-                        <View style={styles.colLeft}>
-                        <Text style={styles.tableCellText}>50+ g</Text>
-                        </View>
-                        <View style={styles.colRight}>
-                            <Text style={styles.tableCellText}>Very sudden stops with no cushioning (Life-threatening injuries)</Text>
-                        </View>
-                    </View>
-                </View>
+                <Table
+                    columns={[
+                        { key: "gforce", title: "G Force Range", flex: 0.7 },
+                        { key: "example", title: "Examples", flex: 1.4 },
+                        { key: "effect", title: "Likely Effects", flex: 0.9 },
+                    ]}
+                    data={[
+                        {
+                            gforce: "1-5 g",
+                            example: "Standing up quickly, elevators, amusement rides",
+                            effect: "No injury"
+                        },
+                        {
+                            gforce: "5-10 g",
+                            example: "Hard falls while running, minor car braking",
+                            effect: "Possible bruising or strains"
+                        },
+                        {
+                            gforce: "10-30 g",
+                            example: "Sports collisions, bicycle crashes, car crashes with seatbelts",
+                            effect: "Serious injuries possible (broken bones, concussions)"
+                        },
+                        {
+                            gforce: "30-50 g",
+                            example: "Severe car crashes, falls onto hard surfaces",
+                            effect: "High risk of severe injury"
+                        },
+                        {
+                            gforce: "50+ g",
+                            example: "Very sudden stops with no cushioning",
+                            effect: "Life-threatening injuries likely"
+                        },
+                    ]}
+                />
 
                 <Text style={[styles.paragraph, {marginTop: 5, marginBottom: 2}]}>G-force formula:</Text>
                 <Equation latex='\\text{g-force} = \\frac{\\Delta v}{t_{contact}} \\div 9.8' fontSize={13}/>
