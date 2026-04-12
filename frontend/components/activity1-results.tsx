@@ -388,54 +388,6 @@ const createStyles = (theme: any) => {
         marginBottom: 10,
     },
 
-    table: {
-        borderWidth: 1,
-        borderBottomWidth: 0,
-        borderColor: theme.text,
-        marginBottom: 20,
-    },
-
-    tableRowHeader: {
-        flexDirection: "row",
-        borderBottomWidth: 1,
-        borderColor: theme.text,
-        backgroundColor: theme.hoverBackground,
-    },
-
-    tableRow: {
-        flexDirection: "row",
-        borderBottomWidth: 1,
-        borderColor: theme.text,
-        alignItems: 'stretch',
-    },
-
-    colLeft: {
-        flex: 0.7,
-        padding: 12,
-        borderRightWidth: 1,
-        borderColor: theme.text,
-        justifyContent: "center",
-    },
-
-    colRight: {
-        flex: 1.3,
-        padding: 12,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    tableHeader: {
-        fontFamily: "Lato_700Bold",
-        color: theme.text,
-        textAlign: 'center'
-    },
-
-    tableCellText: {
-        fontFamily: "Lato_400Regular",
-        color: theme.blackText,
-        textAlign: 'center'
-    },
-
     grid:{
       flexDirection:"row",
       flexWrap:"wrap",
