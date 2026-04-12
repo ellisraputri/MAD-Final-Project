@@ -48,6 +48,7 @@ function ActivityOneResultCard(props: {
 
     const [showVideoModal, setShowVideoModal] = useState(false);
     const condition = props.timeCalculated && props.timeCalculated > 0;
+    const gForceCondition = props.timeStop && props.timeStop > 0;
 
     const finalVelocity = condition? 0.3 / props.timeCalculated! : undefined;
     const acceleration = condition? finalVelocity! / props.timeCalculated! : undefined;
@@ -55,6 +56,8 @@ function ActivityOneResultCard(props: {
     const netForce = acceleration && props.mass? props.mass * acceleration: undefined;
     const weight = props.mass? props.mass * 9.8: undefined;
     const dragForce = weight && netForce? weight - netForce: undefined;
+
+    const gForce = gForceCondition? (finalVelocity! / props.timeStop!) / 9.8: undefined;
 
     return(
         <View key={props.item} style={[resultStyles.card, {borderWidth:1, borderColor:"white"}]}>
@@ -111,7 +114,7 @@ function ActivityOneResultCard(props: {
             <Text style={resultStyles.subtitleText}>Score (accuracy): {props.accuracy?.toFixed(2)} </Text>
 
             {/* CALCULATION */}
-            <Accordion title="Force Calculations">
+            <Accordion title="Force Calculations" marginBottom={0}>
                 <Text style={resultStyles.calculationText}>First, we know that the height is 30 cm or 0.3 m.</Text>
                 <Text style={resultStyles.calculationText}>Then, from the measurements, the time is {props.timeCalculated} s.</Text>
                 <Text style={resultStyles.calculationText}>Since the toy is dropped, the initial velocity is 0 m/s.</Text>
@@ -120,29 +123,44 @@ function ActivityOneResultCard(props: {
                     (
                     <>
                         <Text style={[resultStyles.calculationText, {marginBottom: 2}]}>Final velocity calculation:</Text>
-                        <Equation latex='v_{final} = \\frac{distance}{time}' fontSize={14}/>
-                        <Equation latex={`v_{final} = \\\\frac{0.3}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`} fontSize={14}/>
+                        <Equation latex='v_{final} = \\frac{distance}{time}' fontSize={13}/>
+                        <Equation latex={`v_{final} = \\\\frac{0.3}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`} fontSize={13}/>
 
                         <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Acceleration calculation:</Text>
-                        <Equation latex='a = \\frac{v_{final} - v_0}{time}' fontSize={14}/>
-                        <Equation latex={`a = \\\\frac{${finalVelocity?.toFixed(3)} - 0}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`} fontSize={14}/>
+                        <Equation latex='a = \\frac{v_{final} - v_0}{time}' fontSize={13}/>
+                        <Equation latex={`a = \\\\frac{${finalVelocity?.toFixed(3)} - 0}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`} fontSize={13}/>
 
                         <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Net Force calculation:</Text>
-                        <Equation latex='F_N = mass \\times a' fontSize={14}/>
-                        <Equation latex={`F_N = ${props.mass} \\\\times ${acceleration?.toFixed(3)} = ${netForce?.toFixed(3)} \\\\text{ } N`} fontSize={14}/>
+                        <Equation latex='F_N = mass \\times a' fontSize={13}/>
+                        <Equation latex={`F_N = ${props.mass} \\\\times ${acceleration?.toFixed(3)} = ${netForce?.toFixed(3)} \\\\text{ } N`} fontSize={13}/>
 
                         <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Weight calculation:</Text>
-                        <Equation latex='w = mass \\times g' fontSize={14}/>
-                        <Equation latex={`w = ${props.mass} \\\\times 9.8 = ${weight} \\\\text{ } N`} fontSize={14}/>
+                        <Equation latex='w = mass \\times g' fontSize={13}/>
+                        <Equation latex={`w = ${props.mass} \\\\times 9.8 = ${weight} \\\\text{ } N`} fontSize={13}/>
 
                         <Text style={[resultStyles.calculationText, {marginTop: 15, marginBottom: 2}]}>Drag Force calculation:</Text>
-                        <Equation latex='F_D = w - F_N' fontSize={14}/>
-                        <Equation latex={`F_D = ${weight} - ${netForce?.toFixed(3)} \\\\approx ${dragForce?.toFixed(3)} \\\\text{ } N`} fontSize={14}/>
+                        <Equation latex='F_D = w - F_N' fontSize={13}/>
+                        <Equation latex={`F_D = ${weight} - ${netForce?.toFixed(3)} \\\\approx ${dragForce?.toFixed(3)} \\\\text{ } N`} fontSize={13}/>
                     </>
                     )
                 }
+            </Accordion>
 
-                
+            <Accordion title="G-Force Calculations" marginBottom={15}>
+                {gForceCondition &&
+                    (
+                    <>
+                        <Text style={[resultStyles.calculationText, {fontFamily: 'Lato_700Bold'}]}>Case 1: Object does not bounce</Text>
+
+                        <Text style={[resultStyles.calculationText, {marginBottom: 2}]}>Object goes from impact speed downward to 0 m/s.</Text>
+                        <Equation latex='\\Delta v = v_{impact}' fontSize={13}/>
+
+                        <Text style={[resultStyles.calculationText, {marginTop: 5, marginBottom: 2}]}>Calculations:</Text>
+                        <Equation latex={`\\\\text{g-force} = \\\\frac{v_{final}}{\\\\text{stop time}} \\\\div 9.8`} fontSize={13}/>
+                        <Equation latex={`\\\\text{g-force} = \\\\frac{${finalVelocity?.toFixed(3)}}{${props.timeStop?.toFixed(3)}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`} fontSize={13}/>
+                    </>
+                    )
+                }
             </Accordion>
             
         </View>
@@ -247,11 +265,74 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
                 </View>
             </View>
 
-            {/* Equation */}
-            <Text style={styles.subtitle}>
-                Newton's Second Law
-            </Text>
-            <Equation latex={"NetForce = mass \\\\times acceleration"} fontSize={14} />
+            <Text style={[styles.paragraph, {fontFamily: 'Lato_700Bold', marginBottom: 5}]}>Newton's Second Law</Text>
+            <Equation latex={"\\\\text{Net Force } (F_N) = mass \\\\times acceleration"} fontSize={13} />
+
+            {/* -----------GFORCE----------- */}
+            <Text style={[styles.subtitle, {marginTop: 40}]}>G-Force</Text>
+            <Text style={styles.paragraph}>G-force describes how quickly the object slows down when it hits the ground. It is measured in multiples of</Text>
+                <Equation latex='g = 9.8 m/s^2' fontSize={14}/>
+
+                <View style={styles.table}>
+                    <View style={styles.tableRowHeader}>
+                        <View style={styles.colLeft}>
+                        <Text style={styles.tableHeader}>G-Force Range</Text>
+                        </View>
+                        <View style={styles.colRight}>
+                        <Text style={styles.tableHeader}>Examples and Likely Effect</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.tableRow}>
+                        <View style={styles.colLeft}>
+                        <Text style={styles.tableCellText}>1-5 g</Text>
+                        </View>
+                        <View style={styles.colRight}>
+                            <Text style={styles.tableCellText}>Standing up quickly, elevators, amusement rides (no injury)</Text>
+                        </View>
+                    </View>
+                    <View style={styles.tableRow}>
+                        <View style={styles.colLeft}>
+                        <Text style={styles.tableCellText}>5-10 g</Text>
+                        </View>
+                        <View style={styles.colRight}>
+                            <Text style={styles.tableCellText}>Hard falls while running, minor car braking (possible bruise)</Text>
+                        </View>
+                    </View>
+                    <View style={styles.tableRow}>
+                        <View style={styles.colLeft}>
+                        <Text style={styles.tableCellText}>10-30 g</Text>
+                        </View>
+                        <View style={styles.colRight}>
+                            <Text style={styles.tableCellText}>Sports collisions, bicycle crashes, car crashes with seatbelts (serious injury)</Text>
+                        </View>
+                    </View>
+                    <View style={styles.tableRow}>
+                        <View style={styles.colLeft}>
+                        <Text style={styles.tableCellText}>30-50 g</Text>
+                        </View>
+                        <View style={styles.colRight}>
+                            <Text style={styles.tableCellText}>Severe car crashes, falls onto hard surfaces (High risk of severe injuries)</Text>
+                        </View>
+                    </View>
+                    <View style={styles.tableRow}>
+                        <View style={styles.colLeft}>
+                        <Text style={styles.tableCellText}>50+ g</Text>
+                        </View>
+                        <View style={styles.colRight}>
+                            <Text style={styles.tableCellText}>Very sudden stops with no cushioning (Life-threatening injuries)</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <Text style={[styles.paragraph, {marginTop: 5, marginBottom: 2}]}>G-force formula:</Text>
+                <Equation latex='\\text{g-force} = \\frac{\\Delta v}{t_{contact}} \\div 9.8' fontSize={13}/>
+
+                <Text style={[styles.paragraph, {marginTop: 5, marginBottom: 2}]}>Case 1 (no bounce):</Text>
+                <Equation latex='\\Delta v = v_{impact}' fontSize={13}/>
+
+                <Text style={[styles.paragraph, {marginTop: 5, marginBottom: 2}]}>Case 2 (bounce):</Text>
+                <Equation latex='\\Delta v = v_{impact} + v_{up}' fontSize={13}/>
         </Section>
 
         {/* Results */}
@@ -339,7 +420,7 @@ const createStyles = (theme: any) => {
         fontSize: 17,
         fontFamily: "Lato_700Bold",
         color: theme.text,
-        marginBottom: 20,
+        marginBottom: 10,
     },
 
     table: {
@@ -364,7 +445,7 @@ const createStyles = (theme: any) => {
     },
 
     colLeft: {
-        flex: 1,
+        flex: 0.7,
         padding: 12,
         borderRightWidth: 1,
         borderColor: theme.text,
@@ -372,7 +453,7 @@ const createStyles = (theme: any) => {
     },
 
     colRight: {
-        flex: 1,
+        flex: 1.3,
         padding: 12,
         justifyContent: "center",
         alignItems: "center",
@@ -425,7 +506,6 @@ const createStyles = (theme: any) => {
     },
     subsContainer:{
         marginLeft: 20,
-        gap: 10,
     },
     titleRow:{
         marginBottom: 5,

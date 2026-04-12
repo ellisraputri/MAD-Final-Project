@@ -3,9 +3,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function Accordion({ title, children }: { title: string, children: React.ReactNode }) {
+export default function Accordion({ title, children, marginBottom }: { title: string, children: React.ReactNode, marginBottom:number }) {
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = createStyles(theme, marginBottom);
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -32,7 +32,7 @@ export default function Accordion({ title, children }: { title: string, children
     );
 }
 
-const createStyles = (theme: any) => {
+const createStyles = (theme: any, marginBtm:number) => {
   const styles = StyleSheet.create({
     accordionContainer: {
         borderWidth: 1,
@@ -40,7 +40,7 @@ const createStyles = (theme: any) => {
         borderRadius: 8,
         marginTop: 30,
         overflow: 'hidden',
-        marginBottom: 15,
+        marginBottom: marginBtm,
     },
     accordionHeader: {
         flexDirection: 'row',
