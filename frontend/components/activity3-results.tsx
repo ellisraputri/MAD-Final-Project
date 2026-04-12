@@ -6,7 +6,7 @@ import theoryActivity from '@/data/activity_theory.json';
 import { Ionicons } from '@expo/vector-icons';
 import Button from './ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { ResultDetail } from '@/services/result/result.type';
+import { ResultDetailActivityThree } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
@@ -35,8 +35,8 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 function ActivityThreeResultCard(props: {
     item: number; 
     videoUri: string | null;
-    timePredict: number;
-    timeCalculated: number;
+    bendPredict: number;
+    bendCalculated: number;
 }){
     const theme = useAppTheme();
     const resultStyles = createStyles(theme);
@@ -85,10 +85,10 @@ function ActivityThreeResultCard(props: {
             </Text>
             <View style={resultStyles.list}>
                 <Text style={resultStyles.listItem}>
-                    • Predicted: {props.timePredict}
+                    • Predicted: {props.bendPredict}
                 </Text>
                 <Text style={resultStyles.listItem}>
-                    • Outcome: {props.timeCalculated}
+                    • Outcome: {props.bendCalculated}
                 </Text>
             </View>
 
@@ -104,7 +104,7 @@ export default function ActivityThreeResultsScreen(props: {resultId: string, onB
   const { id } = useLocalSearchParams();
   const {team} = useAppContext();
 
-  const [data, setData] = useState<ResultDetail>();
+  const [data, setData] = useState<ResultDetailActivityThree>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [result, setResult] = useState<ActivityRankDetail>();
@@ -118,10 +118,14 @@ export default function ActivityThreeResultsScreen(props: {resultId: string, onB
         setLoading(false);
         return;
     }
-    setData(response.data);
+
+    if(Number(response.data.activityId) !== 3){
+        console.warn("[ActivityThree] Wrong activityId received, skipping render. Got:", response.data.activityId);
+        return;  
+    }
+    setData(response.data as ResultDetailActivityThree);
     if(!response.data?.ratings) setShowRating(true);
 
-    
     const rankingRes = await getActivityRank({activityId: "3"});
     if(!rankingRes.success){
       toast.error(`Failed to fetch leaderboard rank data: ${rankingRes.message}`);
@@ -151,18 +155,15 @@ export default function ActivityThreeResultsScreen(props: {resultId: string, onB
         {/* Results */}
         {data &&
           <Section title="Results">
-            <ActivityThreeResultCard 
-              item={1} videoUri={data.medias[0].content}
-              timeCalculated={data.outcomes[0]} timePredict={data.predictions[0].prediction} 
-            />
-            <ActivityThreeResultCard 
-              item={2} videoUri={data.medias[1].content}
-              timeCalculated={data.outcomes[1]} timePredict={data.predictions[1].prediction} 
-            />
-            <ActivityThreeResultCard 
-              item={3} videoUri={data.medias[2].content}
-              timeCalculated={data.outcomes[2]} timePredict={data.predictions[2].prediction} 
-            />
+            {data?.outcomes?.map((outcome, index) => (
+              <ActivityThreeResultCard
+                key={index}
+                item={index + 1}
+                videoUri={data.medias?.[index]?.content}
+                bendCalculated={outcome?.max_bend}
+                bendPredict={data.predictions?.[index]?.prediction}
+              />
+            ))}
           </Section>
         }
 

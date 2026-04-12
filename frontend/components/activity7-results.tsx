@@ -6,7 +6,7 @@ import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { ContentAudio } from '@/services/media/media.type';
-import { ResultDetail } from '@/services/result/result.type';
+import { ResultDetailActivitySeven } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import { parseMediaContent } from '@/services/media/media';
@@ -16,6 +16,8 @@ import RatingPopup from './ui/rating-popup';
 import RankingCard from './ui/ranking-card';
 import { ActivityRankDetail } from '@/services/summary/summary.type';
 import { getActivityRank } from '@/services/summary/summary';
+import { BasePrediction } from '@/services/result/prediction.type';
+import { ActivitySevenOutcome } from '@/services/result/outcome.type';
 
 const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
@@ -35,8 +37,8 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 function ActivitySevenResultCard(props: {
     item: number; 
     contents: any[];
-    valuePredict: any[];
-    valueCalculated: number[];
+    valuePredict: BasePrediction[];
+    valueCalculated: ActivitySevenOutcome[];
 }){
   const theme = useAppTheme();
   const resultStyles = createStyles(theme);
@@ -74,7 +76,7 @@ function ActivitySevenResultCard(props: {
               
               {props.valueCalculated.map((p,idx) => (
                 <Text style={resultStyles.listItem} key={idx}>
-                  • Outcome from Member {idx+1}: {p}
+                  • Outcome from Member {idx+1}: {p.bpm}
               </Text>
               ))}
           </View>
@@ -90,10 +92,10 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
   const { id } = useLocalSearchParams();
   const {team} = useAppContext();
 
-  const [data, setData] = useState<ResultDetail>();
+  const [data, setData] = useState<ResultDetailActivitySeven>();
   const [contents, setContents] = useState<ContentAudio[][]>();
-  const [predictions, setPredictions] = useState<object[][]>();
-  const [outcomes, setOutcomes] = useState<number[][]>();
+  const [predictions, setPredictions] = useState<BasePrediction[][]>();
+  const [outcomes, setOutcomes] = useState<ActivitySevenOutcome[][]>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
 
@@ -109,6 +111,10 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
         setLoading(false);
         return;
     }
+    if(Number(response.data.activityId) !== 7){
+        console.warn("[ActivitySeven] Wrong activityId received, skipping render. Got:", response.data.activityId);
+        return;  
+    }
 
     const parsedContents = response.data.medias.map((m, _) => {
       return parseMediaContent(m.content);
@@ -123,7 +129,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
       grouped_outs.push(response.data.outcomes.slice(i, i + team.members.length));
     }
     setPredictions(grouped_preds);
-    setOutcomes(grouped_outs);
+    setOutcomes(grouped_outs as ActivitySevenOutcome[][]);
 
     for (let i = 0; i < parsedContents.length; i += team?.members.length) {
       grouped_contents.push(parsedContents.slice(i, i + team.members.length));
@@ -131,7 +137,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
     setContents(grouped_contents);
 
     if(!response.data?.ratings) setShowRating(true);
-    setData(response.data);
+    setData(response.data as ResultDetailActivitySeven);
 
     const rankingRes = await getActivityRank({activityId: "7"});
     if(!rankingRes.success){
@@ -161,6 +167,7 @@ export default function ActivitySevenResultsScreen(props: {resultId: string, onB
 
         {/* Results */}
         {data && contents && outcomes && predictions &&
+  outcomes.length >= 3 && predictions.length >= 3 && contents.length >= 3 &&
           <Section title="Results">
             <ActivitySevenResultCard 
               item={1} contents={contents[0]} 

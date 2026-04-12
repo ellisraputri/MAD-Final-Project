@@ -6,7 +6,7 @@ import theoryActivity from '@/data/activity_theory.json';
 import { Ionicons } from '@expo/vector-icons';
 import Button from './ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { ResultDetail } from '@/services/result/result.type';
+import { ResultDetailActivityOne } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
@@ -175,7 +175,7 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
   const {team} = useAppContext();
 
   const { id } = useLocalSearchParams();
-  const [data, setData] = useState<ResultDetail>();
+  const [data, setData] = useState<ResultDetailActivityOne>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [result, setResult] = useState<ActivityRankDetail>();
@@ -189,7 +189,12 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
         setLoading(false);
         return;
     }
-    setData(response.data);
+
+    if(Number(response.data.activityId) !== 1){
+        console.warn("[ActivityOne] Wrong activityId received, skipping render. Got:", response.data.activityId);
+        return;  
+    }
+    setData(response.data as ResultDetailActivityOne);
     if(!response.data?.ratings) setShowRating(true);
     
     const rankingRes = await getActivityRank({activityId: "1"});
@@ -300,21 +305,18 @@ export default function ActivityOneResultsScreen(props: {resultId: string, onBac
 
         {/* Results */}
         <Section title="Results">
-            <ActivityOneResultCard 
-                item={1} mass={data?.predictions[0]?.mass} videoUri={data?.medias[0].content}
-                timeCalculated={data?.outcomes[0].touch_time} timePredict={data?.predictions[0].prediction}
-                timeStop={data?.outcomes[0].stop_time} accuracy={data?.outcomes[0].score}
-            />
-            <ActivityOneResultCard 
-                item={2} mass={data?.predictions[1]?.mass} videoUri={data?.medias[1].content}
-                timeCalculated={data?.outcomes[1].touch_time} timePredict={data?.predictions[1].prediction} 
-                timeStop={data?.outcomes[1].stop_time}  accuracy={data?.outcomes[1].score}
-            />
-            <ActivityOneResultCard 
-                item={3} mass={data?.predictions[2]?.mass} videoUri={data?.medias[2].content}
-                timeCalculated={data?.outcomes[2].touch_time} timePredict={data?.predictions[2].prediction} 
-                timeStop={data?.outcomes[2].stop_time} accuracy={data?.outcomes[2].score}
-            />
+            {data?.outcomes?.map((outcome, index) => (
+              <ActivityOneResultCard
+                key={index}
+                item={index + 1}
+                videoUri={data.medias?.[index]?.content}
+                mass={data?.predictions[index]?.mass}
+                timeCalculated={outcome?.touch_time}
+                timePredict={data.predictions?.[index]?.prediction}
+                timeStop={outcome?.stop_time}
+                accuracy={outcome?.score}
+              />
+            ))}
         </Section>
 
         <Section title="Leaderboard Rank">

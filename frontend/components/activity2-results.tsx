@@ -5,7 +5,7 @@ import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { ResultDetail } from '@/services/result/result.type';
+import { ResultDetail, ResultDetailActivityTwo } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
@@ -82,7 +82,7 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
   const { id } = useLocalSearchParams();
   const {team} = useAppContext();
 
-  const [data, setData] = useState<ResultDetail>();
+  const [data, setData] = useState<ResultDetailActivityTwo>();
   const [contents, setContents] = useState<ContentAudio[]>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
@@ -98,12 +98,17 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
         return;
     }
 
+    if(Number(response.data.activityId) !== 2){
+        console.warn("[ActivityTwo] Wrong activityId received, skipping render. Got:", response.data.activityId);
+        return;  
+    }
+
     const contents = response.data.medias.map((m, _) => {
       return parseMediaContent(m.content);
     })
 
     setContents(contents);
-    setData(response.data);
+    setData(response.data as ResultDetailActivityTwo);
     if(!response.data?.ratings) setShowRating(true);
 
     const rankingRes = await getActivityRank({activityId: "2"});
@@ -138,18 +143,16 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
         {/* Results */}
         {contents && data && 
           <Section title="Results">
-            <ActivityTwoResultCard 
-              item={1} audioUri={contents[0].url} levels={contents[0].levels}
-              valueCalculated={data?.outcomes[0]} valuePredict={data.predictions[0].prediction} 
-            />
-            <ActivityTwoResultCard 
-              item={2} audioUri={contents[1].url} levels={contents[1].levels}
-              valueCalculated={data?.outcomes[1]} valuePredict={data.predictions[1].prediction} 
-            />
-            <ActivityTwoResultCard 
-              item={3} audioUri={contents[2].url} levels={contents[2].levels}
-              valueCalculated={data?.outcomes[2]} valuePredict={data.predictions[2].prediction} 
-            />
+            {data?.outcomes?.map((outcome, index) => (
+              <ActivityTwoResultCard
+                key={index}
+                item={index + 1}
+                audioUri={contents[index].url}
+                levels={contents[index].levels}
+                valueCalculated={outcome}
+                valuePredict={data.predictions?.[index]?.prediction}
+              />
+            ))}
           </Section>
         }
 

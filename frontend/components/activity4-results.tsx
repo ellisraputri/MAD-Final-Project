@@ -5,7 +5,7 @@ import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { ResultDetail } from '@/services/result/result.type';
+import { ResultDetailActivityFour } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
@@ -68,7 +68,7 @@ export default function ActivityFourResultsScreen(props: {resultId: string, onBa
   const {team} = useAppContext();
 
   const [result, setResult] = useState<ActivityRankDetail>();
-  const [data, setData] = useState<ResultDetail>();
+  const [data, setData] = useState<ResultDetailActivityFour>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
 
@@ -81,7 +81,12 @@ export default function ActivityFourResultsScreen(props: {resultId: string, onBa
         setLoading(false);
         return;
     }
-    setData(response.data);
+
+    if(Number(response.data.activityId) !== 4){
+        console.warn("[ActivityFour] Wrong activityId received, skipping render. Got:", response.data.activityId);
+        return;  
+    }
+    setData(response.data as ResultDetailActivityFour);
     if(!response.data?.ratings) setShowRating(true);
 
     const rankingRes = await getActivityRank({activityId: "4"});
@@ -113,18 +118,15 @@ export default function ActivityFourResultsScreen(props: {resultId: string, onBa
         {/* Results */}
         {data && 
           <Section title="Results">
-            <ActivityFourResultCard 
-              item={1} vibrateTime={Number(data.medias[0].content)}
-              valueCalculated={data.outcomes[0]} valuePredict={data.predictions[0].prediction} 
-            />
-            <ActivityFourResultCard 
-              item={2} vibrateTime={Number(data.medias[1].content)}
-              valueCalculated={data.outcomes[1]} valuePredict={data.predictions[1].prediction} 
-            />
-            <ActivityFourResultCard 
-              item={3} vibrateTime={Number(data.medias[2].content)}
-              valueCalculated={data.outcomes[2]} valuePredict={data.predictions[2].prediction} 
-            />
+            {data?.outcomes?.map((outcome, index) => (
+              <ActivityFourResultCard
+                key={index}
+                item={index + 1}
+                vibrateTime={Number(data.medias?.[index]?.content)}
+                valueCalculated={outcome}
+                valuePredict={data.predictions?.[index]?.prediction}
+              />
+            ))}
           </Section>
         }
 

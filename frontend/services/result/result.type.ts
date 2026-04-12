@@ -1,4 +1,6 @@
 import { MediaDetail } from "../media/media.type"
+import { ActivityOneOutcome, ActivitySevenOutcome, ActivityThreeOutcome, BaseOutcome } from "./outcome.type"
+import { ActivityOnePrediction, BasePrediction } from "./prediction.type"
 
 export type ResultBaseResponse = {
     success: boolean,
@@ -37,19 +39,6 @@ export type GetResultDetailRequest = {
     resultId: string,
 }
 
-export type ResultDetail = {
-    resultId: string,
-    activityId: number,
-    teamId: string,
-    attemptNo: number,
-    score: number,
-    medias: MediaDetail[],
-    outcomes: any[],
-    predictions: any[],
-    ratings: number,
-    comments: string,
-}
-
 export type GetResultDetailResponse = {
     success: boolean,
     message: string,
@@ -61,3 +50,64 @@ export type SubmitRatingRequest = {
     ratings?: number,
     comments?: string,
 }
+
+export type ResultDetailBase = {
+    resultId: string,
+    teamId: string,
+    attemptNo: number,
+    score: number,
+    medias: MediaDetail[],
+    ratings: number,
+    comments: string,
+}
+
+export type ResultDetailActivityOne = ResultDetailBase & {
+    activityId: 1;
+    outcomes: ActivityOneOutcome[];
+    predictions: ActivityOnePrediction[],
+}
+
+export type ResultDetailActivityTwo = ResultDetailBase & {
+    activityId: 2;
+    outcomes: BaseOutcome[];
+    predictions: BasePrediction[],
+}
+
+export type ResultDetailActivityThree = ResultDetailBase & {
+    activityId: 3;
+    outcomes: ActivityThreeOutcome[];
+    predictions: BasePrediction[];
+}
+
+export type ResultDetailActivityFour = ResultDetailBase & {
+    activityId: 4;
+    outcomes: BaseOutcome[];
+    predictions: BasePrediction[],
+}
+
+export type ResultDetailActivityFive = ResultDetailBase & {
+    activityId: 5;
+    outcomes: BaseOutcome[];
+    predictions: BasePrediction[],
+}
+
+export type ResultDetailActivitySix = ResultDetailBase & {
+    activityId: 6;
+    outcomes: BaseOutcome[];
+    predictions: BasePrediction[],
+}
+
+export type ResultDetailActivitySeven = ResultDetailBase & {
+    activityId: 7;
+    outcomes: ActivitySevenOutcome[];
+    predictions: BasePrediction[];
+}
+
+export type ResultDetail = 
+    | ResultDetailActivityOne 
+    | ResultDetailActivityTwo 
+    | ResultDetailActivityThree
+    | ResultDetailActivityFour
+    | ResultDetailActivityFive
+    | ResultDetailActivitySix
+    | ResultDetailActivitySeven;

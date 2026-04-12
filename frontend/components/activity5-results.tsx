@@ -5,7 +5,7 @@ import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { ResultDetail } from '@/services/result/result.type';
+import { ResultDetailActivityFive } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
@@ -68,7 +68,7 @@ export default function ActivityFiveResultsScreen(props: {resultId: string, onBa
   const { id } = useLocalSearchParams();
   const {team} = useAppContext();
 
-  const [data, setData] = useState<ResultDetail>();
+  const [data, setData] = useState<ResultDetailActivityFive>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [result, setResult] = useState<ActivityRankDetail>();
@@ -82,7 +82,11 @@ export default function ActivityFiveResultsScreen(props: {resultId: string, onBa
         setLoading(false);
         return;
     }
-    setData(response.data);
+    if(Number(response.data.activityId) !== 5){
+        console.warn("[ActivityFive] Wrong activityId received, skipping render. Got:", response.data.activityId);
+        return;  
+    }
+    setData(response.data as ResultDetailActivityFive);
     if(!response.data?.ratings) setShowRating(true);
 
     const rankingRes = await getActivityRank({activityId: "5"});
@@ -114,18 +118,15 @@ export default function ActivityFiveResultsScreen(props: {resultId: string, onBa
         {/* Results */}
         {data && 
           <Section title="Results">
-            <ActivityFiveResultCard 
-              item={1} vibrateTime={Number(data.medias[0].content)}
-              valueCalculated={data.outcomes[0]} valuePredict={data.predictions[0].prediction} 
-            />
-            <ActivityFiveResultCard 
-              item={2} vibrateTime={Number(data.medias[1].content)}
-              valueCalculated={data.outcomes[1]} valuePredict={data.predictions[1].prediction} 
-            />
-            <ActivityFiveResultCard 
-              item={3} vibrateTime={Number(data.medias[2].content)}
-              valueCalculated={data.outcomes[2]} valuePredict={data.predictions[2].prediction} 
-            />
+            {data?.outcomes?.map((outcome, index) => (
+              <ActivityFiveResultCard
+                key={index}
+                item={index + 1}
+                vibrateTime={Number(data.medias?.[index]?.content)}
+                valueCalculated={outcome}
+                valuePredict={data.predictions?.[index]?.prediction}
+              />
+            ))}
           </Section>
         }
 

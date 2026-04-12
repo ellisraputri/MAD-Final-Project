@@ -5,7 +5,7 @@ import theoryActivity from '@/data/activity_theory.json';
 import Button from './ui/button';
 import AudioPlayer from './ui/audio-player';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { ResultDetail } from '@/services/result/result.type';
+import { ResultDetailActivitySix } from '@/services/result/result.type';
 import { getResultDetail } from '@/services/result/result';
 import { toast } from 'sonner-native';
 import Loading from './ui/loading';
@@ -15,6 +15,8 @@ import RatingPopup from './ui/rating-popup';
 import { ActivityRankDetail } from '@/services/summary/summary.type';
 import { getActivityRank } from '@/services/summary/summary';
 import RankingCard from './ui/ranking-card';
+import { BasePrediction } from '@/services/result/prediction.type';
+import { BaseOutcome } from '@/services/result/outcome.type';
 
 const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
@@ -34,10 +36,10 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 
 function ActivitySixResultCard(props: {
     item: number; 
-    timePredict: any[];
-    timeCalculated: number[];
-    accuracyPredict?: any[];
-    accuracyCalculated?: number[];
+    timePredict: BasePrediction[];
+    timeCalculated: BaseOutcome[];
+    accuracyPredict?: BasePrediction[];
+    accuracyCalculated?: BaseOutcome[];
     medias?: MediaDetail[];
 }){
   const theme = useAppTheme();
@@ -125,9 +127,9 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
   const { id } = useLocalSearchParams();
   const {team} = useAppContext();
 
-  const [data, setData] = useState<ResultDetail>();
-  const [predictions, setPredictions] = useState<object[][]>();
-  const [outcomes, setOutcomes] = useState<number[][]>();
+  const [data, setData] = useState<ResultDetailActivitySix>();
+  const [predictions, setPredictions] = useState<BasePrediction[][]>();
+  const [outcomes, setOutcomes] = useState<BaseOutcome[][]>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [result, setResult] = useState<ActivityRankDetail>();
@@ -142,8 +144,12 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
         setLoading(false);
         return;
     }
+    if(Number(response.data.activityId) !== 6){
+        console.warn("[ActivitySix] Wrong activityId received, skipping render. Got:", response.data.activityId);
+        return;  
+    }
     if(!response.data?.ratings) setShowRating(true);
-    setData(response.data);
+    setData(response.data as ResultDetailActivitySix);
 
     const grouped_preds = [];
     const grouped_outs = [];
@@ -153,7 +159,7 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
       grouped_outs.push(response.data.outcomes.slice(i, i + team.members.length));
     }
     setPredictions(grouped_preds);
-    setOutcomes(grouped_outs);
+    setOutcomes(grouped_outs as BaseOutcome[][]);
 
     const rankingRes = await getActivityRank({activityId: "6"});
     if(!rankingRes.success){
