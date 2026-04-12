@@ -70,13 +70,13 @@ function ActivitySevenResultCard(props: {
           <View style={resultStyles.list}>
               {props.valuePredict.map((p, idx) => (
                 <Text style={resultStyles.listItem} key={idx}>
-                    • Prediction from Member {idx+1}: {p.prediction}
+                    • Prediction from Member {idx+1}: {p.prediction} bpm
                 </Text>
               ))}
               
               {props.valueCalculated.map((p,idx) => (
                 <Text style={resultStyles.listItem} key={idx}>
-                  • Outcome from Member {idx+1}: {p.bpm}
+                  • Outcome from Member {idx+1}: {p.bpm} bpm
               </Text>
               ))}
           </View>

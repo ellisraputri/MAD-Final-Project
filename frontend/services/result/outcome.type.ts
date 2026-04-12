@@ -18,5 +18,13 @@ export type ActivitySevenOutcome = {
     prediction: number;
 };
 
+export type ActivityTwoOutcome = {
+    outcome: number,
+    score: number,
+    realOutcome: number,
+}
 
-export type BaseOutcome = number;
+export type ActivityBaseOutcome = {
+    outcome: number,
+    score: number,
+}

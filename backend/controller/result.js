@@ -134,12 +134,19 @@ export const submitResult = async (req, res) => {
       return latestAttemptNo + 1;
     });
 
-    // TODO: model scoring
-    // activity 6 = loop predictions, ambil predictions[i].outcome
     const outcomes = await scorePredictions(medias, predictions, activityId);
     const score =
       outcomes.reduce((sum, o) => sum + (o.score || 0), 0) /
       (outcomes.length || 1);
+    
+    const preds = [];
+    if (activityId == 2|| activityId==4 || activityId==5){
+      for(const p of predictions){
+        preds.push({
+          "prediction": p.prediction,
+        })
+      }
+    }
 
     const resultData = resultModel({
       activityId,
@@ -148,7 +155,7 @@ export const submitResult = async (req, res) => {
       score,
       outcomes,
       medias,
-      predictions,
+      predictions: preds,
     });
 
     const docRef = await resultRef.add(resultData);
@@ -189,20 +196,31 @@ export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
     return latestAttemptNo + 1;
   });
 
-  let score = 0;
-  // TODO: model scoring
-  // activity 6 = loop predictions, ambil predictions[i].outcome
+  const medias = results.flatMap(r => r.medias || []);
+  let preds = results.flatMap(r => r.predictions);
 
-  const outcomes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const outcomes = await scorePredictions(medias, preds, activityId);
+  const score =
+    outcomes.reduce((sum, o) => sum + (o.score || 0), 0) /
+    (outcomes.length || 1);
+
+  if (activityId==6){
+    preds =[];
+    for(const p of predictions){
+      preds.push({
+        "prediction": p.prediction,
+      })
+    }
+  }
 
   const resultData = resultModel({
     activityId,
     teamId,
     attemptNo: newAttemptNo,
-    score: 0,
+    score: score,
     outcomes: outcomes,
-    medias: results.flatMap(r => r.medias || []),
-    predictions: results.flatMap(r => r.predictions),
+    medias: medias,
+    predictions: preds,
   });
 
   await resultRef.add(resultData);

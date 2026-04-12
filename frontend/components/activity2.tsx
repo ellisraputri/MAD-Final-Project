@@ -18,9 +18,17 @@ type audioType = {
 	input:string;
 }
 
-const isAudioTypeEmpty = (obj: audioType) => {
-	return obj.uri==="" && obj.levels.length===0 && obj.input===""
-}
+const amplitudeToDb = (amp: number) => {
+  if (amp <= 0) return -Infinity; // silence
+  return 20 * Math.log10(amp);
+};
+const getAverageDb = (levels: number[]) => {
+  if (!levels.length) return -Infinity;
+  const avgAmp =
+    levels.reduce((sum, val) => sum + Math.abs(val), 0) / levels.length;
+
+  return amplitudeToDb(avgAmp);
+};
 
 export default function ActivityTwoScreen() {
   const theme = useAppTheme();
@@ -142,6 +150,7 @@ export default function ActivityTwoScreen() {
     const predictions = audios.map((audio, _) => {
       return {
         prediction: Number(audio.input),
+        outcome: getAverageDb(audio.levels),
       }
     })
 

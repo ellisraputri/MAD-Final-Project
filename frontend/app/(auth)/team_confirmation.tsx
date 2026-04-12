@@ -58,9 +58,10 @@ export default function TeamConfirmationScreen() {
       toast.error(userResponse.message)
       return;
     }
-    setUser(userResponse.user);
+    setUser(userResponse.data);
+    console.log(userResponse);
 
-    if(userResponse.user?.teamId !== null && userResponse.user?.teamId) {
+    if(userResponse.data?.teamId !== null && userResponse.data?.teamId) {
       router.push("/(tabs)");
     }
   }

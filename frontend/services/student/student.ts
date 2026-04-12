@@ -10,7 +10,7 @@ export const getStudentDetail = async(): Promise<StudentDetailResponse> => {
     } catch (error: any) {
         console.log(error);
         return {
-            user: null,
+            data: null,
             ...createDefaultError(error.response.data.message),
         };
     }

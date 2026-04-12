@@ -1,5 +1,5 @@
 import { MediaDetail } from "../media/media.type"
-import { ActivityOneOutcome, ActivitySevenOutcome, ActivityThreeOutcome, BaseOutcome } from "./outcome.type"
+import { ActivityOneOutcome, ActivitySevenOutcome, ActivityThreeOutcome, ActivityBaseOutcome, ActivityTwoOutcome } from "./outcome.type"
 import { ActivityOnePrediction, BasePrediction } from "./prediction.type"
 
 export type ResultBaseResponse = {
@@ -69,7 +69,7 @@ export type ResultDetailActivityOne = ResultDetailBase & {
 
 export type ResultDetailActivityTwo = ResultDetailBase & {
     activityId: 2;
-    outcomes: BaseOutcome[];
+    outcomes: ActivityTwoOutcome[];
     predictions: BasePrediction[],
 }
 
@@ -81,19 +81,19 @@ export type ResultDetailActivityThree = ResultDetailBase & {
 
 export type ResultDetailActivityFour = ResultDetailBase & {
     activityId: 4;
-    outcomes: BaseOutcome[];
+    outcomes: ActivityBaseOutcome[];
     predictions: BasePrediction[],
 }
 
 export type ResultDetailActivityFive = ResultDetailBase & {
     activityId: 5;
-    outcomes: BaseOutcome[];
+    outcomes: ActivityBaseOutcome[];
     predictions: BasePrediction[],
 }
 
 export type ResultDetailActivitySix = ResultDetailBase & {
     activityId: 6;
-    outcomes: BaseOutcome[];
+    outcomes: ActivityBaseOutcome[];
     predictions: BasePrediction[],
 }
 

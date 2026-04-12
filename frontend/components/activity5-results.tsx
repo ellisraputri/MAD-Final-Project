@@ -50,14 +50,12 @@ function ActivityFiveResultCard(props: {
 
           <View style={resultStyles.list}>
               <Text style={resultStyles.listItem}>
-                  • Predicted: {props.valuePredict}
+                  • Predicted: {props.valuePredict} cm 
               </Text>
               <Text style={resultStyles.listItem}>
-                  • Outcome: {props.valueCalculated}
+                  • Outcome: {props.valueCalculated} cm
               </Text>
           </View>
-
-          <Text style={resultStyles.descText}>This is the results of calculation..</Text>
         </View>
     )
 }
@@ -123,7 +121,7 @@ export default function ActivityFiveResultsScreen(props: {resultId: string, onBa
                 key={index}
                 item={index + 1}
                 vibrateTime={Number(data.medias?.[index]?.content)}
-                valueCalculated={outcome}
+                valueCalculated={outcome.outcome}
                 valuePredict={data.predictions?.[index]?.prediction}
               />
             ))}

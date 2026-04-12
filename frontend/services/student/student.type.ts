@@ -8,7 +8,7 @@ export type StudentDetail = {
 }
 
 export type StudentDetailResponse = {
-    user: StudentDetail | null,
+    data: StudentDetail | null,
     success: boolean,
     message: string,
 }

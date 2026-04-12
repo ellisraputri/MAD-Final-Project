@@ -16,7 +16,7 @@ import { ActivityRankDetail } from '@/services/summary/summary.type';
 import { getActivityRank } from '@/services/summary/summary';
 import RankingCard from './ui/ranking-card';
 import { BasePrediction } from '@/services/result/prediction.type';
-import { BaseOutcome } from '@/services/result/outcome.type';
+import { ActivityBaseOutcome } from '@/services/result/outcome.type';
 
 const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
@@ -37,9 +37,9 @@ function Section({title, children}: {title: string, children: React.ReactNode}) 
 function ActivitySixResultCard(props: {
     item: number; 
     timePredict: BasePrediction[];
-    timeCalculated: BaseOutcome[];
+    timeCalculated: ActivityBaseOutcome[];
     accuracyPredict?: BasePrediction[];
-    accuracyCalculated?: BaseOutcome[];
+    accuracyCalculated?: ActivityBaseOutcome[];
     medias?: MediaDetail[];
 }){
   const theme = useAppTheme();
@@ -58,7 +58,7 @@ function ActivitySixResultCard(props: {
           {props.item===3 && (
             <>
               {props.medias?.map((m, idx) => (
-                <>
+                <View key={idx}>
                   <Text style={resultStyles.subtitleText}>Trace Result Member {idx+1}: </Text>
                   <View style={resultStyles.padContainer} key={idx}>
                     <Image
@@ -73,7 +73,7 @@ function ActivitySixResultCard(props: {
                       style={[resultStyles.image, resultStyles.overlay]}
                     />
                   </View>
-                </>
+                </View>
               ))}
             </>
           )}
@@ -84,13 +84,13 @@ function ActivitySixResultCard(props: {
           <View style={resultStyles.list}>
               {props.timePredict.map((p, idx) => (
                 <Text style={resultStyles.listItem} key={idx}>
-                    • Prediction from Member {idx+1}: {p.prediction}
+                    • Prediction from Member {idx+1}: {p.prediction} ms
                 </Text>
               ))}
               
               {props.timeCalculated.map((p,idx) => (
                 <Text style={resultStyles.listItem} key={idx}>
-                  • Outcome from Member {idx+1}: {p}
+                  • Outcome from Member {idx+1}: {p.outcome} ms
               </Text>
               ))}
           </View>
@@ -102,21 +102,19 @@ function ActivitySixResultCard(props: {
               </Text>
               <View style={resultStyles.list}>
                 {props.accuracyPredict && props.accuracyPredict.map((p, idx) => (
-                  <Text style={resultStyles.listItem}>
-                      • Prediction from Member {idx+1}: {p.prediction}
+                  <Text style={resultStyles.listItem} key={idx}>
+                      • Prediction from Member {idx+1}: {p.prediction}%
                   </Text>
                 ))}
                 
                 {props.accuracyCalculated && props.accuracyCalculated.map((p,idx) => (
-                  <Text style={resultStyles.listItem}>
-                    • Outcome from Member {idx+1}: {p}
+                  <Text style={resultStyles.listItem} key={idx}>
+                    • Outcome from Member {idx+1}: {p.outcome}%
                   </Text>
                 ))}
               </View>
             </>
           }
-
-          <Text style={resultStyles.descText}>This is the results of calculation..</Text>
         </View>
     )
 }
@@ -129,7 +127,7 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
 
   const [data, setData] = useState<ResultDetailActivitySix>();
   const [predictions, setPredictions] = useState<BasePrediction[][]>();
-  const [outcomes, setOutcomes] = useState<BaseOutcome[][]>();
+  const [outcomes, setOutcomes] = useState<ActivityBaseOutcome[][]>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [result, setResult] = useState<ActivityRankDetail>();
@@ -159,7 +157,7 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
       grouped_outs.push(response.data.outcomes.slice(i, i + team.members.length));
     }
     setPredictions(grouped_preds);
-    setOutcomes(grouped_outs as BaseOutcome[][]);
+    setOutcomes(grouped_outs as ActivityBaseOutcome[][]);
 
     const rankingRes = await getActivityRank({activityId: "6"});
     if(!rankingRes.success){
@@ -191,15 +189,15 @@ export default function ActivitySixResultsScreen(props: {resultId: string, onBac
         {data && predictions && outcomes &&
           <Section title="Results">
             <ActivitySixResultCard 
-              item={1} 
+              item={1}  key={1}
               timePredict={predictions[0]} timeCalculated={outcomes[0]}
             />
             <ActivitySixResultCard 
-              item={2} 
+              item={2} key={2}
               timePredict={predictions[1]} timeCalculated={outcomes[1]}
             />
             <ActivitySixResultCard 
-              item={3} medias={data.medias}
+              item={3} medias={data.medias} key={3}
               timePredict={predictions[2]} timeCalculated={outcomes[2]}
               accuracyPredict={predictions[3]} accuracyCalculated={outcomes[3]} 
             />

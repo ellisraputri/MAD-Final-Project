@@ -70,13 +70,13 @@ export default function HomeScreen() {
       toast.error(userResponse.message);
       return;
     }
-    setUser(userResponse.user);
+    setUser(userResponse.data);
 
-    if (!userResponse.user?.teamId) {
+    if (!userResponse.data?.teamId) {
       router.push("/(auth)/team_confirmation");
     } else {
       setLoading(true);
-      const teamId = userResponse.user.teamId;
+      const teamId = userResponse.data.teamId;
       await fetchTeamDetail(teamId);
 
       const fetches = Array.from({ length: 8 }, (_, i) => {

@@ -39,6 +39,7 @@ function ActivityTwoResultCard(props: {
     levels: Array<Number>;
     valuePredict: number;
     valueCalculated: number;
+    realOutcome: number;
 }){
     const theme = useAppTheme();
     const resultStyles = createStyles(theme);
@@ -71,7 +72,7 @@ function ActivityTwoResultCard(props: {
               </Text>
           </View>
 
-          <Text style={resultStyles.descText}>This is the results of calculation..</Text>
+          <Text style={resultStyles.descText}>The value of dB for this result is {props.realOutcome}</Text>
         </View>
     )
 }
@@ -149,7 +150,8 @@ export default function ActivityTwoResultsScreen(props: {resultId: string, onBac
                 item={index + 1}
                 audioUri={contents[index].url}
                 levels={contents[index].levels}
-                valueCalculated={outcome}
+                valueCalculated={outcome.outcome}
+                realOutcome={outcome.realOutcome}
                 valuePredict={data.predictions?.[index]?.prediction}
               />
             ))}

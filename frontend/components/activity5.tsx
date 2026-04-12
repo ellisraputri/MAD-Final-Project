@@ -11,6 +11,7 @@ import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { uploadMedia45 } from "@/services/media/media";
 import { Accelerometer } from 'expo-sensors';
+import { estimateDistance } from "@/services/util";
 
 export default function ActivityFiveScreen() {
   const theme = useAppTheme();
@@ -23,7 +24,7 @@ export default function ActivityFiveScreen() {
   const [vibrations, setVibrations] = useState<{
     duration: string;
     movement: string;
-    avgSpeed: number;
+    distance: number;
   }[]>([]);
   const [isVibrating, setIsVibrating] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -92,20 +93,12 @@ export default function ActivityFiveScreen() {
     else {
       if (vibrations.length >= 3) return;
 
-      const avgSpeed = motionData.reduce((a, b) => a + b, 0) / motionData.length;
-      const jerkValues = motionData.slice(1).map((v, i) =>
-        Math.abs(v - motionData[i])
-      );
-      const smoothness = jerkValues.reduce((a, b) => a + b, 0) / jerkValues.length;
-      const mean = avgSpeed;
-      const variance = motionData.reduce((acc, v) => acc + (v - mean) ** 2, 0) /motionData.length;
-
       setVibrations((prev) => [
         ...prev,
         {
           duration: elapsedTime.toString(),
           movement: "",
-          avgSpeed: avgSpeed,
+          distance: estimateDistance(motionData, 0.1),
         },
       ]);
     }
@@ -163,7 +156,7 @@ export default function ActivityFiveScreen() {
     const predictions = vibrations.map((vib, _) => {
       return {
         prediction: Number(vib.movement),
-        outcome: Number(vib.avgSpeed)
+        outcome: vib.distance,
       }
     })
 

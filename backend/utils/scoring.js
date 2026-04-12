@@ -39,6 +39,11 @@ export const scorePredictions = async (medias, predictions, activityId) => {
       return await scoreActivity3(mediaList, predictions);
     case '7':
       return await scoreActivity7(mediaList, predictions);
+    case '2':
+    case '4':
+    case '5':
+    case '6':
+      return await scoreActivity2456(predictions, activityId); 
 
     default:
       return [0, 0, 0];
@@ -160,4 +165,41 @@ export const scoreActivity7 = async (mediaList, predictions) => {
       error: true
     })
   });
+};
+
+export const scoreActivity2456 = async (predictions, activityId) => {
+  console.log(typeof(activityId));
+  if (activityId == 2) {
+    const sorted = [...predictions].sort((a, b) => b.outcome - a.outcome);
+
+    const rankMap = new Map();
+    sorted.forEach((item, index) => {
+      rankMap.set(item.prediction, index + 1);
+    });
+
+    predictions = predictions.map(item => ({
+      prediction: item.prediction,
+      realOutcome: item.outcome,              // 👈 keep original
+      outcome: rankMap.get(item.prediction)   // 👈 new ranked value
+    }));
+  }
+
+  const outcomes = [];
+  for (const prediction of predictions) {
+    if(activityId !=2){
+      outcomes.push({
+        outcome: prediction.outcome,
+        score: calculateScore(prediction.prediction, prediction.outcome),
+      });
+    }
+    else {
+      outcomes.push({
+        outcome: prediction.outcome,
+        score: calculateScore(prediction.prediction, prediction.outcome),
+        realOutcome: prediction.realOutcome,
+      });
+    }
+  }
+
+  return outcomes;
 };
