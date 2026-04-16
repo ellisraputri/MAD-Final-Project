@@ -179,6 +179,8 @@ export default function ActivitySixScreen() {
 
       if (isDone) {
         router.push(`/(tabs)/activity/6/results`);
+        setIsWaitingResult(false);
+        handleRetry();
       }
     };
 

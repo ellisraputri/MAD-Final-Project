@@ -54,7 +54,7 @@ function ActivitySevenResultCard(props: {
           <View style={resultStyles.subsContainer}>
             {props.contents?.map((content, idx) => (
               <View key={idx} style={resultStyles.viewAudio}>
-                <Text style={resultStyles.subtitle2Text}>Audio from Member {idx}</Text>
+                <Text style={resultStyles.subtitle2Text}>Audio from Member {idx+1}</Text>
                 {content.url ? (
                   <AudioPlayer uri={content.url} levels={content.levels}/>
                 ) : (
@@ -300,6 +300,7 @@ const createStyles = (theme:any) => {
           fontFamily: "Lato_700Bold",
           fontSize: 16,
           color: theme.blackText,
+          marginBottom: 5,
       },
       viewAudio : {
         marginBottom: 10,

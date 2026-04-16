@@ -87,6 +87,8 @@ export default function ActivitySevenScreen() {
   
         if (isDone) {
           router.push(`/(tabs)/activity/7/results`);
+          setIsWaitingResult(false);
+          handleRetry();
         }
       };
   
