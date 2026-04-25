@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Image, Modal,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
@@ -38,6 +38,7 @@ export default function TeamConfirmationScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const {setUser} = useAppContext();
+  const params = useLocalSearchParams();
 
   const router = useRouter();
   const [teamName, setTeamName] = useState("");
@@ -86,14 +87,29 @@ export default function TeamConfirmationScreen() {
     router.push("/(tabs)");
   }
 
-  const handleJoinTeam = async() => {
-    if(joinTeamModalLoading) return;
+  useEffect(() => {
+    const joinTeamFromQR = async () => {
+      if (params.scannedTeamId) {
+        const scannedId = String(params.scannedTeamId);
+
+        setTeamId(scannedId);
+        await handleJoinTeam(scannedId);
+      }
+    };
+
+    joinTeamFromQR();
+  }, [params.scannedTeamId]);
+
+  const handleJoinTeam = async (customTeamId?: string) => {
+    if (joinTeamModalLoading) return;
+
     setJoinTeamModalLoading(true);
 
     const response = await joinTeam({
-      teamId: teamId
-    })
-    if(!response.success) {
+      teamId: customTeamId || teamId,
+    });
+
+    if (!response.success) {
       toast.error(response.message);
       setJoinTeamModalLoading(false);
       return;
@@ -239,6 +255,14 @@ export default function TeamConfirmationScreen() {
                 value={teamId}
                 onChangeText={setTeamId}
                 style={styles.input}
+            />
+
+            <Button
+              text="Scan QR Code"
+              onPress={() => router.push("/(auth)/scan_team")}
+              width={200}
+              marginTop={20}
+              fontSize={20}
             />
 
             {/* OK Button */}

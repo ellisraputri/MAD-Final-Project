@@ -14,6 +14,7 @@ import Loading from "@/components/ui/loading";
 import { socket } from "@/services/socket";
 import { ActivityRankDetail, GlobalRankDetail } from "@/services/summary/summary.type";
 import { getActivityRank, getGlobalRank } from "@/services/summary/summary";
+import QRCode from 'react-native-qrcode-svg';
 
 const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
 
@@ -301,6 +302,11 @@ export default function HomeScreen() {
         
         {/* TEAM INFO */}
         <Text style={styles.label}>Team ID: {team?.id}</Text>
+
+        <QRCode
+          value={team?.id}
+          size={200}
+        />
 
         <Text style={styles.label}>Team Class Grade: {team?.grade}</Text>
 
