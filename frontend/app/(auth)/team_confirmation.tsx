@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Image, Modal,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import Svg, { Polygon } from 'react-native-svg';
 import CustomDropdown from '@/components/ui/dropdown';
 import Button from '@/components/ui/button';
@@ -48,6 +48,7 @@ export default function TeamConfirmationScreen() {
   const [joinTeamModalVisible, setJoinTeamModalVisible] = useState(false);
   const [newTeamModalLoading, setNewTeamModalLoading] = useState(false);
   const [joinTeamModalLoading, setJoinTeamModalLoading] = useState(false);
+  const [scanQrLoading, setScanQrLoading] = useState(false);
 
   useEffect(() => {
     checkTeam();
@@ -86,6 +87,13 @@ export default function TeamConfirmationScreen() {
 
     router.push("/(tabs)");
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      // Runs whenever screen comes back into focus
+      setScanQrLoading(false);
+    }, [])
+  );
 
   useEffect(() => {
     const joinTeamFromQR = async () => {
@@ -241,7 +249,7 @@ export default function TeamConfirmationScreen() {
             
             {/* Header */}
             <View style={styles.headerPopup}>
-              <Text style={styles.title}>Join Team</Text>
+              <Text style={styles.title}>Join Team By ID</Text>
 
               <TouchableOpacity onPress={() => setJoinTeamModalVisible(false)}>
                 <Text style={styles.close}>✕</Text>
@@ -257,22 +265,29 @@ export default function TeamConfirmationScreen() {
                 style={styles.input}
             />
 
-            <Button
-              text="Scan QR Code"
-              onPress={() => router.push("/(auth)/scan_team")}
-              width={200}
-              marginTop={20}
-              fontSize={20}
-            />
-
             {/* OK Button */}
             <Button
               onPress={handleJoinTeam}
               text='OK'
               width={150}
-              fontSize={20}
-              marginTop={30}
+              fontSize={16}
+              marginTop={10}
               isLoading={joinTeamModalLoading}
+            />
+
+            <Text style={styles.title2}>Or, Join Team By QR Code</Text>
+
+            {/* Scan QR Button */}
+            <Button
+              text="Scan QR Code"
+              onPress={() => {
+                setScanQrLoading(true);
+                router.push("/(auth)/scan_team");
+              }}
+              width={200}
+              marginTop={0}
+              fontSize={16}
+              isLoading={scanQrLoading}
             />
 
           </View>
@@ -367,10 +382,17 @@ export const createStyles = (theme: any) => {
       alignItems: "center",
     },
     title: {
-      fontSize: 24,
+      fontSize: 20,
       color: theme.text,
       fontWeight: "600",
       fontFamily: "Nunito_700Bold",
+    },
+    title2: {
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: "600",
+      fontFamily: "Nunito_700Bold",
+      marginTop: 50,
     },
     close: {
       fontSize: 28,

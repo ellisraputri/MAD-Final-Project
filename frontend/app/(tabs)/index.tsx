@@ -301,12 +301,14 @@ export default function HomeScreen() {
       <ScrollView style={styles.content}  contentContainerStyle={{ paddingBottom: 150 }}>
         
         {/* TEAM INFO */}
-        <Text style={styles.label}>Team ID: {team?.id}</Text>
+        <View style={{marginBottom: 5}}>
+          <QRCode
+            value={team?.id}
+            size={100}
+          />
+        </View>
 
-        <QRCode
-          value={team?.id}
-          size={200}
-        />
+        <Text style={styles.label}>Team ID: {team?.id}</Text>
 
         <Text style={styles.label}>Team Class Grade: {team?.grade}</Text>
 
