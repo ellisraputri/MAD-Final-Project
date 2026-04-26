@@ -18,6 +18,7 @@ import RankingCard from './ui/ranking-card';
 import Equation from './ui/equation';
 import Table from './ui/table';
 import Accordion from './ui/accordion';
+import VideoModal from './ui/video-modal';
 
 const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
 
@@ -62,27 +63,12 @@ function ActivityThreeResultCard(props: {
         <View style={resultStyles.subsContainer}>
             <View style={resultStyles.videoPlaceholder}>
                 {props.videoUri ? (
-                    <>
-                        <TouchableOpacity
-                        style={resultStyles.playOverlay}
-                        onPress={() => setShowVideoModal(true)}
-                        >
-                        <Ionicons name="play-circle" size={60} color="#357D89" />
-                        <Text style={resultStyles.tapText}>Tap to play</Text>
-                        </TouchableOpacity>
-
-                        <Modal visible={showVideoModal} animationType="slide" transparent={false}>
-                            <View style={resultStyles.fullscreenModal}>
-                                <VideoPlayer link={props.videoUri} vidHeight={400} vidWidth={320} />
-                                <TouchableOpacity
-                                style={resultStyles.closeVideoBtn}
-                                onPress={() => setShowVideoModal(false)}
-                                >
-                                <Text style={resultStyles.closeBtnText}>Close</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </Modal>
-                    </>
+                    <VideoModal 
+                        showModal={showVideoModal} 
+                        videoUri={props.videoUri} 
+                        openModal={() => setShowVideoModal(true)} 
+                        closeModal={() => setShowVideoModal(false)}
+                    />
                 ) : (
                     <Text style={resultStyles.descText}>No video</Text>
                 )}
@@ -306,40 +292,12 @@ const createStyles = (theme: any) => {
       flexWrap:"wrap",
       justifyContent:"space-between"
     },
-
-    playOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-    },
-    tapText: {
-        marginTop: 8,
-        color: theme.text,
-        fontFamily: "Lato_400Regular",
-        fontSize: 20,
-    },
     subtitle: {
         marginTop: 40,
         fontSize: 17,
         fontFamily: "Lato_700Bold",
         color: theme.text,
         marginBottom: 10,
-    },
-    fullscreenModal: {
-        flex: 1,
-        backgroundColor: '#000',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    closeVideoBtn: {
-        position: 'absolute',
-        bottom: 80, 
-        backgroundColor: theme.text,
-        padding: 10,
-        borderRadius: 8,
-        width: 120,
-        alignItems: 'center',
     },
     subsContainer:{
         marginLeft: 20,

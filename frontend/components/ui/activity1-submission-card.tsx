@@ -3,6 +3,7 @@ import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "reac
 import VideoPlayer from "./video-player";
 import { useState } from "react";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import VideoModal from "./video-modal";
 
 
 export default function ActivityOneSubmissionCard(props: {
@@ -35,27 +36,11 @@ export default function ActivityOneSubmissionCard(props: {
             <View style={submissionStyles.subsContainer}>
                 <View style={submissionStyles.videoPlaceholder}>
                     {props.videoUri ? (
-                        <>
-                            <TouchableOpacity
-                            style={submissionStyles.playOverlay}
-                            onPress={() => setShowVideoModal(true)}
-                            >
-                            <Ionicons name="play-circle" size={60} color={theme.text} />
-                            <Text style={submissionStyles.tapText}>Tap to play</Text>
-                            </TouchableOpacity>
-
-                            <Modal visible={showVideoModal} animationType="slide" transparent={false}>
-                                <View style={submissionStyles.fullscreenModal}>
-                                    <VideoPlayer link={props.videoUri} vidHeight={400} vidWidth={320} />
-                                    <TouchableOpacity
-                                    style={submissionStyles.closeVideoBtn}
-                                    onPress={() => setShowVideoModal(false)}
-                                    >
-                                    <Text style={submissionStyles.editBtnText}>Close</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </Modal>
-                        </>
+                        <VideoModal 
+                            showModal={showVideoModal}  
+                            videoUri={props.videoUri} 
+                            openModal={() => setShowVideoModal(true)} 
+                            closeModal={() => setShowVideoModal(false)}/>
                     ) : (
                         <Text style={submissionStyles.descText}>No video</Text>
                     )}
@@ -89,33 +74,6 @@ export default function ActivityOneSubmissionCard(props: {
 
 export const createStyles = (theme: any) => {
     const submissionStyles = StyleSheet.create({
-        playOverlay: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-        },
-        tapText: {
-            marginTop: 8,
-            color: theme.text,
-            fontFamily: "Lato_400Regular",
-            fontSize: 20,
-        },
-        fullscreenModal: {
-            flex: 1,
-            backgroundColor: '#000',
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        closeVideoBtn: {
-            position: 'absolute',
-            bottom: 80, 
-            backgroundColor: theme.text,
-            padding: 10,
-            borderRadius: 8,
-            width: 120,
-            alignItems: 'center',
-        },
         subsContainer:{
             marginLeft: 20,
         },
