@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -7,14 +7,13 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
-} from 'react-native';
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useRouter } from 'expo-router';
-import Svg, { Polygon } from 'react-native-svg';
-import Button from '@/components/ui/button';
-import { useAppTheme } from '@/hooks/use-app-theme';
+import { useRouter } from "expo-router";
+import Svg, { Polygon } from "react-native-svg";
+import Button from "@/components/ui/button";
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { loginAndGetData } from "@/services/auth/auth";
-import { auth } from '@/services/firebase';
 
 export default function LoginScreen() {
   const theme = useAppTheme();
@@ -22,23 +21,23 @@ export default function LoginScreen() {
 
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async() => {
-    if(isLoading) return;
-    
-    if(email==="" || password===""){
+  const handleLogin = async () => {
+    if (isLoading) return;
+
+    if (email === "" || password === "") {
       alert("Fields cannot be empty");
     }
     setIsLoading(true);
-    
-    const res = await loginAndGetData({email, password});
+
+    const res = await loginAndGetData({ email, password });
     alert(res.message);
     setIsLoading(false);
 
-    if(res.success) router.replace('/team_confirmation');
+    if (res.success) router.replace("/team_confirmation");
   };
 
   return (
@@ -47,26 +46,24 @@ export default function LoginScreen() {
       contentContainerStyle={{ paddingBottom: 20 }}
       keyboardShouldPersistTaps="handled"
       enableOnAndroid={true}
-      extraScrollHeight={10}        // extra space above keyboard
-      enableAutomaticScroll={true}  // auto scrolls to focused input
+      extraScrollHeight={10} // extra space above keyboard
+      enableAutomaticScroll={true} // auto scrolls to focused input
     >
       {/* Header Image */}
       <ImageBackground
-        source={require('../../assets/images/header.png')}
+        source={require("../../assets/images/header.png")}
         style={styles.header}
         resizeMode="cover"
       >
         <Image
           source={require("../../assets/images/logo.png")}
           style={styles.logo}
-        >
-        </Image>
+        ></Image>
 
         <Image
           source={require("../../assets/images/text_logo.png")}
           style={styles.textLogo}
-        >
-        </Image>
+        ></Image>
 
         <View style={styles.overlay}>
           <Text style={styles.subtitle}>
@@ -86,7 +83,6 @@ export default function LoginScreen() {
             fill={theme.background}
           />
         </Svg>
-
       </ImageBackground>
 
       {/* Form */}
@@ -113,7 +109,7 @@ export default function LoginScreen() {
         {/* Login Button */}
         <Button
           onPress={handleLogin}
-          text='Login'
+          text="Login"
           width={200}
           fontSize={20}
           marginTop={60}
@@ -122,10 +118,8 @@ export default function LoginScreen() {
 
         {/* Register */}
         <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>
-            Don't have an account?{' '}
-          </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+          <Text style={styles.registerText}>Don&rsquo;t have an account?</Text>
+          <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
             <Text style={styles.registerLink}>Register here</Text>
           </TouchableOpacity>
         </View>
@@ -142,7 +136,7 @@ export const createStyles = (theme: any) => {
     },
     header: {
       height: 300,
-      justifyContent: 'flex-end',
+      justifyContent: "flex-end",
     },
     form: {
       flex: 1,
@@ -155,7 +149,7 @@ export const createStyles = (theme: any) => {
     label: {
       fontSize: 20,
       color: theme.text,
-      fontFamily: 'Nunito_700Bold',
+      fontFamily: "Nunito_700Bold",
       marginTop: 24,
     },
     input: {
@@ -163,58 +157,59 @@ export const createStyles = (theme: any) => {
       borderBottomColor: theme.text,
       fontSize: 16,
       paddingVertical: 8,
-      fontFamily: 'Lato_400Regular',
+      fontFamily: "Lato_400Regular",
       marginTop: 8,
-      color: theme.blackText
+      color: theme.blackText,
     },
     registerText: {
       fontSize: 16,
       color: theme.text,
+      marginRight: 2,
     },
     registerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
+      flexDirection: "row",
+      justifyContent: "center",
       marginTop: 40,
     },
     registerLink: {
       fontSize: 16,
       fontWeight: "bold",
       color: theme.text,
-      textDecorationLine: 'underline',
+      textDecorationLine: "underline",
     },
     diagonal: {
-      position: 'absolute',
+      position: "absolute",
       bottom: -1,
-      width: '100%',
+      width: "100%",
     },
     logo: {
-      position: 'absolute',
+      position: "absolute",
       top: 60,
       left: 15,
       width: 60,
       height: 80,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     textLogo: {
-      position: 'absolute',
+      position: "absolute",
       top: 150,
       left: 20,
       width: 180,
       height: 50,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     overlay: {
-      position: 'absolute',
+      position: "absolute",
       bottom: 60,
       left: 0,
       right: 20,
       padding: 20,
     },
     subtitle: {
-      color: '#fff',
+      color: "#fff",
       fontSize: 18,
       fontFamily: "Lato_700Bold",
     },
   });
   return styles;
-}
+};

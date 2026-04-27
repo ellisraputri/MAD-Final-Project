@@ -1,8 +1,4 @@
-export const teamModel = ({
-  name,
-  grade,
-  logo = null,
-}) => {
+export const teamModel = ({ name, grade, logo = null }) => {
   return {
     name: name,
     grade: grade,

@@ -1,16 +1,16 @@
-import express from 'express';
-import cors from 'cors';
-import 'dotenv/config';
-import http from 'http';
-import { Server } from 'socket.io';
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+import http from "http";
+import { Server } from "socket.io";
 
-import { db } from './config/firestore.js';
-import studentRouter from './router/student.js';
-import teamRouter from './router/team.js';
-import resultRouter from './router/result.js';
-import mediaRouter from './router/media.js';
-import { registerTeamSocket } from './config/socket.js';
-import summaryRouter from './router/summary.js';
+import { db } from "./config/firestore.js";
+import studentRouter from "./router/student.js";
+import teamRouter from "./router/team.js";
+import resultRouter from "./router/result.js";
+import mediaRouter from "./router/media.js";
+import { registerTeamSocket } from "./config/socket.js";
+import summaryRouter from "./router/summary.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -23,14 +23,14 @@ export const io = new Server(server, {
     credentials: true,
   },
 });
-registerTeamSocket(io); 
+registerTeamSocket(io);
 
 // Middleware
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 
 // Routes
-app.get('/', (req, res) => res.send("Firebase API working"));
+app.get("/", (req, res) => res.send("Firebase API working"));
 app.use("/api/auth", studentRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/result", resultRouter);

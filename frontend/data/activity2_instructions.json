@@ -1,15 +1,15 @@
 {
-    "overview": "Students measure and compare sound levels in different classroom activities.",
-    "equipments": [
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/6/66/NPC_Arapacati.png/revision/latest?cb=20240411183812",
-            "caption": "Mobile phone with STEMM Lab app"
-        }
-    ],
-    "tutorial": [
-        "Measure noise from different actions (dropping objects (pens, books) talking, walking, stamping your feet).",
-        "Record sound levels and locations.",
-        "Map loud and quiet zones."
-    ],
-    "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "overview": "Students measure and compare sound levels in different classroom activities.",
+  "equipments": [
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/6/66/NPC_Arapacati.png/revision/latest?cb=20240411183812",
+      "caption": "Mobile phone with STEMM Lab app"
+    }
+  ],
+  "tutorial": [
+    "Measure noise from different actions (dropping objects (pens, books) talking, walking, stamping your feet).",
+    "Record sound levels and locations.",
+    "Map loud and quiet zones."
+  ],
+  "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 }

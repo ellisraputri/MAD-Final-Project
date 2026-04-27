@@ -8,14 +8,14 @@ export const generateDailySummary = async () => {
   const grouped = {};
 
   // 🔹 Group by activityId
-  snapshot.forEach(doc => {
+  snapshot.forEach((doc) => {
     const data = doc.data();
     const key = data.activityId;
 
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push({
       ...data,
-      resultId: doc.id, 
+      resultId: doc.id,
     });
   });
 
@@ -28,7 +28,7 @@ export const generateDailySummary = async () => {
 
     // Assign ranking
     const rankings = records.map((item, index) => ({
-      resultId: item.resultId, 
+      resultId: item.resultId,
       teamId: item.teamId,
       score: item.score,
       rank: index + 1,
@@ -40,14 +40,14 @@ export const generateDailySummary = async () => {
     await db.collection("summaries").doc(activityId).set({
       activityId,
       rankings,
-      updatedAt: now
+      updatedAt: now,
     });
   }
 
   const teamMap = {};
 
   // 🔹 Step 1: Group → teamId → activityId → best score
-  snapshot.forEach(doc => {
+  snapshot.forEach((doc) => {
     const data = doc.data();
     const { teamId, activityId, score } = data;
 
@@ -61,18 +61,17 @@ export const generateDailySummary = async () => {
       // take BEST score per activity
       teamMap[teamId][activityId] = Math.max(
         teamMap[teamId][activityId],
-        score
+        score,
       );
     }
   });
 
   // 🔹 Step 2: Compute averages
-  const rankings = Object.keys(teamMap).map(teamId => {
+  const rankings = Object.keys(teamMap).map((teamId) => {
     const activities = Object.values(teamMap[teamId]);
 
     const avg =
-      activities.reduce((sum, val) => sum + val, 0) /
-      activities.length;
+      activities.reduce((sum, val) => sum + val, 0) / activities.length;
 
     return {
       teamId,
@@ -99,7 +98,7 @@ export const generateDailySummary = async () => {
 
   cacheService.del(`summary.global.rankings`);
   cacheService.del(`summary.global.updatedAt`);
-  for (let i=1; i<=7; i++){
+  for (let i = 1; i <= 7; i++) {
     cacheService.del(`summary.activity.${i}.rankings`);
     cacheService.del(`summary.activity.${i}.updatedAt`);
   }
@@ -107,78 +106,76 @@ export const generateDailySummary = async () => {
   console.log("🌍 Daily summary ranking updated");
 };
 
-export const getGlobalRank = async(req, res) => {
-    try {
-        const rankings = cacheService.get(`summary.global.rankings`);
-        const updatedAt = cacheService.get(`summary.global.updatedAt`);
+export const getGlobalRank = async (req, res) => {
+  try {
+    const rankings = cacheService.get(`summary.global.rankings`);
+    const updatedAt = cacheService.get(`summary.global.updatedAt`);
 
-        if (rankings && updatedAt) {
-          return res.status(200).json({
-              rankings: rankings, 
-              updatedAt: updatedAt,
-              success: true,
-              message: "Global rank found",
-          });
-        }
-
-        const summaryRef = db.collection("summaries").doc("global");
-        const doc = await summaryRef.get();
-
-        if (!doc.exists) {
-            return error400(res, "Global rank not found");
-        }
-
-        cacheService.set(`summary.global.rankings`, doc.data().rankings);
-        cacheService.set(`summary.global.updatedAt`, doc.data().updatedAt);
-
-        return res.status(200).json({
-            rankings: doc.data().rankings, 
-            updatedAt: doc.data().updatedAt,
-            success: true,
-            message: "Global rank found",
-        });
-
-    } catch (error) {
-        console.error(error);
-        return error500(res);
+    if (rankings && updatedAt) {
+      return res.status(200).json({
+        rankings: rankings,
+        updatedAt: updatedAt,
+        success: true,
+        message: "Global rank found",
+      });
     }
-}
 
-export const getActivityRank = async(req, res) => {
-    try {
-        const {id} = req.params;
+    const summaryRef = db.collection("summaries").doc("global");
+    const doc = await summaryRef.get();
 
-        const rankings = cacheService.get(`summary.activity.${id}.rankings`);
-        const updatedAt = cacheService.get(`summary.activity.${id}.updatedAt`);
-
-        if (rankings && updatedAt) {
-          return res.status(200).json({
-              rankings: rankings, 
-              updatedAt: updatedAt,
-              success: true,
-              message: "Activity rank found",
-          });
-        }
-
-        const summaryRef = db.collection("summaries").doc(id);
-        const doc = await summaryRef.get();
-
-        if (!doc.exists) {
-            return error400(res, `Activity ${id} rank not found`);
-        }
-
-        cacheService.set(`summary.activity.${id}.rankings`, doc.data().rankings);
-        cacheService.set(`summary.activity.${id}.updatedAt`, doc.data().updatedAt);
-
-        return res.status(200).json({
-            rankings: doc.data().rankings, 
-            updatedAt: doc.data().updatedAt,
-            success: true,
-            message: "Activity rank found",
-        });
-
-    } catch (error) {
-        console.error(error);
-        return error500(res);
+    if (!doc.exists) {
+      return error400(res, "Global rank not found");
     }
-}
+
+    cacheService.set(`summary.global.rankings`, doc.data().rankings);
+    cacheService.set(`summary.global.updatedAt`, doc.data().updatedAt);
+
+    return res.status(200).json({
+      rankings: doc.data().rankings,
+      updatedAt: doc.data().updatedAt,
+      success: true,
+      message: "Global rank found",
+    });
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};
+
+export const getActivityRank = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const rankings = cacheService.get(`summary.activity.${id}.rankings`);
+    const updatedAt = cacheService.get(`summary.activity.${id}.updatedAt`);
+
+    if (rankings && updatedAt) {
+      return res.status(200).json({
+        rankings: rankings,
+        updatedAt: updatedAt,
+        success: true,
+        message: "Activity rank found",
+      });
+    }
+
+    const summaryRef = db.collection("summaries").doc(id);
+    const doc = await summaryRef.get();
+
+    if (!doc.exists) {
+      return error400(res, `Activity ${id} rank not found`);
+    }
+
+    cacheService.set(`summary.activity.${id}.rankings`, doc.data().rankings);
+    cacheService.set(`summary.activity.${id}.updatedAt`, doc.data().updatedAt);
+
+    return res.status(200).json({
+      rankings: doc.data().rankings,
+      updatedAt: doc.data().updatedAt,
+      success: true,
+      message: "Activity rank found",
+    });
+  } catch (error) {
+    console.error(error);
+    return error500(res);
+  }
+};

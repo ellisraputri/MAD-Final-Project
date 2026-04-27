@@ -7,7 +7,10 @@ const __dirname = path.dirname(__filename);
 
 export const analyzeVideo = (videoPath) => {
   return new Promise((resolve, reject) => {
-    const pythonPath = path.join(__dirname, "../scripts/.venv/Scripts/python.exe");
+    const pythonPath = path.join(
+      __dirname,
+      "../scripts/.venv/Scripts/python.exe",
+    );
     const scriptPath = path.join(__dirname, "../scripts/activity1.py");
     const modelPath = path.join(__dirname, "../scripts/model/yolov8s.pt");
 
@@ -35,8 +38,8 @@ export const analyzeVideo = (videoPath) => {
         console.log(result);
       } catch (e) {
         reject("Invalid JSON: " + data);
-      } finally{
-        console.log('sukkses');
+      } finally {
+        console.log("sukkses");
       }
     });
   });

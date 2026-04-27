@@ -9,13 +9,15 @@ type Props = {
   vidHeight?: number;
 };
 
-export default function VideoPlayer({link, rate=1.0, vidWidth=320, vidHeight=250}: Props) {
-  const player = useVideoPlayer(
-    link ? { uri: link } : null,
-    (player) => {
-      player.loop = false;
-    }
-  );
+export default function VideoPlayer({
+  link,
+  rate = 1.0,
+  vidWidth = 320,
+  vidHeight = 250,
+}: Props) {
+  const player = useVideoPlayer(link ? { uri: link } : null, (player) => {
+    player.loop = false;
+  });
 
   useEffect(() => {
     if (link) {
@@ -34,7 +36,7 @@ export default function VideoPlayer({link, rate=1.0, vidWidth=320, vidHeight=250
       <VideoView
         player={player}
         style={{ width: vidWidth, height: vidHeight }}
-        fullscreenOptions={{enable: true}}
+        fullscreenOptions={{ enable: true }}
         allowsPictureInPicture
       />
     </View>

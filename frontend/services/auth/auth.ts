@@ -1,45 +1,70 @@
-import { apiClient, auth } from '../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from './auth.type';
-import { createDefaultError } from '@/constants/error';
+import { apiClient, auth } from "../firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from "./auth.type";
+import { createDefaultError } from "@/constants/error";
 
-export const loginAndGetData = async (req: LoginRequest): Promise<LoginResponse> => {
+export const loginAndGetData = async (
+  req: LoginRequest,
+): Promise<LoginResponse> => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, req.email, req.password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      req.email,
+      req.password,
+    );
     const idToken = await userCredential.user.getIdToken();
 
-    console.log("idToken", idToken)
+    console.log("idToken", idToken);
 
-    const response = await apiClient.post('/api/auth/login', {}, {
-      headers: {
-        Authorization: `Bearer ${idToken}`
-      }
-    });
+    const response = await apiClient.post(
+      "/api/auth/login",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      },
+    );
     return response.data;
-
   } catch (error: any) {
     console.error("Error:", error);
     return createDefaultError(error.response.data.message);
   }
 };
 
-export const registerAndGetData = async (req: RegisterRequest): Promise<RegisterResponse> => {
+export const registerAndGetData = async (
+  req: RegisterRequest,
+): Promise<RegisterResponse> => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, req.email, req.password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      req.email,
+      req.password,
+    );
     const idToken = await userCredential.user.getIdToken();
 
     console.log("id token ", idToken);
 
-    const response = await apiClient.post("/api/auth/register", 
+    const response = await apiClient.post(
+      "/api/auth/register",
       {
-        firstName: req.firstName, 
+        firstName: req.firstName,
         grade: req.grade,
-      }, 
+      },
       {
         headers: {
           Authorization: `Bearer ${idToken}`,
         },
-      }
+      },
     );
 
     return response.data;
@@ -54,10 +79,10 @@ export const logout = async () => {
     await signOut(auth);
     return {
       message: "Logout success",
-      success: true
-    }
+      success: true,
+    };
   } catch (error: any) {
     console.error("Logout error:", error.message);
-    return createDefaultError(error.response.data.message)
+    return createDefaultError(error.response.data.message);
   }
 };

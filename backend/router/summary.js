@@ -1,6 +1,10 @@
-import express from 'express';
-import { generateDailySummary, getActivityRank, getGlobalRank } from '../controller/summary.js';
-import { authenticate } from '../middleware/auth.js';
+import express from "express";
+import {
+  generateDailySummary,
+  getActivityRank,
+  getGlobalRank,
+} from "../controller/summary.js";
+import { authenticate } from "../middleware/auth.js";
 
 const summaryRouter = express.Router();
 

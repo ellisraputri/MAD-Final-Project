@@ -4,10 +4,10 @@ import { teamModel } from "../models/team.js";
 import { FieldPath } from "firebase-admin/firestore";
 import cacheService from "../config/caching.js";
 
-
 const generateId = (length = 6) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
@@ -34,12 +34,15 @@ export const createTeam = async (req, res) => {
     if (userData.teamId) {
       return error400(res, "User already has a team.");
     }
-    if(userData.grade !== grade){
-        return error400(res, "Team's grade level needs to be the same as user's.")
+    if (userData.grade !== grade) {
+      return error400(
+        res,
+        "Team's grade level needs to be the same as user's.",
+      );
     }
 
     const customId = generateId(6);
-    const teamRef = db.collection('teams').doc(customId); 
+    const teamRef = db.collection("teams").doc(customId);
 
     const teamData = teamModel({
       name: name,
@@ -58,7 +61,6 @@ export const createTeam = async (req, res) => {
       success: true,
       message: "Team created successfully",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
@@ -92,8 +94,11 @@ export const joinTeam = async (req, res) => {
     if (userData.teamId) {
       return error400(res, "User already has a team.");
     }
-    if(userData.grade !== teamData.grade){
-        return error400(res, "Team's grade level needs to be the same as user's.")
+    if (userData.grade !== teamData.grade) {
+      return error400(
+        res,
+        "Team's grade level needs to be the same as user's.",
+      );
     }
 
     await userRef.update({
@@ -106,7 +111,6 @@ export const joinTeam = async (req, res) => {
       success: true,
       message: "Team joined successfully",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
@@ -135,7 +139,7 @@ export const getDetail = async (req, res) => {
 
     const studentsRef = db.collection("students");
     const snapshot = await studentsRef.where("teamId", "==", teamId).get();
-    const members = snapshot.docs.map(doc => ({
+    const members = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
@@ -155,7 +159,6 @@ export const getDetail = async (req, res) => {
       success: true,
       message: "Team found",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
@@ -177,7 +180,7 @@ export const editDetail = async (req, res) => {
 
     await teamRef.update({
       name: name,
-      logo: logoUrl
+      logo: logoUrl,
     });
 
     cacheService.del(`team.${teamId}`);
@@ -186,7 +189,6 @@ export const editDetail = async (req, res) => {
       success: true,
       message: "Team edited successfully",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
@@ -195,12 +197,12 @@ export const editDetail = async (req, res) => {
 
 export const getDetailBatch = async (req, res) => {
   try {
-    const {teamIds} = req.body;
+    const { teamIds } = req.body;
 
     let nowTeamIds = [];
     let teams = [];
 
-    for (const teamId of teamIds){
+    for (const teamId of teamIds) {
       const cached = cacheService.get(`team.${teamId}`);
       if (cached) {
         teams.push(cached);
@@ -214,12 +216,12 @@ export const getDetailBatch = async (req, res) => {
       .where(FieldPath.documentId(), "in", nowTeamIds)
       .get();
 
-    const teams2 = snapshot.docs.map(doc => {
+    const teams2 = snapshot.docs.map((doc) => {
       const teamDetail = {
         id: doc.id,
         name: doc.data().name,
-        logo: doc.data().logo
-      }
+        logo: doc.data().logo,
+      };
 
       cacheService.set(`team.${doc.id}`, teamDetail);
       return teamDetail;
@@ -231,7 +233,6 @@ export const getDetailBatch = async (req, res) => {
       success: true,
       message: "Team found",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);

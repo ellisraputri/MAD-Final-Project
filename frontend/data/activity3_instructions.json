@@ -1,29 +1,29 @@
 {
-    "overview": "Students test how air movement affects flexible materials.",
-    "equipments": [
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
-            "caption": "Mobile phone with STEMM Lab app"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
-            "caption": "Paper and cardboard"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
-            "caption": "Scissors"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
-            "caption": "Sticky Tape"
-        }
-    ],
-    "tutorial": [
-        "Stand paper upright on a table.",
-        "Fan air from 30 cm away.",
-        "Observe and record movement.",
-        "Repeat with different fan designs and fan distance (15cm, 30, 45cm)",
-        "Repeat with a cardboard instead of a paper vertical."
-    ],
-    "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "overview": "Students test how air movement affects flexible materials.",
+  "equipments": [
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "caption": "Mobile phone with STEMM Lab app"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "caption": "Paper and cardboard"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "caption": "Scissors"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "caption": "Sticky Tape"
+    }
+  ],
+  "tutorial": [
+    "Stand paper upright on a table.",
+    "Fan air from 30 cm away.",
+    "Observe and record movement.",
+    "Repeat with different fan designs and fan distance (15cm, 30, 45cm)",
+    "Repeat with a cardboard instead of a paper vertical."
+  ],
+  "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 }

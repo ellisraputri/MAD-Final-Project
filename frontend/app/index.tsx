@@ -1,9 +1,9 @@
-import { Redirect } from 'expo-router';
-import * as NavigationBar from 'expo-navigation-bar';
-import { useEffect, useState } from 'react';
-import { StatusBar, View, ActivityIndicator } from 'react-native';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/services/firebase';
+import { Redirect } from "expo-router";
+import * as NavigationBar from "expo-navigation-bar";
+import { useEffect, useState } from "react";
+import { View, ActivityIndicator } from "react-native";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/services/firebase";
 
 export default function Index() {
   const [user, setUser] = useState<User | null | undefined>(undefined);

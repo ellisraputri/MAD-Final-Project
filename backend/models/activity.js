@@ -1,10 +1,4 @@
-export const activityModel = ({
-  id,
-  name,
-  type,
-  imageUrl,
-  description,
-}) => {
+export const activityModel = ({ id, name, type, imageUrl, description }) => {
   return {
     id: id,
     name: name,

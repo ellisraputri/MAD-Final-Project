@@ -1,42 +1,42 @@
 {
-    "overview": "Students design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints, aiming to achieve the slowest and safest landing within a target area.",
-    "equipments": [
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
-            "caption": "Mobile phone with STEMM Lab app"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
-            "caption": "Small toy (e.g. army toy soldier)"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
-            "caption": "Table"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
-            "caption": "Paper or plastic"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
-            "caption": "String"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
-            "caption": "Scissors"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
-            "caption": "Tape"
-        }
-    ],
-    "tutorial": [
-        "Drop the toy without a parachute and record the fall (baseline test).",
-        "Build a parachute using provided materials.",
-        "Drop the toy from the height of 30 cm and record the fall.",
-        "Review speed and landing accuracy results in the app.",
-        "Redesign and test up to three prototypes within 20 minutes.",
-        "Upload videos, results, and team reflections."
-    ],
-    "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "overview": "Students design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints, aiming to achieve the slowest and safest landing within a target area.",
+  "equipments": [
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "caption": "Mobile phone with STEMM Lab app"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "caption": "Small toy (e.g. army toy soldier)"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "caption": "Table"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "caption": "Paper or plastic"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "caption": "String"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "caption": "Scissors"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "caption": "Tape"
+    }
+  ],
+  "tutorial": [
+    "Drop the toy without a parachute and record the fall (baseline test).",
+    "Build a parachute using provided materials.",
+    "Drop the toy from the height of 30 cm and record the fall.",
+    "Review speed and landing accuracy results in the app.",
+    "Redesign and test up to three prototypes within 20 minutes.",
+    "Upload videos, results, and team reflections."
+  ],
+  "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 }

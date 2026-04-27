@@ -10,11 +10,11 @@ export const uploadMedia = async (req, res) => {
       return error400(res, "Request body is not complete.");
     }
 
-    const mediaRef = db.collection('medias').doc(); 
+    const mediaRef = db.collection("medias").doc();
     const mediaData = mediaModel({
       id: mediaRef.id,
       type: type,
-      content: content
+      content: content,
     });
 
     await mediaRef.set(mediaData);
@@ -24,7 +24,6 @@ export const uploadMedia = async (req, res) => {
       success: true,
       message: "Media uploaded successfully",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
@@ -40,12 +39,15 @@ export const uploadToCloudinary = async (req, res) => {
       return error400(res, "No file uploaded");
     }
 
-    let streamOptions = {}
-    if (isAudio){
-      streamOptions = { folder: "users", resource_type: "video", format: "mp3" }
-    }
-    else{
-      streamOptions = { folder: "users", resource_type: "auto" }
+    let streamOptions = {};
+    if (isAudio) {
+      streamOptions = {
+        folder: "users",
+        resource_type: "video",
+        format: "mp3",
+      };
+    } else {
+      streamOptions = { folder: "users", resource_type: "auto" };
     }
 
     const uploadResult = await new Promise((resolve, reject) => {
@@ -60,7 +62,7 @@ export const uploadToCloudinary = async (req, res) => {
     return res.json({
       url: uploadResult.secure_url,
       success: true,
-      message: "Upload to cloud success"
+      message: "Upload to cloud success",
     });
   } catch (error) {
     console.error(error);

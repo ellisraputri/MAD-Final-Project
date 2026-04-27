@@ -1,24 +1,24 @@
 export type StudentDetail = {
-    appearance: boolean,
-    email: string,
-    firstName: string,
-    grade: number,
-    id: string,
-    teamId: string,
-}
+  appearance: boolean;
+  email: string;
+  firstName: string;
+  grade: number;
+  id: string;
+  teamId: string;
+};
 
 export type StudentDetailResponse = {
-    data: StudentDetail | null,
-    success: boolean,
-    message: string,
-}
+  data: StudentDetail | null;
+  success: boolean;
+  message: string;
+};
 
 export type UpdateStudentRequest = {
-    firstName: string,
-    appearance: boolean,
-}
+  firstName: string;
+  appearance: boolean;
+};
 
 export type UpdateStudentResponse = {
-    success: boolean,
-    message: string,
-}
+  success: boolean;
+  message: string;
+};

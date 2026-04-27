@@ -9,16 +9,22 @@ type Props = {
   attemptNo?: string;
 };
 
-export default function PodiumCard({ rank, name, score, imageUrl, attemptNo }: Props) {
+export default function PodiumCard({
+  rank,
+  name,
+  score,
+  imageUrl,
+  attemptNo,
+}: Props) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  
+
   const medal =
     rank === 1
       ? require("@/assets/images/gold.png")
       : rank === 2
-      ? require("@/assets/images/silver.png")
-      : require("@/assets/images/bronze.png");
+        ? require("@/assets/images/silver.png")
+        : require("@/assets/images/bronze.png");
 
   return (
     <View style={styles.container}>
@@ -65,7 +71,7 @@ export const createStyles = (theme: any) => {
       width: 100,
       fontFamily: "Lato_700Bold",
       textAlign: "center",
-      color: theme.blackText
+      color: theme.blackText,
     },
 
     attempt: {
@@ -74,7 +80,7 @@ export const createStyles = (theme: any) => {
       width: 100,
       fontFamily: "Lato_700Bold",
       textAlign: "center",
-      color: theme.blackText
+      color: theme.blackText,
     },
 
     score: {
@@ -83,8 +89,8 @@ export const createStyles = (theme: any) => {
       width: 100,
       fontFamily: "Lato_700Bold",
       textAlign: "center",
-      color: theme.blackText
+      color: theme.blackText,
     },
   });
   return styles;
-}
+};

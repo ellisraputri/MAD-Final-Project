@@ -4,7 +4,13 @@ import { Audio, AVPlaybackStatus } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppTheme } from "@/hooks/use-app-theme";
 
-export default function AudioPlayer({ uri, levels }: { uri: string; levels: Array<any> }) {
+export default function AudioPlayer({
+  uri,
+  levels,
+}: {
+  uri: string;
+  levels: any[];
+}) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
 
@@ -47,7 +53,7 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
     const { sound } = await Audio.Sound.createAsync(
       { uri },
       { shouldPlay: false, progressUpdateIntervalMillis: 50, isLooping: false },
-      onPlaybackStatusUpdate
+      onPlaybackStatusUpdate,
     );
 
     soundRef.current = sound;
@@ -55,38 +61,42 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
   };
 
   const togglePlay = async () => {
-  if (isProcessingRef.current) return; // HARD LOCK
-  isProcessingRef.current = true;
+    if (isProcessingRef.current) return; // HARD LOCK
+    isProcessingRef.current = true;
 
-  try {
-    if (!soundRef.current) {
-      const sound = await loadSound();
-      await sound.playAsync();
-      setIsPlaying(true);
-      isPlayingRef.current = true;
-      return;
-    }
+    try {
+      if (!soundRef.current) {
+        const sound = await loadSound();
+        await sound.playAsync();
+        setIsPlaying(true);
+        isPlayingRef.current = true;
+        return;
+      }
 
-    if (isPlayingRef.current) {
-      await soundRef.current.pauseAsync();
-      setIsPlaying(false);
-      isPlayingRef.current = false;
-    } else {
-      await soundRef.current.playAsync();
-      setIsPlaying(true);
-      isPlayingRef.current = true;
+      if (isPlayingRef.current) {
+        await soundRef.current.pauseAsync();
+        setIsPlaying(false);
+        isPlayingRef.current = false;
+      } else {
+        await soundRef.current.playAsync();
+        setIsPlaying(true);
+        isPlayingRef.current = true;
+      }
+    } catch (e) {
+      console.error("Audio toggle error:", e);
+    } finally {
+      isProcessingRef.current = false; // RELEASE LOCK
     }
-  } catch (e) {
-    console.error("Audio toggle error:", e);
-  } finally {
-    isProcessingRef.current = false; // RELEASE LOCK
-  }
-};
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={togglePlay} style={styles.button}>
-        <Ionicons name={isPlaying ? "pause" : "play"} size={24} color={theme.text} />
+        <Ionicons
+          name={isPlaying ? "pause" : "play"}
+          size={24}
+          color={theme.text}
+        />
       </TouchableOpacity>
 
       <View style={styles.waveContainer}>
@@ -97,7 +107,10 @@ export default function AudioPlayer({ uri, levels }: { uri: string; levels: Arra
               key={i}
               style={[
                 styles.bar,
-                { height: level, backgroundColor: played ? theme.text : theme.blackText },
+                {
+                  height: level,
+                  backgroundColor: played ? theme.text : theme.blackText,
+                },
               ]}
             />
           );
@@ -139,4 +152,4 @@ const createStyles = (theme: any) => {
     },
   });
   return styles;
-}
+};

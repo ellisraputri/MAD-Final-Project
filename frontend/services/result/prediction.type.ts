@@ -1,6 +1,6 @@
 export type BasePrediction = {
-    prediction: number;
-}
+  prediction: number;
+};
 export type ActivityOnePrediction = BasePrediction & {
-    mass: number;
-}
+  mass: number;
+};

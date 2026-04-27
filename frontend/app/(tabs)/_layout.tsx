@@ -1,24 +1,24 @@
-import { Tabs, usePathname } from 'expo-router';
+import { Tabs, usePathname } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { ImageBackground, StyleSheet, View } from 'react-native';
-import * as NavigationBar from 'expo-navigation-bar';
-import { useEffect } from 'react';
+import { ImageBackground, StyleSheet, View } from "react-native";
+import * as NavigationBar from "expo-navigation-bar";
+import { useEffect } from "react";
 
 export default function TabLayout() {
   const pathname = usePathname();
 
   useEffect(() => {
-      NavigationBar.setBehaviorAsync("overlay-swipe");
-      NavigationBar.setVisibilityAsync("hidden");
-    }, []);
+    NavigationBar.setBehaviorAsync("overlay-swipe");
+    NavigationBar.setVisibilityAsync("hidden");
+  }, []);
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#3AA6A6",   
-        tabBarInactiveTintColor: "white", 
+        tabBarActiveTintColor: "#3AA6A6",
+        tabBarInactiveTintColor: "white",
         tabBarStyle: {
           height: 60,
           borderTopWidth: 0,
@@ -44,12 +44,15 @@ export default function TabLayout() {
         ),
       }}
     >
-
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({color, focused}) => (
-            <Ionicons name={focused ? "home" : "home-outline"} size={30} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={30}
+              color={color}
+            />
           ),
         }}
       />
@@ -74,8 +77,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="leaderboard"
         options={{
-          tabBarIcon: ({color, focused}) => (
-            <Ionicons name={focused ? "bar-chart" : "bar-chart-outline"} size={30} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "bar-chart" : "bar-chart-outline"}
+              size={30}
+              color={color}
+            />
           ),
         }}
       />
@@ -83,17 +90,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarIcon: ({color, focused}) => (
-            <Ionicons name={focused ? "settings" : "settings-outline"} size={30} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "settings" : "settings-outline"}
+              size={30}
+              color={color}
+            />
           ),
         }}
       />
 
-      <Tabs.Screen
-        name="activity/[id]"
-        options={{ href: null }}
-      />
-
+      <Tabs.Screen name="activity/[id]" options={{ href: null }} />
     </Tabs>
   );
 }

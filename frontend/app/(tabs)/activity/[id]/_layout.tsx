@@ -1,4 +1,8 @@
-import { withLayoutContext, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  withLayoutContext,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -18,10 +22,24 @@ export default function Layout() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push("/(tabs)/activity")} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color={theme.isDark? theme.lightText : theme.text} />
+        <TouchableOpacity
+          onPress={() => router.push("/(tabs)/activity")}
+          style={styles.backButton}
+        >
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color={theme.isDark ? theme.lightText : theme.text}
+          />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, theme.isDark? {color: theme.lightText} : {color: theme.text}]}>Activity {id}</Text>
+        <Text
+          style={[
+            styles.headerTitle,
+            theme.isDark ? { color: theme.lightText } : { color: theme.text },
+          ]}
+        >
+          Activity {id}
+        </Text>
       </View>
 
       <TopTabs
@@ -38,8 +56,8 @@ export default function Layout() {
             color: theme.text,
           },
           tabBarStyle: {
-            backgroundColor: theme.background
-          }
+            backgroundColor: theme.background,
+          },
         }}
       >
         <TopTabs.Screen
@@ -47,21 +65,15 @@ export default function Layout() {
           options={{ title: "Instruction" }}
         />
 
-        <TopTabs.Screen
-          name="activity"
-          options={{ title: "Activity" }}
-        />
+        <TopTabs.Screen name="activity" options={{ title: "Activity" }} />
 
-        <TopTabs.Screen
-          name="results"
-          options={{ title: "Results" }}
-        />
+        <TopTabs.Screen name="results" options={{ title: "Results" }} />
       </TopTabs>
     </SafeAreaView>
   );
 }
 
-const createStyles = (theme:any) => {
+const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
     header: {
       flexDirection: "row",
@@ -80,4 +92,4 @@ const createStyles = (theme:any) => {
     },
   });
   return styles;
-}
+};

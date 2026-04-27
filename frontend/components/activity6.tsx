@@ -6,8 +6,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { useAppContext } from "@/context/AppContext";
-import { submitResult } from "@/services/result/result";
-import { toast } from "sonner-native";
 import { uploadMedia } from "@/services/media/media";
 import { base64ToRNFile } from "@/services/base64";
 import { socket } from "@/services/socket";
@@ -22,9 +20,11 @@ type CardActivitySixProps = {
 function CardActivitySix(props: CardActivitySixProps) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  
+
   return (
-    <View style={[styles.cardContainer, {borderWidth:1, borderColor:"white"}]}>
+    <View
+      style={[styles.cardContainer, { borderWidth: 1, borderColor: "white" }]}
+    >
       <Text style={styles.cardTitle}>{props.title}</Text>
       <Text style={styles.cardSubtitle}>Prediction</Text>
 
@@ -35,7 +35,8 @@ function CardActivitySix(props: CardActivitySixProps) {
           keyboardType="decimal-pad"
           value={props.input[props.type]?.toString() || ""}
           onChangeText={(text) => {
-            if (/^\d*\.?\d*$/.test(text)) { // allow digits and one dot
+            if (/^\d*\.?\d*$/.test(text)) {
+              // allow digits and one dot
               props.setInput((prev) => ({
                 ...prev,
                 [props.type]: text,
@@ -48,23 +49,24 @@ function CardActivitySix(props: CardActivitySixProps) {
 
       {props.type === 3 && (
         <>
-        <Text style={styles.cardLabel}>Accuracy</Text>
-        <View style={styles.cardInputRow}>
-          <TextInput
-            style={styles.cardInput}
-            keyboardType="decimal-pad"
-            value={props.input[props.type+1]?.toString() || ""}
-            onChangeText={(text) => {
-              if (/^\d*\.?\d*$/.test(text)) { // allow digits and one dot
-                props.setInput((prev) => ({
-                  ...prev,
-                  [props.type+1]: text,
-                }));
-              }
-            }}
-          />
-          <Text style={styles.cardUnit}>%</Text>
-        </View>
+          <Text style={styles.cardLabel}>Accuracy</Text>
+          <View style={styles.cardInputRow}>
+            <TextInput
+              style={styles.cardInput}
+              keyboardType="decimal-pad"
+              value={props.input[props.type + 1]?.toString() || ""}
+              onChangeText={(text) => {
+                if (/^\d*\.?\d*$/.test(text)) {
+                  // allow digits and one dot
+                  props.setInput((prev) => ({
+                    ...prev,
+                    [props.type + 1]: text,
+                  }));
+                }
+              }}
+            />
+            <Text style={styles.cardUnit}>%</Text>
+          </View>
         </>
       )}
     </View>
@@ -74,12 +76,15 @@ function CardActivitySix(props: CardActivitySixProps) {
 export default function ActivitySixScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const {user, team} = useAppContext();
+  const { user, team } = useAppContext();
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const [phase, setPhase] = useState<1 | 2 | 3 | 4>(4); 
+  const [phase, setPhase] = useState<1 | 2 | 3 | 4>(4);
   const [isWaiting, setIsWaiting] = useState<1 | 2 | 3>(1);
-  const [reactionTimes, setReactionTimes] = useState<{ dominant: number | null; nonDominant: number | null }>({
+  const [reactionTimes, setReactionTimes] = useState<{
+    dominant: number | null;
+    nonDominant: number | null;
+  }>({
     dominant: null,
     nonDominant: null,
   });
@@ -89,11 +94,16 @@ export default function ActivitySixScreen() {
   const traceStartTime = useRef<number | null>(null);
   const [traceMetrics, setTraceMetrics] = useState({
     time: null as number | null,
-    accuracy: null as number | null
+    accuracy: null as number | null,
   });
   const [isWaitingResult, setIsWaitingResult] = useState(false);
 
-  const [userInput, setUserInput] = useState<Record<number,string>>({1:"", 2:"", 3:"", 4:""});  //1 = time_phase_1, 2 = time_phase_2, 3 = time_phase_3, 4 = accuracy_phase_3
+  const [userInput, setUserInput] = useState<Record<number, string>>({
+    1: "",
+    2: "",
+    3: "",
+    4: "",
+  }); //1 = time_phase_1, 2 = time_phase_2, 3 = time_phase_3, 4 = accuracy_phase_3
 
   useFocusEffect(
     useCallback(() => {
@@ -101,14 +111,14 @@ export default function ActivitySixScreen() {
       setIsWaiting(1);
       setReactionTimes({ dominant: null, nonDominant: null });
       setTraceData(null);
-      setUserInput({1:"", 2:"", 3:"", 4:""});
+      setUserInput({ 1: "", 2: "", 3: "", 4: "" });
       startTime.current = 0;
-    }, [])
+    }, []),
   );
 
   const startReactionTest = () => {
     setIsWaiting(2); // show "Get ready..."
-    const delay = Math.random() * 2000 + 1000; 
+    const delay = Math.random() * 2000 + 1000;
     setTimeout(() => {
       startTime.current = Date.now();
       setIsWaiting(3); // show Stop button
@@ -144,7 +154,7 @@ export default function ActivitySixScreen() {
 
     setTraceMetrics({
       time: traceTime,
-      accuracy: accuracy
+      accuracy: accuracy,
     });
 
     setTraceData(signature);
@@ -169,9 +179,9 @@ export default function ActivitySixScreen() {
     setIsWaiting(1);
     setReactionTimes({ dominant: null, nonDominant: null });
     setTraceData(null);
-    setUserInput({1:"", 2:"", 3:"", 4:""});
+    setUserInput({ 1: "", 2: "", 3: "", 4: "" });
     startTime.current = 0;
-  }
+  };
 
   useEffect(() => {
     const handler = ({ activityId, isDone }: any) => {
@@ -191,39 +201,48 @@ export default function ActivitySixScreen() {
     };
   }, []);
 
-  const handleSubmit = async() => {
-    if(!team?.id || !traceData) return;
-    
+  const handleSubmit = async () => {
+    if (!team?.id || !traceData) return;
+
     setSubmitLoading(true);
 
     const file = await base64ToRNFile(traceData);
     const uploadResponse = await uploadMedia({
       file: file,
       type: "image",
-    })
+    });
 
     const predictions = [
-      {prediction: Number(userInput[1]), outcome: Number(reactionTimes["dominant"])},
-      {prediction: Number(userInput[2]), outcome: Number(reactionTimes["nonDominant"])},
-      {prediction: Number(userInput[3]), outcome: Number(traceMetrics.time)},
-      {prediction: Number(userInput[4]), outcome: Number(traceMetrics.accuracy)}
-    ]
+      {
+        prediction: Number(userInput[1]),
+        outcome: Number(reactionTimes["dominant"]),
+      },
+      {
+        prediction: Number(userInput[2]),
+        outcome: Number(reactionTimes["nonDominant"]),
+      },
+      { prediction: Number(userInput[3]), outcome: Number(traceMetrics.time) },
+      {
+        prediction: Number(userInput[4]),
+        outcome: Number(traceMetrics.accuracy),
+      },
+    ];
 
     socket.emit("submit_result_user", {
       teamId: team.id,
       activityId: "6",
       result: {
-        userId: user?.id, 
+        userId: user?.id,
         predictions: predictions,
-        medias: [uploadResponse.id], 
-      }
+        medias: [uploadResponse.id],
+      },
     });
 
     setSubmitLoading(false);
     alert("Successfully submitted the results and predictions!");
-    
+
     setIsWaitingResult(true);
-  }
+  };
 
   useEffect(() => {
     if (traceData) {
@@ -247,103 +266,117 @@ export default function ActivitySixScreen() {
       style={{ flex: 1 }}
       contentContainerStyle={{ paddingBottom: 20 }}
       keyboardShouldPersistTaps="handled"
-      enableOnAndroid={true}        // critical for Android
-      extraScrollHeight={10}        // extra space above keyboard
-      enableAutomaticScroll={true}  // auto scrolls to focused input
+      enableOnAndroid={true} // critical for Android
+      extraScrollHeight={10} // extra space above keyboard
+      enableAutomaticScroll={true} // auto scrolls to focused input
     >
-    <View style={styles.container}>
-      {(phase === 1 || phase === 2) && (
-        <>
-          <Text style={styles.title}>
-            Phase {phase} — Reaction Test ({phase === 1 ? "Dominant" : "Non-Dominant"} Hand)
-          </Text>
+      <View style={styles.container}>
+        {(phase === 1 || phase === 2) && (
+          <>
+            <Text style={styles.title}>
+              Phase {phase} — Reaction Test (
+              {phase === 1 ? "Dominant" : "Non-Dominant"} Hand)
+            </Text>
 
-          <View style={[styles.card, styles.phase12]}>
-            {isWaiting === 2 ? (
-              <Text style={styles.readyText}>Get ready...</Text>
-            ) : (
-              <Pressable
-                style={isWaiting === 1? styles.startButton : styles.stopButton}
-                onPress={isWaiting == 1 ? startReactionTest : stopReactionTest}
-              >
-                <Text style={isWaiting === 1? styles.startText : styles.stopText}>
-                  {isWaiting == 1 ? "Start" : "Stop"}
-                </Text>
-              </Pressable>
-            )}
-          </View>
-        </>
-      )}
-
-      {phase === 3 && (
-        <>
-          <Text style={styles.title}>Phase 3 — Tracing Challenge</Text>
-          <View style={[styles.card, styles.phase3]}>
-            <View style={{ height: 200, marginVertical: 10 }}>
-              <Signature
-                ref={signatureRef}
-                onBegin={handleTraceBegin}
-                onOK={handleTraceOK}
-                descriptionText="Trace the pattern"
-                clearText="Clear"
-                confirmText="Confirm"
-                webStyle={signaturePadStyle}
-                penColor="#388087" 
-              />
+            <View style={[styles.card, styles.phase12]}>
+              {isWaiting === 2 ? (
+                <Text style={styles.readyText}>Get ready...</Text>
+              ) : (
+                <Pressable
+                  style={
+                    isWaiting === 1 ? styles.startButton : styles.stopButton
+                  }
+                  onPress={
+                    isWaiting === 1 ? startReactionTest : stopReactionTest
+                  }
+                >
+                  <Text
+                    style={isWaiting === 1 ? styles.startText : styles.stopText}
+                  >
+                    {isWaiting === 1 ? "Start" : "Stop"}
+                  </Text>
+                </Pressable>
+              )}
             </View>
-          </View>
+          </>
+        )}
 
-          <Button 
-            onPress={handleConfirm}
-            width = {150}
-            fontSize = {20}
-            marginTop = {10}
-            text = {"Confirm"}
-          />
-        </>
-      )}
+        {phase === 3 && (
+          <>
+            <Text style={styles.title}>Phase 3 — Tracing Challenge</Text>
+            <View style={[styles.card, styles.phase3]}>
+              <View style={{ height: 200, marginVertical: 10 }}>
+                <Signature
+                  ref={signatureRef}
+                  onBegin={handleTraceBegin}
+                  onOK={handleTraceOK}
+                  descriptionText="Trace the pattern"
+                  clearText="Clear"
+                  confirmText="Confirm"
+                  webStyle={signaturePadStyle}
+                  penColor="#388087"
+                />
+              </View>
+            </View>
 
-      {phase === 4 && (
-        <>
-          <CardActivitySix 
-            title="Phase 1 - Reaction Test (Dominant Hand)" 
-            input={userInput}
-            setInput={setUserInput}
-            type={1}
-          />
-          <CardActivitySix 
-            title="Phase 2 - Reaction Test (Non-Dominant Hand)" 
-            input={userInput}
-            setInput={setUserInput}
-            type={2}
-          />
-          <CardActivitySix 
-            title="Phase 3 - Tracing Challenge" 
-            input={userInput}
-            setInput={setUserInput}
-            type={3}
-          />
-
-          <View style={{ flexDirection: "row", gap: 10, alignItems: "center", justifyContent: "center" }}>
-            <Button 
-              onPress={handleRetry}
-              width={120}
-              fontSize={18}
-              marginTop={10}
-              text={"Retry"}
-            />
-            <Button 
-              onPress={handleSubmit}
-              width={120}
-              fontSize={18}
+            <Button
+              onPress={handleConfirm}
+              width={150}
+              fontSize={20}
               marginTop={10}
               text={"Confirm"}
-              isLoading={submitLoading}
             />
-          </View>
-        </>
-      )}
-    </View>
+          </>
+        )}
+
+        {phase === 4 && (
+          <>
+            <CardActivitySix
+              title="Phase 1 - Reaction Test (Dominant Hand)"
+              input={userInput}
+              setInput={setUserInput}
+              type={1}
+            />
+            <CardActivitySix
+              title="Phase 2 - Reaction Test (Non-Dominant Hand)"
+              input={userInput}
+              setInput={setUserInput}
+              type={2}
+            />
+            <CardActivitySix
+              title="Phase 3 - Tracing Challenge"
+              input={userInput}
+              setInput={setUserInput}
+              type={3}
+            />
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                onPress={handleRetry}
+                width={120}
+                fontSize={18}
+                marginTop={10}
+                text={"Retry"}
+              />
+              <Button
+                onPress={handleSubmit}
+                width={120}
+                fontSize={18}
+                marginTop={10}
+                text={"Confirm"}
+                isLoading={submitLoading}
+              />
+            </View>
+          </>
+        )}
+      </View>
     </KeyboardAwareScrollView>
   );
 }
@@ -369,17 +402,27 @@ const signaturePadStyle = `
 
 const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
-    container: { flex: 1}, 
+    container: { flex: 1 },
     card: { borderRadius: 12, height: 300 },
-    phase12: { 
-      backgroundColor: "#BADFE7", 
-      justifyContent: "center", 
-      alignItems: "center", 
-      borderColor:  theme.text,
+    phase12: {
+      backgroundColor: "#BADFE7",
+      justifyContent: "center",
+      alignItems: "center",
+      borderColor: theme.text,
       borderWidth: 1,
     },
-    phase3: { backgroundColor: "#BADFE7", borderWidth: 1, borderColor: theme.text },
-    title: { fontSize: 20, fontWeight: "600", color: theme.text, lineHeight: 28, marginBottom: 15 },
+    phase3: {
+      backgroundColor: "#BADFE7",
+      borderWidth: 1,
+      borderColor: theme.text,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: "600",
+      color: theme.text,
+      lineHeight: 28,
+      marginBottom: 15,
+    },
     startButton: {
       width: 120,
       height: 120,
@@ -396,7 +439,11 @@ const createStyles = (theme: any) => {
       justifyContent: "center",
       alignItems: "center",
     },
-    startText: { color: theme.darkText, fontSize: 20, fontFamily: "Lato_700Bold" },
+    startText: {
+      color: theme.darkText,
+      fontSize: 20,
+      fontFamily: "Lato_700Bold",
+    },
     stopText: { color: "white", fontSize: 20, fontFamily: "Lato_700Bold" },
     readyText: {
       marginTop: 20,
@@ -424,7 +471,7 @@ const createStyles = (theme: any) => {
       fontSize: 16,
       color: theme.text,
       marginBottom: 5,
-      fontFamily: "Lato_400Regular"
+      fontFamily: "Lato_400Regular",
     },
 
     cardInputRow: {
@@ -463,4 +510,4 @@ const createStyles = (theme: any) => {
     },
   });
   return styles;
-}
+};
