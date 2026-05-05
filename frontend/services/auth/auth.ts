@@ -10,7 +10,7 @@ import {
   RegisterRequest,
   RegisterResponse,
 } from "./auth.type";
-import { createDefaultError } from "@/constants/error";
+import { createDefaultError, mapAuthError } from "@/constants/error";
 
 export const loginAndGetData = async (
   req: LoginRequest
@@ -36,8 +36,11 @@ export const loginAndGetData = async (
     );
     return response.data;
   } catch (error: any) {
-    console.error("Error:", error);
-    return createDefaultError(error.response.data.message);
+    const message =
+      error?.response?.data?.message ||
+      mapAuthError(error) ||
+      "Something went wrong";
+    return createDefaultError(message);
   }
 };
 
@@ -51,8 +54,6 @@ export const registerAndGetData = async (
       req.password
     );
     const idToken = await userCredential.user.getIdToken();
-
-    console.log("id token ", idToken);
 
     const response = await apiClient.post(
       "/api/auth/register",
@@ -69,8 +70,12 @@ export const registerAndGetData = async (
 
     return response.data;
   } catch (error: any) {
-    console.error("Error:", error.message);
-    return createDefaultError(error.response.data.message);
+    const message =
+      error?.response?.data?.message ||
+      mapAuthError(error) ||
+      "Something went wrong";
+
+    return createDefaultError(message);
   }
 };
 

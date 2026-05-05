@@ -14,6 +14,7 @@ import Svg, { Polygon } from "react-native-svg";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { loginAndGetData } from "@/services/auth/auth";
+import PasswordInput from "@/components/ui/password-input";
 
 export default function LoginScreen() {
   const theme = useAppTheme();
@@ -30,6 +31,7 @@ export default function LoginScreen() {
 
     if (email === "" || password === "") {
       alert("Fields cannot be empty");
+      return;
     }
     setIsLoading(true);
 
@@ -97,13 +99,10 @@ export default function LoginScreen() {
         />
 
         <Text style={styles.label}>Password</Text>
-        <TextInput
+        <PasswordInput
           placeholder="Enter your password"
-          placeholderTextColor={theme.placeholderText}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
+          password={password}
+          setPassword={setPassword}
         />
 
         {/* Login Button */}
