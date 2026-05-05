@@ -20,11 +20,11 @@ export const getGlobalRank = async (): Promise<GlobalRankResponse> => {
 };
 
 export const getActivityRank = async (
-  req: ActivityRankRequest,
+  req: ActivityRankRequest
 ): Promise<ActivityRankResponse> => {
   try {
     const response = await apiClient.get(
-      `/api/summary/activity/${req.activityId}`,
+      `/api/summary/activity/${req.activityId}`
     );
     return response.data;
   } catch (error: any) {

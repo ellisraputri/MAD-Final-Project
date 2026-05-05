@@ -80,20 +80,18 @@ function ActivitySevenResultCard(props: {
       <View style={resultStyles.list}>
         {props.valuePredict.map((p, idx) => (
           <Text style={resultStyles.listItem} key={idx}>
-            • Prediction from Member {idx + 1}: {p.prediction} bpm
+            • Prediction from Member {idx + 1}:{" "}
+            {p.prediction ? p.prediction.toFixed(3) : "-"} bpm
           </Text>
         ))}
 
         {props.valueCalculated.map((p, idx) => (
           <Text style={resultStyles.listItem} key={idx}>
-            • Outcome from Member {idx + 1}: {p.bpm} bpm
+            • Outcome from Member {idx + 1}: {p.bpm ? p.bpm.toFixed(3) : "-"}{" "}
+            bpm
           </Text>
         ))}
       </View>
-
-      <Text style={resultStyles.descText}>
-        This is the results of calculation..
-      </Text>
     </View>
   );
 }
@@ -129,7 +127,7 @@ export default function ActivitySevenResultsScreen(props: {
     if (Number(response.data.activityId) !== 7) {
       console.warn(
         "[ActivitySeven] Wrong activityId received, skipping render. Got:",
-        response.data.activityId,
+        response.data.activityId
       );
       return;
     }
@@ -148,10 +146,10 @@ export default function ActivitySevenResultsScreen(props: {
       i += team?.members.length
     ) {
       grouped_preds.push(
-        response.data.predictions.slice(i, i + team.members.length),
+        response.data.predictions.slice(i, i + team.members.length)
       );
       grouped_outs.push(
-        response.data.outcomes.slice(i, i + team.members.length),
+        response.data.outcomes.slice(i, i + team.members.length)
       );
     }
     setPredictions(grouped_preds);
@@ -168,7 +166,7 @@ export default function ActivitySevenResultsScreen(props: {
     const rankingRes = await getActivityRank({ activityId: "7" });
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
       );
     }
     for (let i = 0; i < rankingRes.rankings.length; i++) {

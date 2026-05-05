@@ -9,7 +9,7 @@ import {
 } from "./media.type";
 
 export const uploadToCloudinary = async (
-  file: RNFile,
+  file: RNFile
 ): Promise<CloudinaryUploadResponse> => {
   try {
     const formData = new FormData();
@@ -22,7 +22,7 @@ export const uploadToCloudinary = async (
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      },
+      }
     );
 
     return response.data;
@@ -36,7 +36,7 @@ export const uploadToCloudinary = async (
 };
 
 export const uploadMedia = async (
-  req: MediaRequest,
+  req: MediaRequest
 ): Promise<MediaResponse> => {
   try {
     const res1 = await uploadToCloudinary(req.file);
@@ -64,7 +64,7 @@ export const uploadMedia = async (
 };
 
 export const uploadMedia45 = async (
-  req: Media45Request,
+  req: Media45Request
 ): Promise<MediaResponse> => {
   try {
     const res2 = await apiClient.post("/api/media/upload", {

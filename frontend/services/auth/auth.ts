@@ -13,13 +13,13 @@ import {
 import { createDefaultError } from "@/constants/error";
 
 export const loginAndGetData = async (
-  req: LoginRequest,
+  req: LoginRequest
 ): Promise<LoginResponse> => {
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       req.email,
-      req.password,
+      req.password
     );
     const idToken = await userCredential.user.getIdToken();
 
@@ -32,7 +32,7 @@ export const loginAndGetData = async (
         headers: {
           Authorization: `Bearer ${idToken}`,
         },
-      },
+      }
     );
     return response.data;
   } catch (error: any) {
@@ -42,13 +42,13 @@ export const loginAndGetData = async (
 };
 
 export const registerAndGetData = async (
-  req: RegisterRequest,
+  req: RegisterRequest
 ): Promise<RegisterResponse> => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       req.email,
-      req.password,
+      req.password
     );
     const idToken = await userCredential.user.getIdToken();
 
@@ -64,7 +64,7 @@ export const registerAndGetData = async (
         headers: {
           Authorization: `Bearer ${idToken}`,
         },
-      },
+      }
     );
 
     return response.data;

@@ -162,7 +162,9 @@ export default function ActivityThreeScreen() {
     const currLength = videos.length;
     if (currLength < 3) {
       alert(
-        `You can only submit when there are 3 videos. Please continue to record ${3 - currLength} more videos.`,
+        `You can only submit when there are 3 videos. Please continue to record ${
+          3 - currLength
+        } more videos.`
       );
       return;
     }
@@ -171,7 +173,9 @@ export default function ActivityThreeScreen() {
     const uploads = videos.map((video, index) => {
       const file = {
         uri: video.uri,
-        name: `video_${index}_${Math.random().toString(36).substring(2, 7)}.mp4`,
+        name: `video_${index}_${Math.random()
+          .toString(36)
+          .substring(2, 7)}.mp4`,
         type: "video/mp4",
       };
 
@@ -218,7 +222,7 @@ export default function ActivityThreeScreen() {
             });
           },
         },
-      ],
+      ]
     );
   };
 
@@ -323,7 +327,7 @@ export default function ActivityThreeScreen() {
                         text: "OK",
                         onPress: () => handleRerecord(index),
                       },
-                    ],
+                    ]
                   )
                 }
               />
@@ -402,7 +406,7 @@ export default function ActivityThreeScreen() {
                               handleRerecord(index);
                             },
                           },
-                        ],
+                        ]
                       )
                     }
                   />

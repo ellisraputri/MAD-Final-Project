@@ -112,10 +112,10 @@ function ActivityOneResultCard(props: {
         </View>
 
         <Text style={resultStyles.subtitleText}>
-          Time to stop (seconds): {props.timeStop?.toFixed(2)}{" "}
+          Time to stop (seconds): {props.timeStop?.toFixed(3)}{" "}
         </Text>
         <Text style={resultStyles.subtitleText}>
-          Score (accuracy): {props.accuracy?.toFixed(2)}{" "}
+          Score (accuracy): {props.accuracy?.toFixed(3)}{" "}
         </Text>
 
         {/* CALCULATION */}
@@ -140,7 +140,9 @@ function ActivityOneResultCard(props: {
                 fontSize={13}
               />
               <Equation
-                latex={`v_{final} = \\\\frac{0.3}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`}
+                latex={`v_{final} = \\\\frac{0.3}{${props.timeCalculated?.toFixed(
+                  3
+                )}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`}
                 fontSize={13}
               />
 
@@ -157,7 +159,11 @@ function ActivityOneResultCard(props: {
                 fontSize={13}
               />
               <Equation
-                latex={`a = \\\\frac{${finalVelocity?.toFixed(3)} - 0}{${props.timeCalculated?.toFixed(3)}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`}
+                latex={`a = \\\\frac{${finalVelocity?.toFixed(
+                  3
+                )} - 0}{${props.timeCalculated?.toFixed(
+                  3
+                )}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`}
                 fontSize={13}
               />
 
@@ -171,7 +177,9 @@ function ActivityOneResultCard(props: {
               </Text>
               <Equation latex="F_N = mass \\times a" fontSize={13} />
               <Equation
-                latex={`F_N = ${props.mass} \\\\times ${acceleration?.toFixed(3)} = ${netForce?.toFixed(3)} \\\\text{ } N`}
+                latex={`F_N = ${props.mass} \\\\times ${acceleration?.toFixed(
+                  3
+                )} = ${netForce?.toFixed(3)} \\\\text{ } N`}
                 fontSize={13}
               />
 
@@ -199,7 +207,9 @@ function ActivityOneResultCard(props: {
               </Text>
               <Equation latex="F_D = w - F_N" fontSize={13} />
               <Equation
-                latex={`F_D = ${weight} - ${netForce?.toFixed(3)} \\\\approx ${dragForce?.toFixed(3)} \\\\text{ } N`}
+                latex={`F_D = ${weight} - ${netForce?.toFixed(
+                  3
+                )} \\\\approx ${dragForce?.toFixed(3)} \\\\text{ } N`}
                 fontSize={13}
               />
             </>
@@ -236,7 +246,11 @@ function ActivityOneResultCard(props: {
                 fontSize={13}
               />
               <Equation
-                latex={`\\\\text{g-force} = \\\\frac{${finalVelocity?.toFixed(3)}}{${props.timeStop?.toFixed(3)}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
+                latex={`\\\\text{g-force} = \\\\frac{${finalVelocity?.toFixed(
+                  3
+                )}}{${props.timeStop?.toFixed(
+                  3
+                )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
                 fontSize={13}
               />
             </>
@@ -274,7 +288,7 @@ export default function ActivityOneResultsScreen(props: {
     if (Number(response.data.activityId) !== 1) {
       console.warn(
         "[ActivityOne] Wrong activityId received, skipping render. Got:",
-        response.data.activityId,
+        response.data.activityId
       );
       return;
     }
@@ -284,7 +298,7 @@ export default function ActivityOneResultsScreen(props: {
     const rankingRes = await getActivityRank({ activityId: "1" });
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
       );
     }
     for (let i = 0; i < rankingRes.rankings.length; i++) {
