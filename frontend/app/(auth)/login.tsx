@@ -30,6 +30,7 @@ export default function LoginScreen() {
 
     if (email === "" || password === "") {
       alert("Fields cannot be empty");
+      return;
     }
     setIsLoading(true);
 
