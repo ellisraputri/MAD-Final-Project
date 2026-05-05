@@ -47,6 +47,7 @@ export default function RegisterScreen() {
 
     if (email === "" || password === "" || firstName === "" || grade === "") {
       alert("Fields cannot be empty");
+      return;
     }
     setIsLoading(true);
 

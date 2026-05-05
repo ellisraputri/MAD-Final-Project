@@ -77,6 +77,8 @@
   "private": true,
   "jest": {
     "preset": "jest-expo",
-    "setupFilesAfterEnv": ["./testing/setup.js"]
+    "setupFilesAfterEnv": [
+      "./testing/setup.js"
+    ]
   }
 }
