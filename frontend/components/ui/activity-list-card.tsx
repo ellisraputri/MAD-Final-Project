@@ -22,48 +22,50 @@ export default function ActivityListCard(props: ActivityProps) {
   const styles = createStyles(theme);
 
   return (
-    <View style={styles.container}>
-      {/* Top Image Section */}
-      <ImageBackground
-        source={props.image}
-        style={styles.image}
-        imageStyle={styles.imageStyle}
-      >
-        <View
-          style={[
-            styles.badge,
-            props.type === "Engineering"
-              ? { backgroundColor: "#BADFE7" }
-              : { backgroundColor: "#C2EDCE" },
-          ]}
+    <Link
+      href={{
+        pathname: "/(tabs)/activity/[id]/instructions",
+        params: { id: props.index.toString() },
+      }}
+      asChild
+    >
+      <Pressable style={styles.container}>
+        {/* Top Image Section */}
+        <ImageBackground
+          source={props.image}
+          style={styles.image}
+          imageStyle={styles.imageStyle}
         >
-          <Text style={styles.badgeText}>{props.type}</Text>
+          <View
+            style={[
+              styles.badge,
+              props.type === "Engineering"
+                ? { backgroundColor: "#BADFE7" }
+                : { backgroundColor: "#C2EDCE" },
+            ]}
+          >
+            <Text style={styles.badgeText}>{props.type}</Text>
+          </View>
+        </ImageBackground>
+
+        {/* Bottom Caption */}
+        <View style={styles.card}>
+          <Text style={styles.title}>
+            Activity {props.index}: {props.name}
+          </Text>
+
+          <Text
+            style={styles.description}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {props.description}
+          </Text>
+
+          <Text style={[styles.link]}>Find out more...</Text>
         </View>
-      </ImageBackground>
-
-      {/* Bottom Caption */}
-      <View style={styles.card}>
-        <Text style={styles.title}>
-          Activity {props.index}: {props.name}
-        </Text>
-
-        <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
-          {props.description}
-        </Text>
-
-        <Link
-          href={{
-            pathname: "/(tabs)/activity/[id]/instructions",
-            params: { id: props.index.toString() },
-          }}
-          asChild
-        >
-          <Pressable>
-            <Text style={[styles.link]}>Find out more...</Text>
-          </Pressable>
-        </Link>
-      </View>
-    </View>
+      </Pressable>
+    </Link>
   );
 }
 
