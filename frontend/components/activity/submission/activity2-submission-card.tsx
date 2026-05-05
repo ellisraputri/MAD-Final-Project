@@ -2,7 +2,7 @@ import { Text, TextInput } from "react-native";
 import AudioPlayer from "../../ui/audio-player";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import SubmissionCardLayout from "./submission-card-layout";
-import { createSubmissionCardStyles } from "./submissionCardStyle";
+import { createSubmissionCardStyles } from "./submission-card-style";
 
 export default function ActivityTwoSubmissionCard(props: {
   item: number;

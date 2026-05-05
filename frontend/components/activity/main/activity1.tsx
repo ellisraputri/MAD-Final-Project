@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   Modal,
   ScrollView,
   Alert,
@@ -24,10 +23,11 @@ import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner-native";
+import { createMainActivityStyles } from "./main-activity-style";
 
 export default function ActivityOneScreen() {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createMainActivityStyles(theme);
   const { team } = useAppContext();
 
   const cameraRef = useRef<CameraView | null>(null);
@@ -435,97 +435,3 @@ export default function ActivityOneScreen() {
     </View>
   );
 }
-
-export const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    closeButton: {
-      position: "absolute",
-      top: 10,
-      right: 15,
-      zIndex: 10,
-      padding: 8,
-    },
-    buttonContainer: {
-      flexDirection: "column",
-      justifyContent: "center",
-      marginTop: 40,
-    },
-
-    recordButtonOuter: {
-      width: 60,
-      height: 60,
-      borderRadius: 40,
-      backgroundColor: "#fff",
-      justifyContent: "center",
-      alignItems: "center",
-      marginTop: 10,
-    },
-
-    recordButtonInner: {
-      width: 35,
-      height: 35,
-      borderRadius: 25,
-      backgroundColor: "#c50000",
-    },
-
-    recordingInner: {
-      width: 25,
-      height: 25,
-      borderRadius: 6,
-      backgroundColor: "#c50000",
-    },
-
-    recordBtnArea: {
-      backgroundColor: theme.hoverBackground,
-      width: 320,
-      alignItems: "center",
-      paddingBottom: 15,
-    },
-
-    videoScreen: {
-      width: 320,
-      height: 500,
-    },
-
-    mainView: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-
-    modalContainer: {
-      flex: 1,
-      paddingTop: 30,
-      paddingHorizontal: 5,
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-    scrollView: {
-      alignItems: "center",
-      paddingBottom: 40,
-    },
-    titleModalText: {
-      marginTop: 20,
-      marginBottom: 20,
-      fontSize: 20,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Lato_700Bold",
-    },
-    titleText: {
-      marginTop: 100,
-      marginBottom: 20,
-      fontSize: 20,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Lato_700Bold",
-    },
-    subtitleText: {
-      fontFamily: "Lato_400Regular",
-      fontSize: 16,
-      marginBottom: 60,
-      color: theme.blackText,
-    },
-  });
-  return styles;
-};

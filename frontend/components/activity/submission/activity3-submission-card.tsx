@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import VideoModal from "../../ui/video-modal";
 import SubmissionCardLayout from "./submission-card-layout";
-import { createSubmissionCardStyles } from "./submissionCardStyle";
+import { createSubmissionCardStyles } from "./submission-card-style";
 
 export default function ActivityThreeSubmissionCard(props: {
   item: number;

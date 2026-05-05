@@ -1,7 +1,7 @@
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { Text, TextInput } from "react-native";
 import SubmissionCardLayout from "./submission-card-layout";
-import { createSubmissionCardStyles } from "./submissionCardStyle";
+import { createSubmissionCardStyles } from "./submission-card-style";
 
 export default function ActivityFiveSubmissionCard(props: {
   item: number;

@@ -1,7 +1,7 @@
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
-import { createSubmissionCardStyles } from "./submissionCardStyle";
+import { createSubmissionCardStyles } from "./submission-card-style";
 
 type Props = {
   item: number;

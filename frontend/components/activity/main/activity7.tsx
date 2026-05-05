@@ -2,20 +2,14 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import LiveRecorder from "../../ui/audio-recording";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Alert,
-} from "react-native";
+import { Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import AudioPlayer from "../../ui/audio-player";
 import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
 import { socket } from "@/services/socket";
+import { createMainActivityStyles } from "./main-activity-style";
 
 type CardActivitySevenProps = {
   title: string;
@@ -29,7 +23,7 @@ type CardActivitySevenProps = {
 
 function CardActivitySeven(props: CardActivitySevenProps) {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createMainActivityStyles(theme);
 
   return (
     <View
@@ -67,7 +61,7 @@ function CardActivitySeven(props: CardActivitySevenProps) {
 
 export default function ActivitySevenScreen() {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createMainActivityStyles(theme);
   const { user, team } = useAppContext();
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -340,91 +334,3 @@ export default function ActivitySevenScreen() {
     </KeyboardAwareScrollView>
   );
 }
-
-const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    container: { flex: 1 },
-    title: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: theme.text,
-      lineHeight: 28,
-      marginBottom: 15,
-    },
-
-    cardTitle: {
-      fontSize: 18,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      marginBottom: 14,
-    },
-
-    cardSubtitle: {
-      marginTop: 10,
-      fontSize: 16,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      marginBottom: 5,
-    },
-
-    cardLabel: {
-      fontSize: 16,
-      color: theme.text,
-      marginBottom: 5,
-      fontFamily: "Lato_400Regular",
-    },
-
-    cardInputRow: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-
-    cardInput: {
-      width: 100,
-      height: 40,
-      borderWidth: 1,
-      borderColor: theme.text,
-      borderRadius: 4,
-      paddingHorizontal: 10,
-      backgroundColor: theme.background,
-      marginBottom: 15,
-      fontFamily: "Lato_400Regular",
-      fontSize: 16,
-      color: theme.blackText,
-    },
-
-    cardUnit: {
-      marginLeft: 12,
-      fontSize: 16,
-      color: theme.text,
-      fontFamily: "Lato_400Regular",
-    },
-
-    cardContainer: {
-      margin: 10,
-      marginBottom: 20,
-      padding: 20,
-      elevation: 6,
-      backgroundColor: theme.background,
-      borderRadius: 10,
-    },
-
-    editBtn: {
-      backgroundColor: theme.text,
-      padding: 8,
-      borderRadius: 6,
-      alignItems: "center",
-      alignSelf: "flex-end",
-      width: 80,
-      height: 40,
-      justifyContent: "center",
-      marginTop: 10,
-    },
-    editBtnText: {
-      color: "#fff",
-      fontFamily: "Lato_400Regular",
-      fontSize: 14,
-    },
-  });
-  return styles;
-};
