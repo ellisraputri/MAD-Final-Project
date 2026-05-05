@@ -3,6 +3,23 @@ import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import HomeScreen from "../app/(tabs)/index.tsx";
 
 describe("HomeScreen", () => {
+  const { useAppContext } = require("@/context/AppContext");
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    useAppContext.mockReturnValue({
+      user: { id: "1", firstName: "John", appearance: true },
+      setUser: jest.fn(),
+      team: {
+        id: "team1",
+        name: "My Team",
+        grade: 10,
+        logo: "logo.png",
+      },
+      setTeam: jest.fn(),
+    });
+  });
+
   it("redirects to team confirmation if user has no team", async () => {
     const { getStudentDetail } = require("@/services/student/student");
     const { router } = require("expo-router");

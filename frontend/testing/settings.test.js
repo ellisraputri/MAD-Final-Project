@@ -14,6 +14,23 @@ jest.mock("@/components/ui/dropdown", () => {
 });
 
 describe("SettingsScreen", () => {
+  const { useAppContext } = require("@/context/AppContext");
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    useAppContext.mockReturnValue({
+      user: { id: "1", firstName: "John", appearance: true },
+      setUser: jest.fn(),
+      team: {
+        id: "team1",
+        name: "My Team",
+        grade: 10,
+        logo: "logo.png",
+      },
+      setTeam: jest.fn(),
+    });
+  });
+
   it("renders settings screen", () => {
     const { getByText } = render(<SettingsScreen />);
 

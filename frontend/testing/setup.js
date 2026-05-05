@@ -79,6 +79,12 @@ jest.mock("expo-router", () => ({
     push: jest.fn(),
     replace: jest.fn(),
   },
+  useGlobalSearchParams: jest.fn(),
+  useLocalSearchParams: jest.fn(),
+  useFocusEffect: (cb) => {
+    const React = require("react");
+    React.useEffect(cb, []); // ✅ only run once
+  },
 }));
 
 jest.mock("expo-sqlite", () => ({
@@ -95,7 +101,11 @@ jest.mock("sonner-native", () => ({
 jest.mock("@/services/socket", () => ({
   socket: {
     emit: jest.fn(),
-    on: jest.fn(),
+    on: jest.fn((event, cb) => {
+      if (event === "team_active_users") {
+        handler = cb;
+      }
+    }),
     off: jest.fn(),
     connected: true,
   },
@@ -133,17 +143,7 @@ jest.mock("expo-image-picker", () => ({
 }));
 
 jest.mock("@/context/AppContext", () => ({
-  useAppContext: () => ({
-    user: { id: "1", firstName: "John", appearance: true },
-    setUser: jest.fn(),
-    team: {
-      id: "team1",
-      name: "My Team",
-      grade: 10,
-      logo: "logo.png",
-    },
-    setTeam: jest.fn(),
-  }),
+  useAppContext: jest.fn(),
 }));
 
 global.alert = jest.fn();
