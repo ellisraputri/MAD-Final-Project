@@ -2,21 +2,6 @@ import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import HomeScreen from "../app/(tabs)/index.tsx";
 
-// --- MOCKS ---
-jest.mock("@/services/student/student", () => ({
-  getStudentDetail: jest.fn(),
-}));
-
-jest.mock("@/services/team/team", () => ({
-  getTeamDetail: jest.fn(),
-  editTeam: jest.fn(),
-}));
-
-jest.mock("@/services/summary/summary", () => ({
-  getActivityRank: jest.fn(),
-  getGlobalRank: jest.fn(),
-}));
-
 describe("HomeScreen", () => {
   it("redirects to team confirmation if user has no team", async () => {
     const { getStudentDetail } = require("@/services/student/student");

@@ -3,21 +3,6 @@ import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import TeamConfirmationScreen from "../app/(auth)/team_confirmation";
 
 // --- MOCKS ---
-jest.mock("@/services/student/student", () => ({
-  getStudentDetail: jest.fn(),
-}));
-
-jest.mock("@/services/team/team", () => ({
-  createTeam: jest.fn(),
-  joinTeam: jest.fn(),
-}));
-
-jest.mock("@/context/AppContext", () => ({
-  useAppContext: () => ({
-    setUser: jest.fn(),
-  }),
-}));
-
 jest.mock("@/components/ui/dropdown", () => {
   const React = require("react");
   const { TouchableOpacity, Text } = require("react-native");

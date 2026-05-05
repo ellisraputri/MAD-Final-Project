@@ -2,10 +2,6 @@ import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import RegisterScreen from "../app/(auth)/register.tsx";
 
-jest.mock("../services/auth/auth.ts", () => ({
-  registerAndGetData: jest.fn(),
-}));
-
 jest.mock("../components/ui/dropdown.tsx", () => {
   const React = require("react");
   const { Text, TouchableOpacity } = require("react-native");

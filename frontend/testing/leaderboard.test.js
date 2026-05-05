@@ -16,15 +16,6 @@ jest.mock("react-native-element-dropdown", () => {
   };
 });
 
-jest.mock("@/services/summary/summary", () => ({
-  getGlobalRank: jest.fn(),
-  getActivityRank: jest.fn(),
-}));
-
-jest.mock("@/services/team/team", () => ({
-  getTeamDetailBatch: jest.fn(),
-}));
-
 const mockRankings = [
   { teamId: "team1", rank: 1, score: 0.9, attemptNo: 1, timestamp: "1" },
   { teamId: "team2", rank: 2, score: 0.8, attemptNo: 1, timestamp: "2" },

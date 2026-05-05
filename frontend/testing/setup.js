@@ -146,3 +146,41 @@ jest.mock("@/context/AppContext", () => ({
 }));
 
 global.alert = jest.fn();
+
+jest.mock("@/services/auth/auth", () => ({
+  loginAndGetData: jest.fn(),
+  registerAndGetData: jest.fn(),
+  logout: jest.fn(),
+}));
+
+jest.mock("@/services/media/media", () => ({
+  uploadToCloudinary: jest.fn(),
+  uploadMedia: jest.fn(),
+  uploadMedia45: jest.fn(),
+  parseMediaContent: jest.fn(),
+}));
+
+jest.mock("@/services/result/result", () => ({
+  submitResult: jest.fn(),
+  getResultList: jest.fn(),
+  getResultDetail: jest.fn(),
+  submitRating: jest.fn(),
+}));
+
+jest.mock("@/services/student/student", () => ({
+  getStudentDetail: jest.fn(),
+  editStudentDetail: jest.fn(),
+}));
+
+jest.mock("@/services/summary/summary", () => ({
+  getGlobalRank: jest.fn(),
+  getActivityRank: jest.fn(),
+}));
+
+jest.mock("@/services/team/team", () => ({
+  getTeamDetail: jest.fn(),
+  createTeam: jest.fn(),
+  joinTeam: jest.fn(),
+  editTeam: jest.fn(),
+  getTeamDetailBatch: jest.fn(),
+}));

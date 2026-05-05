@@ -1,11 +1,6 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import LoginScreen from "../app/(auth)/login.tsx";
-
-jest.mock("../services/auth/auth.ts", () => ({
-  loginAndGetData: jest.fn(),
-}));
-
 import { loginAndGetData } from "../services/auth/auth.ts";
 
 describe("LoginScreen", () => {
