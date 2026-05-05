@@ -8,13 +8,15 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import VideoModal from "./video-modal";
+import VideoModal from "../../ui/video-modal";
 
-export default function ActivityThreeSubmissionCard(props: {
+export default function ActivityOneSubmissionCard(props: {
   item: number;
   videoUri: string | null;
-  bend: string;
-  onChangeBend: (text: string) => void;
+  mass: string;
+  time: string;
+  onChangeMass: (text: string) => void;
+  onChangeTime: (text: string) => void;
   onDelete: () => void;
   onRerecord: () => void;
 }) {
@@ -49,13 +51,23 @@ export default function ActivityThreeSubmissionCard(props: {
           )}
         </View>
 
-        <Text style={submissionStyles.prediction}>Prediction</Text>
-
-        <Text style={submissionStyles.descText}>Bend (degrees)</Text>
+        <Text style={submissionStyles.descText}>Mass of toy (gram)</Text>
         <TextInput
           style={submissionStyles.inputBox}
-          value={props.bend}
-          onChangeText={props.onChangeBend}
+          value={props.mass}
+          onChangeText={props.onChangeMass}
+          keyboardType="numeric"
+        />
+
+        <Text style={submissionStyles.prediction}>Prediction</Text>
+
+        <Text style={submissionStyles.descText}>
+          Time to hit ground (seconds)
+        </Text>
+        <TextInput
+          style={submissionStyles.inputBox}
+          value={props.time}
+          onChangeText={props.onChangeTime}
           keyboardType="numeric"
         />
 

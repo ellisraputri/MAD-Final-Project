@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import theoryActivity from "@/data/activity_theory.json";
-import Button from "./ui/button";
-import AudioPlayer from "./ui/audio-player";
+import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { ResultDetailActivityTwo } from "@/services/result/result.type";
+import { ResultDetailActivitySix } from "@/services/result/result.type";
 import { getResultDetail } from "@/services/result/result";
 import { toast } from "sonner-native";
-import Loading from "./ui/loading";
-import { ContentAudio } from "@/services/media/media.type";
-import { parseMediaContent } from "@/services/media/media";
-import RatingPopup from "./ui/rating-popup";
-import { getActivityRank } from "@/services/summary/summary";
-import { ActivityRankDetail } from "@/services/summary/summary.type";
+import Loading from "../../ui/loading";
 import { useAppContext } from "@/context/AppContext";
-import RankingCard from "./ui/ranking-card";
+import { MediaDetail } from "@/services/media/media.type";
+import RatingPopup from "../../ui/rating-popup";
+import { ActivityRankDetail } from "@/services/summary/summary.type";
+import { getActivityRank } from "@/services/summary/summary";
+import RankingCard from "../../ui/ranking-card";
+import { BasePrediction } from "@/services/result/prediction.type";
+import { ActivityBaseOutcome } from "@/services/result/outcome.type";
 
 const defaultLogo =
   "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
@@ -39,13 +39,13 @@ function Section({
   );
 }
 
-function ActivityTwoResultCard(props: {
+function ActivitySixResultCard(props: {
   item: number;
-  audioUri: string | null;
-  levels: number[];
-  valuePredict: number;
-  valueCalculated: number;
-  realOutcome: number;
+  timePredict: BasePrediction[];
+  timeCalculated: ActivityBaseOutcome[];
+  accuracyPredict?: BasePrediction[];
+  accuracyCalculated?: ActivityBaseOutcome[];
+  medias?: MediaDetail[];
 }) {
   const theme = useAppTheme();
   const resultStyles = createStyles(theme);
@@ -57,38 +57,77 @@ function ActivityTwoResultCard(props: {
     >
       <View style={resultStyles.titleRow}>
         <Text style={resultStyles.title}>
-          {props.item}. Submission {props.item}
+          {props.item === 1 && "Reaction Challenge - Dominant Hand"}
+          {props.item === 2 && "Reaction Challenge - Non-Dominant Hand"}
+          {props.item === 3 && "Tracing Challenge"}
         </Text>
       </View>
 
-      <View style={resultStyles.subsContainer}>
-        {props.audioUri ? (
-          <AudioPlayer uri={props.audioUri} levels={props.levels} />
-        ) : (
-          <Text style={resultStyles.descText}>No audio</Text>
-        )}
-      </View>
+      {props.item === 3 && (
+        <>
+          {props.medias?.map((m, idx) => (
+            <View key={idx}>
+              <Text style={resultStyles.subtitleText}>
+                Trace Result Member {idx + 1}:{" "}
+              </Text>
+              <View style={resultStyles.padContainer} key={idx}>
+                <Image
+                  source={{
+                    uri: "https://coloringlib.com/wp-content/uploads/2024/01/truck-tracing-sheet-coloring.jpg",
+                  }}
+                  style={resultStyles.image}
+                />
 
-      <Text style={resultStyles.subtitleText}>
-        Order of Loudness (among all submissions)
-      </Text>
+                <Image
+                  source={{ uri: m.content }} // from Cloudinary
+                  style={[resultStyles.image, resultStyles.overlay]}
+                />
+              </View>
+            </View>
+          ))}
+        </>
+      )}
+
+      <Text style={resultStyles.subtitleText}>Time used</Text>
       <View style={resultStyles.list}>
-        <Text style={resultStyles.listItem}>
-          • Predicted: {props.valuePredict}
-        </Text>
-        <Text style={resultStyles.listItem}>
-          • Outcome: {props.valueCalculated}
-        </Text>
+        {props.timePredict.map((p, idx) => (
+          <Text style={resultStyles.listItem} key={idx}>
+            • Prediction from Member {idx + 1}: {p.prediction} ms
+          </Text>
+        ))}
+
+        {props.timeCalculated.map((p, idx) => (
+          <Text style={resultStyles.listItem} key={idx}>
+            • Outcome from Member {idx + 1}: {p.outcome} ms
+          </Text>
+        ))}
       </View>
 
-      <Text style={resultStyles.descText}>
-        The value of dB for this result is {props.realOutcome}
-      </Text>
+      {props.item === 3 && (
+        <>
+          <Text style={resultStyles.subtitleText}>Accuracy</Text>
+          <View style={resultStyles.list}>
+            {props.accuracyPredict &&
+              props.accuracyPredict.map((p, idx) => (
+                <Text style={resultStyles.listItem} key={idx}>
+                  • Prediction from Member {idx + 1}: {p.prediction}%
+                </Text>
+              ))}
+
+            {props.accuracyCalculated &&
+              props.accuracyCalculated.map((p, idx) => (
+                <Text style={resultStyles.listItem} key={idx}>
+                  • Outcome from Member {idx + 1}: {p.outcome}%
+                </Text>
+              ))}
+          </View>
+        </>
+      )}
     </View>
   );
 }
 
-export default function ActivityTwoResultsScreen(props: {
+export default function ActivitySixResultsScreen(props: {
   resultId: string;
   onBack: () => void;
 }) {
@@ -97,13 +136,15 @@ export default function ActivityTwoResultsScreen(props: {
   const { id } = useLocalSearchParams();
   const { team } = useAppContext();
 
-  const [data, setData] = useState<ResultDetailActivityTwo>();
-  const [contents, setContents] = useState<ContentAudio[]>();
+  const [data, setData] = useState<ResultDetailActivitySix>();
+  const [predictions, setPredictions] = useState<BasePrediction[][]>();
+  const [outcomes, setOutcomes] = useState<ActivityBaseOutcome[][]>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [result, setResult] = useState<ActivityRankDetail>();
 
   const fetchDetail = async () => {
+    if (!team) return;
     setLoading(true);
 
     const response = await getResultDetail({ resultId: props.resultId });
@@ -112,24 +153,35 @@ export default function ActivityTwoResultsScreen(props: {
       setLoading(false);
       return;
     }
-
-    if (Number(response.data.activityId) !== 2) {
+    if (Number(response.data.activityId) !== 6) {
       console.warn(
-        "[ActivityTwo] Wrong activityId received, skipping render. Got:",
+        "[ActivitySix] Wrong activityId received, skipping render. Got:",
         response.data.activityId
       );
       return;
     }
-
-    const contents = response.data.medias.map((m, _) => {
-      return parseMediaContent(m.content);
-    });
-
-    setContents(contents);
-    setData(response.data as ResultDetailActivityTwo);
     if (!response.data?.ratings) setShowRating(true);
+    setData(response.data as ResultDetailActivitySix);
 
-    const rankingRes = await getActivityRank({ activityId: "2" });
+    const grouped_preds = [];
+    const grouped_outs = [];
+
+    for (
+      let i = 0;
+      i < response.data.predictions.length;
+      i += team?.members.length
+    ) {
+      grouped_preds.push(
+        response.data.predictions.slice(i, i + team.members.length)
+      );
+      grouped_outs.push(
+        response.data.outcomes.slice(i, i + team.members.length)
+      );
+    }
+    setPredictions(grouped_preds);
+    setOutcomes(grouped_outs as ActivityBaseOutcome[][]);
+
+    const rankingRes = await getActivityRank({ activityId: "6" });
     if (!rankingRes.success) {
       toast.error(
         `Failed to fetch leaderboard rank data: ${rankingRes.message}`
@@ -160,24 +212,34 @@ export default function ActivityTwoResultsScreen(props: {
         {/* Theory */}
         <Section title="Theory">
           <Text style={[styles.paragraph, { marginBottom: 30 }]}>
-            {theoryActivity["theory2"]}
+            {theoryActivity["theory6"]}
           </Text>
         </Section>
 
         {/* Results */}
-        {contents && data && (
+        {data && predictions && outcomes && (
           <Section title="Results">
-            {data?.outcomes?.map((outcome, index) => (
-              <ActivityTwoResultCard
-                key={index}
-                item={index + 1}
-                audioUri={contents[index].url}
-                levels={contents[index].levels}
-                valueCalculated={outcome.outcome}
-                realOutcome={outcome.realOutcome}
-                valuePredict={data.predictions?.[index]?.prediction}
-              />
-            ))}
+            <ActivitySixResultCard
+              item={1}
+              key={1}
+              timePredict={predictions[0]}
+              timeCalculated={outcomes[0]}
+            />
+            <ActivitySixResultCard
+              item={2}
+              key={2}
+              timePredict={predictions[1]}
+              timeCalculated={outcomes[1]}
+            />
+            <ActivitySixResultCard
+              item={3}
+              medias={data.medias}
+              key={3}
+              timePredict={predictions[2]}
+              timeCalculated={outcomes[2]}
+              accuracyPredict={predictions[3]}
+              accuracyCalculated={outcomes[3]}
+            />
           </Section>
         )}
 
@@ -205,10 +267,9 @@ export default function ActivityTwoResultsScreen(props: {
           text="Back"
         />
       </ScrollView>
-
       {data?.resultId && (
         <RatingPopup
-          activityId={"2"}
+          activityId={"6"}
           resultId={data?.resultId}
           showModal={showRating}
           onClose={() => setShowRating(false)}
@@ -243,14 +304,8 @@ const createStyles = (theme: any) => {
       fontSize: 15,
       lineHeight: 22,
       textAlign: "justify",
-      fontFamily: "Lato_400Regular",
       color: theme.blackText,
-    },
-
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
+      fontFamily: "Lato_400Regular",
     },
 
     subsContainer: {
@@ -270,10 +325,16 @@ const createStyles = (theme: any) => {
       elevation: 3,
     },
     title: {
-      marginBottom: 20,
+      marginBottom: 10,
       fontFamily: "Lato_700Bold",
       color: theme.text,
       fontSize: 20,
+    },
+    prediction: {
+      marginTop: 15,
+      fontFamily: "Lato_700Bold",
+      color: theme.text,
+      fontSize: 18,
     },
     subtitleText: {
       marginTop: 10,
@@ -296,6 +357,19 @@ const createStyles = (theme: any) => {
       fontFamily: "Lato_400Regular",
       marginBottom: 5,
       color: theme.blackText,
+    },
+    padContainer: {
+      width: 300,
+      height: 200,
+    },
+    image: {
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      resizeMode: "contain",
+    },
+    overlay: {
+      zIndex: 200,
     },
   });
 

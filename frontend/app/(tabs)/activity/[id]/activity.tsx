@@ -1,10 +1,10 @@
-import ActivityOneScreen from "@/components/activity1";
-import ActivityTwoScreen from "@/components/activity2";
-import ActivityThreeScreen from "@/components/activity3";
-import ActivityFourScreen from "@/components/activity4";
-import ActivityFiveScreen from "@/components/activity5";
-import ActivitySixScreen from "@/components/activity6";
-import ActivitySevenScreen from "@/components/activity7";
+import ActivityOneScreen from "@/components/activity/main/activity1";
+import ActivityTwoScreen from "@/components/activity/main/activity2";
+import ActivityThreeScreen from "@/components/activity/main/activity3";
+import ActivityFourScreen from "@/components/activity/main/activity4";
+import ActivityFiveScreen from "@/components/activity/main/activity5";
+import ActivitySixScreen from "@/components/activity/main/activity6";
+import ActivitySevenScreen from "@/components/activity/main/activity7";
 import { useAppContext } from "@/context/AppContext";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { socket } from "@/services/socket";

@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import theoryActivity from "@/data/activity_theory.json";
-import Button from "./ui/button";
+import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { ResultDetailActivityFive } from "@/services/result/result.type";
+import { ResultDetailActivityFour } from "@/services/result/result.type";
 import { getResultDetail } from "@/services/result/result";
 import { toast } from "sonner-native";
-import Loading from "./ui/loading";
-import RatingPopup from "./ui/rating-popup";
+import Loading from "../../ui/loading";
+import RatingPopup from "../../ui/rating-popup";
 import { useAppContext } from "@/context/AppContext";
 import { ActivityRankDetail } from "@/services/summary/summary.type";
 import { getActivityRank } from "@/services/summary/summary";
-import RankingCard from "./ui/ranking-card";
+import RankingCard from "../../ui/ranking-card";
 
 const defaultLogo =
   "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
@@ -36,7 +36,7 @@ function Section({
   );
 }
 
-function ActivityFiveResultCard(props: {
+function ActivityFourResultCard(props: {
   item: number;
   vibrateTime: number;
   valuePredict: number;
@@ -44,7 +44,6 @@ function ActivityFiveResultCard(props: {
 }) {
   const theme = useAppTheme();
   const resultStyles = createStyles(theme);
-
   return (
     <View
       key={props.item}
@@ -71,7 +70,7 @@ function ActivityFiveResultCard(props: {
   );
 }
 
-export default function ActivityFiveResultsScreen(props: {
+export default function ActivityFourResultsScreen(props: {
   resultId: string;
   onBack: () => void;
 }) {
@@ -80,10 +79,10 @@ export default function ActivityFiveResultsScreen(props: {
   const { id } = useLocalSearchParams();
   const { team } = useAppContext();
 
-  const [data, setData] = useState<ResultDetailActivityFive>();
+  const [result, setResult] = useState<ActivityRankDetail>();
+  const [data, setData] = useState<ResultDetailActivityFour>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
-  const [result, setResult] = useState<ActivityRankDetail>();
 
   const fetchDetail = async () => {
     setLoading(true);
@@ -94,17 +93,18 @@ export default function ActivityFiveResultsScreen(props: {
       setLoading(false);
       return;
     }
-    if (Number(response.data.activityId) !== 5) {
+
+    if (Number(response.data.activityId) !== 4) {
       console.warn(
-        "[ActivityFive] Wrong activityId received, skipping render. Got:",
+        "[ActivityFour] Wrong activityId received, skipping render. Got:",
         response.data.activityId
       );
       return;
     }
-    setData(response.data as ResultDetailActivityFive);
+    setData(response.data as ResultDetailActivityFour);
     if (!response.data?.ratings) setShowRating(true);
 
-    const rankingRes = await getActivityRank({ activityId: "5" });
+    const rankingRes = await getActivityRank({ activityId: "4" });
     if (!rankingRes.success) {
       toast.error(
         `Failed to fetch leaderboard rank data: ${rankingRes.message}`
@@ -135,7 +135,7 @@ export default function ActivityFiveResultsScreen(props: {
         {/* Theory */}
         <Section title="Theory">
           <Text style={[styles.paragraph, { marginBottom: 30 }]}>
-            {theoryActivity["theory5"]}
+            {theoryActivity["theory4"]}
           </Text>
         </Section>
 
@@ -143,7 +143,7 @@ export default function ActivityFiveResultsScreen(props: {
         {data && (
           <Section title="Results">
             {data?.outcomes?.map((outcome, index) => (
-              <ActivityFiveResultCard
+              <ActivityFourResultCard
                 key={index}
                 item={index + 1}
                 vibrateTime={Number(data.medias?.[index]?.content)}
@@ -178,9 +178,10 @@ export default function ActivityFiveResultsScreen(props: {
           text="Back"
         />
       </ScrollView>
+
       {data?.resultId && (
         <RatingPopup
-          activityId={"5"}
+          activityId={"4"}
           resultId={data?.resultId}
           showModal={showRating}
           onClose={() => setShowRating(false)}

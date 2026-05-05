@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import ActivityFourSubmissionCard from "./ui/activity4-submission-card";
-import Button from "./ui/button";
+import ActivityFourSubmissionCard from "../submission/activity4-submission-card";
+import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { useAppContext } from "@/context/AppContext";
 import { submitResult } from "@/services/result/result";

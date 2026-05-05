@@ -2,22 +2,17 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import theoryActivity from "@/data/activity_theory.json";
-import Button from "./ui/button";
-import AudioPlayer from "./ui/audio-player";
+import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
-import { ContentAudio } from "@/services/media/media.type";
-import { ResultDetailActivitySeven } from "@/services/result/result.type";
+import { ResultDetailActivityFive } from "@/services/result/result.type";
 import { getResultDetail } from "@/services/result/result";
 import { toast } from "sonner-native";
-import { parseMediaContent } from "@/services/media/media";
-import Loading from "./ui/loading";
+import Loading from "../../ui/loading";
+import RatingPopup from "../../ui/rating-popup";
 import { useAppContext } from "@/context/AppContext";
-import RatingPopup from "./ui/rating-popup";
-import RankingCard from "./ui/ranking-card";
 import { ActivityRankDetail } from "@/services/summary/summary.type";
 import { getActivityRank } from "@/services/summary/summary";
-import { BasePrediction } from "@/services/result/prediction.type";
-import { ActivitySevenOutcome } from "@/services/result/outcome.type";
+import RankingCard from "../../ui/ranking-card";
 
 const defaultLogo =
   "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
@@ -41,11 +36,11 @@ function Section({
   );
 }
 
-function ActivitySevenResultCard(props: {
+function ActivityFiveResultCard(props: {
   item: number;
-  contents: any[];
-  valuePredict: BasePrediction[];
-  valueCalculated: ActivitySevenOutcome[];
+  vibrateTime: number;
+  valuePredict: number;
+  valueCalculated: number;
 }) {
   const theme = useAppTheme();
   const resultStyles = createStyles(theme);
@@ -57,46 +52,26 @@ function ActivitySevenResultCard(props: {
     >
       <View style={resultStyles.titleRow}>
         <Text style={resultStyles.title}>
-          {props.item}. Submission {props.item}
+          Vibration {props.item}:{" "}
+          {props.vibrateTime ? props.vibrateTime.toFixed(3) : "NaN"}s
         </Text>
       </View>
 
-      <View style={resultStyles.subsContainer}>
-        {props.contents?.map((content, idx) => (
-          <View key={idx} style={resultStyles.viewAudio}>
-            <Text style={resultStyles.subtitle2Text}>
-              Audio from Member {idx + 1}
-            </Text>
-            {content.url ? (
-              <AudioPlayer uri={content.url} levels={content.levels} />
-            ) : (
-              <Text style={resultStyles.descText}>No audio</Text>
-            )}
-          </View>
-        ))}
-      </View>
-
-      <Text style={resultStyles.subtitleText}>Breath per minute</Text>
       <View style={resultStyles.list}>
-        {props.valuePredict.map((p, idx) => (
-          <Text style={resultStyles.listItem} key={idx}>
-            • Prediction from Member {idx + 1}:{" "}
-            {p.prediction ? p.prediction.toFixed(3) : "-"} bpm
-          </Text>
-        ))}
-
-        {props.valueCalculated.map((p, idx) => (
-          <Text style={resultStyles.listItem} key={idx}>
-            • Outcome from Member {idx + 1}: {p.bpm ? p.bpm.toFixed(3) : "-"}{" "}
-            bpm
-          </Text>
-        ))}
+        <Text style={resultStyles.listItem}>
+          • Predicted:{" "}
+          {props.valuePredict ? props.valuePredict.toFixed(3) : "-"} cm
+        </Text>
+        <Text style={resultStyles.listItem}>
+          • Outcome:{" "}
+          {props.valueCalculated ? props.valueCalculated.toFixed(3) : "-"} cm
+        </Text>
       </View>
     </View>
   );
 }
 
-export default function ActivitySevenResultsScreen(props: {
+export default function ActivityFiveResultsScreen(props: {
   resultId: string;
   onBack: () => void;
 }) {
@@ -105,17 +80,12 @@ export default function ActivitySevenResultsScreen(props: {
   const { id } = useLocalSearchParams();
   const { team } = useAppContext();
 
-  const [data, setData] = useState<ResultDetailActivitySeven>();
-  const [contents, setContents] = useState<ContentAudio[][]>();
-  const [predictions, setPredictions] = useState<BasePrediction[][]>();
-  const [outcomes, setOutcomes] = useState<ActivitySevenOutcome[][]>();
+  const [data, setData] = useState<ResultDetailActivityFive>();
   const [loading, setLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
-
   const [result, setResult] = useState<ActivityRankDetail>();
 
   const fetchDetail = async () => {
-    if (!team) return;
     setLoading(true);
 
     const response = await getResultDetail({ resultId: props.resultId });
@@ -124,46 +94,17 @@ export default function ActivitySevenResultsScreen(props: {
       setLoading(false);
       return;
     }
-    if (Number(response.data.activityId) !== 7) {
+    if (Number(response.data.activityId) !== 5) {
       console.warn(
-        "[ActivitySeven] Wrong activityId received, skipping render. Got:",
+        "[ActivityFive] Wrong activityId received, skipping render. Got:",
         response.data.activityId
       );
       return;
     }
-
-    const parsedContents = response.data.medias.map((m, _) => {
-      return parseMediaContent(m.content);
-    });
-
-    const grouped_preds = [];
-    const grouped_outs = [];
-    const grouped_contents = [];
-
-    for (
-      let i = 0;
-      i < response.data.predictions.length;
-      i += team?.members.length
-    ) {
-      grouped_preds.push(
-        response.data.predictions.slice(i, i + team.members.length)
-      );
-      grouped_outs.push(
-        response.data.outcomes.slice(i, i + team.members.length)
-      );
-    }
-    setPredictions(grouped_preds);
-    setOutcomes(grouped_outs as ActivitySevenOutcome[][]);
-
-    for (let i = 0; i < parsedContents.length; i += team?.members.length) {
-      grouped_contents.push(parsedContents.slice(i, i + team.members.length));
-    }
-    setContents(grouped_contents);
-
+    setData(response.data as ResultDetailActivityFive);
     if (!response.data?.ratings) setShowRating(true);
-    setData(response.data as ResultDetailActivitySeven);
 
-    const rankingRes = await getActivityRank({ activityId: "7" });
+    const rankingRes = await getActivityRank({ activityId: "5" });
     if (!rankingRes.success) {
       toast.error(
         `Failed to fetch leaderboard rank data: ${rankingRes.message}`
@@ -194,39 +135,24 @@ export default function ActivitySevenResultsScreen(props: {
         {/* Theory */}
         <Section title="Theory">
           <Text style={[styles.paragraph, { marginBottom: 30 }]}>
-            {theoryActivity["theory7"]}
+            {theoryActivity["theory5"]}
           </Text>
         </Section>
 
         {/* Results */}
-        {data &&
-          contents &&
-          outcomes &&
-          predictions &&
-          outcomes.length >= 3 &&
-          predictions.length >= 3 &&
-          contents.length >= 3 && (
-            <Section title="Results">
-              <ActivitySevenResultCard
-                item={1}
-                contents={contents[0]}
-                valueCalculated={outcomes[0]}
-                valuePredict={predictions[0]}
+        {data && (
+          <Section title="Results">
+            {data?.outcomes?.map((outcome, index) => (
+              <ActivityFiveResultCard
+                key={index}
+                item={index + 1}
+                vibrateTime={Number(data.medias?.[index]?.content)}
+                valueCalculated={outcome.outcome}
+                valuePredict={data.predictions?.[index]?.prediction}
               />
-              <ActivitySevenResultCard
-                item={2}
-                contents={contents[1]}
-                valueCalculated={outcomes[1]}
-                valuePredict={predictions[1]}
-              />
-              <ActivitySevenResultCard
-                item={3}
-                contents={contents[2]}
-                valueCalculated={outcomes[2]}
-                valuePredict={predictions[2]}
-              />
-            </Section>
-          )}
+            ))}
+          </Section>
+        )}
 
         <Section title="Leaderboard Rank">
           {result === undefined ? (
@@ -248,13 +174,13 @@ export default function ActivitySevenResultsScreen(props: {
           width={250}
           onPress={props.onBack}
           fontSize={20}
-          marginTop={30}
+          marginTop={5}
           text="Back"
         />
       </ScrollView>
       {data?.resultId && (
         <RatingPopup
-          activityId={"7"}
+          activityId={"5"}
           resultId={data?.resultId}
           showModal={showRating}
           onClose={() => setShowRating(false)}
@@ -289,14 +215,8 @@ const createStyles = (theme: any) => {
       fontSize: 15,
       lineHeight: 22,
       textAlign: "justify",
-      fontFamily: "Lato_400Regular",
       color: theme.blackText,
-    },
-
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
+      fontFamily: "Lato_400Regular",
     },
 
     subsContainer: {
@@ -321,6 +241,12 @@ const createStyles = (theme: any) => {
       color: theme.text,
       fontSize: 20,
     },
+    prediction: {
+      marginTop: 15,
+      fontFamily: "Lato_700Bold",
+      color: theme.text,
+      fontSize: 18,
+    },
     subtitleText: {
       marginTop: 10,
       fontFamily: "Lato_700Bold",
@@ -342,15 +268,6 @@ const createStyles = (theme: any) => {
       fontFamily: "Lato_400Regular",
       marginBottom: 5,
       color: theme.blackText,
-    },
-    subtitle2Text: {
-      fontFamily: "Lato_700Bold",
-      fontSize: 16,
-      color: theme.blackText,
-      marginBottom: 5,
-    },
-    viewAudio: {
-      marginBottom: 10,
     },
   });
 

@@ -15,9 +15,9 @@ import {
 } from "expo-camera";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import VideoPlayer from "./ui/video-player";
-import ActivityThreeSubmissionCard from "./ui/activity3-submission-card";
-import Button from "./ui/button";
+import VideoPlayer from "../../ui/video-player";
+import ActivityOneSubmissionCard from "../submission/activity1-submission-card";
+import Button from "../../ui/button";
 import { router } from "expo-router";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { uploadMedia } from "@/services/media/media";
@@ -25,7 +25,7 @@ import { submitResult } from "@/services/result/result";
 import { useAppContext } from "@/context/AppContext";
 import { toast } from "sonner-native";
 
-export default function ActivityThreeScreen() {
+export default function ActivityOneScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { team } = useAppContext();
@@ -36,7 +36,8 @@ export default function ActivityThreeScreen() {
   const [videos, setVideos] = useState<
     {
       uri: string;
-      bend: string;
+      mass: string;
+      time: string;
     }[]
   >([]);
 
@@ -124,7 +125,7 @@ export default function ActivityThreeScreen() {
       setRerecordIndex(null);
     } else {
       if (videos.length >= 3) return;
-      setVideos((prev) => [...prev, { uri: videoUri, bend: "" }]);
+      setVideos((prev) => [...prev, { uri: videoUri, mass: "", time: "" }]);
     }
 
     setVideoUri(null);
@@ -142,10 +143,11 @@ export default function ActivityThreeScreen() {
     setScreen("record");
   };
 
-  const handleFieldChange = (value: string, index: number) => {
+  const handleFieldChange = (value: string, index: number, type: string) => {
     setVideos((prev) => {
       const updated = [...prev];
-      updated[index].bend = value;
+      if (type === "mass") updated[index].mass = value;
+      else if (type === "time") updated[index].time = value;
       return updated;
     });
   };
@@ -153,9 +155,9 @@ export default function ActivityThreeScreen() {
   const handleSubmit = async () => {
     if (!team?.id || submitLoading) return;
 
-    const invalid = videos.some((v) => !v.bend);
+    const invalid = videos.some((v) => !v.mass || !v.time);
     if (invalid) {
-      alert("Please fill all prediction fields.");
+      alert("Please fill all mass and prediction fields.");
       return;
     }
 
@@ -170,6 +172,7 @@ export default function ActivityThreeScreen() {
     }
 
     setSubmitLoading(true);
+
     const uploads = videos.map((video, index) => {
       const file = {
         uri: video.uri,
@@ -191,12 +194,13 @@ export default function ActivityThreeScreen() {
     });
     const predictions = videos.map((video, _) => {
       return {
-        prediction: Number(video.bend),
+        mass: Number(video.mass),
+        prediction: Number(video.time),
       };
     });
 
     const response = await submitResult({
-      activityId: "3",
+      activityId: "1",
       teamId: team?.id,
       medias: ids,
       predictions: predictions,
@@ -218,7 +222,7 @@ export default function ActivityThreeScreen() {
             resetState();
             router.push({
               pathname: "/activity/[id]/results",
-              params: { id: "3" },
+              params: { id: "1" },
             });
           },
         },
@@ -307,12 +311,18 @@ export default function ActivityThreeScreen() {
           {/* === SUBMISSION SCREEN === */}
           <View style={{ width: "100%", alignItems: "center" }}>
             {videos.map((item, index) => (
-              <ActivityThreeSubmissionCard
+              <ActivityOneSubmissionCard
                 key={index}
                 item={index + 1}
                 videoUri={item.uri}
-                bend={item.bend}
-                onChangeBend={(value) => handleFieldChange(value, index)}
+                mass={item.mass}
+                time={item.time}
+                onChangeMass={(value) =>
+                  handleFieldChange(value, index, "mass")
+                }
+                onChangeTime={(value) =>
+                  handleFieldChange(value, index, "time")
+                }
                 onDelete={() => handleDelete(index)}
                 onRerecord={() =>
                   Alert.alert(
@@ -380,17 +390,23 @@ export default function ActivityThreeScreen() {
                 <Text style={styles.subtitleText}>No submissions yet</Text>
               ) : (
                 videos.map((item, index) => (
-                  <ActivityThreeSubmissionCard
+                  <ActivityOneSubmissionCard
                     key={index}
                     item={index + 1}
                     videoUri={item.uri}
-                    bend={item.bend}
-                    onChangeBend={(value) => handleFieldChange(value, index)}
+                    mass={item.mass}
+                    time={item.time}
+                    onChangeMass={(value) =>
+                      handleFieldChange(value, index, "mass")
+                    }
+                    onChangeTime={(value) =>
+                      handleFieldChange(value, index, "time")
+                    }
                     onDelete={() => {
                       handleDelete(index);
                       if (videos.length === 1) setShowModal(false);
                     }}
-                    onRerecord={() =>
+                    onRerecord={() => {
                       Alert.alert(
                         "Confirm Action",
                         "This will permanently remove the current progress. Are you sure you want to continue?",
@@ -407,8 +423,8 @@ export default function ActivityThreeScreen() {
                             },
                           },
                         ]
-                      )
-                    }
+                      );
+                    }}
                   />
                 ))
               )}

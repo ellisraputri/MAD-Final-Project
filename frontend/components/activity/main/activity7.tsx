@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import LiveRecorder from "./ui/audio-recording";
+import LiveRecorder from "../../ui/audio-recording";
 import {
   StyleSheet,
   Text,
@@ -10,8 +10,8 @@ import {
   View,
   Alert,
 } from "react-native";
-import AudioPlayer from "./ui/audio-player";
-import Button from "./ui/button";
+import AudioPlayer from "../../ui/audio-player";
+import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";

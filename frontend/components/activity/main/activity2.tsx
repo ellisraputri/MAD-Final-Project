@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import LiveRecorder from "./ui/audio-recording";
-import ActivityTwoSubmissionCard from "./ui/activity2-submission-card";
+import LiveRecorder from "../../ui/audio-recording";
+import ActivityTwoSubmissionCard from "../submission/activity2-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -18,7 +18,7 @@ import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
-import Button from "./ui/button";
+import Button from "../../ui/button";
 
 type audioType = {
   uri: string;

@@ -3,7 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, TextInput } from "react-native";
 import Signature from "react-native-signature-canvas";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Button from "./ui/button";
+import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
