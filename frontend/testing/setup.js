@@ -16,6 +16,12 @@ jest.mock("../components/ui/button.tsx", () => {
   };
 });
 
+jest.mock("@/components/ui/loading", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+  return () => <Text>Loading...</Text>;
+});
+
 jest.mock("react-native", () => {
   const React = require("react");
   return {
@@ -69,6 +75,10 @@ jest.mock("expo-router", () => ({
     replace: jest.fn(),
     push: jest.fn(),
   }),
+  router: {
+    push: jest.fn(),
+    replace: jest.fn(),
+  },
 }));
 
 jest.mock("expo-sqlite", () => ({
@@ -79,6 +89,60 @@ jest.mock("sonner-native", () => ({
   toast: {
     error: jest.fn(),
   },
+}));
+
+jest.mock("@/services/socket", () => ({
+  socket: {
+    emit: jest.fn(),
+    on: jest.fn(),
+    off: jest.fn(),
+    connected: true,
+  },
+}));
+
+jest.mock("@/components/ui/ranking-card", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+  return ({ rank, teamName }) => <Text>{`Rank ${rank} ${teamName}`}</Text>;
+});
+
+jest.mock("@/components/ui/podium-card", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+  return ({ rank, name }) => <Text>{`Podium ${rank} ${name}`}</Text>;
+});
+
+jest.mock("@expo/vector-icons", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+
+  return {
+    Ionicons: ({ name }) => <Text>{name}</Text>,
+  };
+});
+
+jest.mock("expo-image-picker", () => ({
+  requestMediaLibraryPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ granted: true }),
+  ),
+  launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true })),
+  MediaTypeOptions: {
+    Images: "Images",
+  },
+}));
+
+jest.mock("@/context/AppContext", () => ({
+  useAppContext: () => ({
+    user: { id: "1", firstName: "John" },
+    setUser: jest.fn(),
+    team: {
+      id: "team1",
+      name: "My Team",
+      grade: 10,
+      logo: "logo.png",
+    },
+    setTeam: jest.fn(),
+  }),
 }));
 
 global.alert = jest.fn();
