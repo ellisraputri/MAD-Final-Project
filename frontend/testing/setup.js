@@ -88,6 +88,7 @@ jest.mock("expo-sqlite", () => ({
 jest.mock("sonner-native", () => ({
   toast: {
     error: jest.fn(),
+    success: jest.fn(),
   },
 }));
 
@@ -133,7 +134,7 @@ jest.mock("expo-image-picker", () => ({
 
 jest.mock("@/context/AppContext", () => ({
   useAppContext: () => ({
-    user: { id: "1", firstName: "John" },
+    user: { id: "1", firstName: "John", appearance: true },
     setUser: jest.fn(),
     team: {
       id: "team1",
