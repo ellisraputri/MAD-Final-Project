@@ -17,28 +17,11 @@ import Equation from "../../ui/equation";
 import Accordion from "../../ui/accordion";
 import Table from "../../ui/table";
 import VideoModal from "../../ui/video-modal";
+import ResultSection from "./activity-result-section";
+import { createResultStyles } from "./activity-result-style";
 
 const defaultLogo =
   "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  const theme = useAppTheme();
-  const styles = createStyles(theme);
-
-  return (
-    <View style={{ marginBottom: 50 }}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.divider} />
-      {children}
-    </View>
-  );
-}
 
 function ActivityOneResultCard(props: {
   item: number;
@@ -50,7 +33,7 @@ function ActivityOneResultCard(props: {
   accuracy: number | undefined;
 }) {
   const theme = useAppTheme();
-  const resultStyles = createStyles(theme);
+  const resultStyles = createResultStyles(theme);
 
   const [showVideoModal, setShowVideoModal] = useState(false);
   const condition = props.timeCalculated && props.timeCalculated > 0;
@@ -266,7 +249,7 @@ export default function ActivityOneResultsScreen(props: {
   onBack: () => void;
 }) {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createResultStyles(theme);
   const { team } = useAppContext();
 
   const { id } = useLocalSearchParams();
@@ -324,7 +307,7 @@ export default function ActivityOneResultsScreen(props: {
         contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
       >
         {/* Theory */}
-        <Section title="Theory">
+        <ResultSection title="Theory">
           <Text style={[styles.paragraph, { marginBottom: 30 }]}>
             {theoryActivity["theory1"]}
           </Text>
@@ -428,10 +411,10 @@ export default function ActivityOneResultsScreen(props: {
             Case 2 (bounce):
           </Text>
           <Equation latex="\\Delta v = v_{impact} + v_{up}" fontSize={13} />
-        </Section>
+        </ResultSection>
 
         {/* Results */}
-        <Section title="Results">
+        <ResultSection title="Results">
           {data?.outcomes?.map((outcome, index) => (
             <ActivityOneResultCard
               key={index}
@@ -444,9 +427,9 @@ export default function ActivityOneResultsScreen(props: {
               accuracy={outcome?.score}
             />
           ))}
-        </Section>
+        </ResultSection>
 
-        <Section title="Leaderboard Rank">
+        <ResultSection title="Leaderboard Rank">
           {result === undefined ? (
             <Text style={styles.paragraph}>
               Still compiling leaderboard data. Please wait until tomorrow.
@@ -460,7 +443,7 @@ export default function ActivityOneResultsScreen(props: {
               attemptNo={result.attemptNo.toString()}
             />
           )}
-        </Section>
+        </ResultSection>
 
         <Button
           width={250}
@@ -482,121 +465,3 @@ export default function ActivityOneResultsScreen(props: {
     </>
   );
 }
-
-const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-      paddingHorizontal: 5,
-    },
-
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: theme.text,
-      fontFamily: "Lato_700Bold",
-    },
-
-    divider: {
-      height: 2,
-      backgroundColor: theme.text,
-      marginVertical: 10,
-    },
-
-    paragraph: {
-      fontSize: 15,
-      lineHeight: 22,
-      textAlign: "justify",
-      fontFamily: "Lato_400Regular",
-      color: theme.blackText,
-    },
-
-    subtitle: {
-      marginTop: 20,
-      fontSize: 17,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      marginBottom: 10,
-    },
-
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-    },
-    subsContainer: {
-      marginLeft: 20,
-    },
-    titleRow: {
-      marginBottom: 5,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    card: {
-      width: "100%",
-      backgroundColor: theme.background,
-      borderRadius: 10,
-      padding: 20,
-      marginBottom: 30,
-      elevation: 3,
-    },
-    title: {
-      marginBottom: 20,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 20,
-    },
-    videoPlaceholder: {
-      height: 400,
-      width: "100%",
-      borderWidth: 2,
-      borderColor: theme.text,
-      backgroundColor: theme.hoverBackground,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: 10,
-      overflow: "hidden",
-    },
-    prediction: {
-      marginTop: 15,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 18,
-    },
-    subtitleText: {
-      marginTop: 10,
-      fontFamily: "Lato_700Bold",
-      fontSize: 16,
-      color: theme.blackText,
-    },
-    descText: {
-      marginTop: 10,
-      fontFamily: "Lato_400Regular",
-      fontSize: 15,
-      color: theme.blackText,
-    },
-    closeBtnText: {
-      color: "#fff",
-      fontFamily: "Lato_400Regular",
-      fontSize: 14,
-    },
-    list: {
-      marginLeft: 10,
-      marginTop: 4,
-    },
-    listItem: {
-      fontSize: 15,
-      fontFamily: "Lato_400Regular",
-      marginBottom: 5,
-      color: theme.blackText,
-    },
-    calculationText: {
-      fontSize: 15,
-      fontFamily: "Lato_400Regular",
-      marginBottom: 15,
-      color: theme.blackText,
-    },
-  });
-  return styles;
-};

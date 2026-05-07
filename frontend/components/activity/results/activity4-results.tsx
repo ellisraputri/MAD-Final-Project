@@ -13,28 +13,11 @@ import { useAppContext } from "@/context/AppContext";
 import { ActivityRankDetail } from "@/services/summary/summary.type";
 import { getActivityRank } from "@/services/summary/summary";
 import RankingCard from "../../ui/ranking-card";
+import { createResultStyles } from "./activity-result-style";
+import ResultSection from "./activity-result-section";
 
 const defaultLogo =
   "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  const theme = useAppTheme();
-  const styles = createStyles(theme);
-
-  return (
-    <View>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.divider} />
-      {children}
-    </View>
-  );
-}
 
 function ActivityFourResultCard(props: {
   item: number;
@@ -43,7 +26,7 @@ function ActivityFourResultCard(props: {
   valueCalculated: number;
 }) {
   const theme = useAppTheme();
-  const resultStyles = createStyles(theme);
+  const resultStyles = createResultStyles(theme);
   return (
     <View
       key={props.item}
@@ -75,7 +58,7 @@ export default function ActivityFourResultsScreen(props: {
   onBack: () => void;
 }) {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createResultStyles(theme);
   const { id } = useLocalSearchParams();
   const { team } = useAppContext();
 
@@ -133,15 +116,15 @@ export default function ActivityFourResultsScreen(props: {
         contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
       >
         {/* Theory */}
-        <Section title="Theory">
+        <ResultSection title="Theory">
           <Text style={[styles.paragraph, { marginBottom: 30 }]}>
             {theoryActivity["theory4"]}
           </Text>
-        </Section>
+        </ResultSection>
 
         {/* Results */}
         {data && (
-          <Section title="Results">
+          <ResultSection title="Results">
             {data?.outcomes?.map((outcome, index) => (
               <ActivityFourResultCard
                 key={index}
@@ -151,10 +134,10 @@ export default function ActivityFourResultsScreen(props: {
                 valuePredict={data.predictions?.[index]?.prediction}
               />
             ))}
-          </Section>
+          </ResultSection>
         )}
 
-        <Section title="Leaderboard Rank">
+        <ResultSection title="Leaderboard Rank">
           {result === undefined ? (
             <Text style={styles.paragraph}>
               Still compiling leaderboard data. Please wait until tomorrow.
@@ -168,7 +151,7 @@ export default function ActivityFourResultsScreen(props: {
               attemptNo={result.attemptNo.toString()}
             />
           )}
-        </Section>
+        </ResultSection>
 
         <Button
           width={250}
@@ -190,87 +173,3 @@ export default function ActivityFourResultsScreen(props: {
     </>
   );
 }
-
-const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-      paddingHorizontal: 5,
-    },
-
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: theme.text,
-      fontFamily: "Lato_700Bold",
-    },
-
-    divider: {
-      height: 2,
-      backgroundColor: theme.text,
-      marginVertical: 10,
-    },
-
-    paragraph: {
-      fontSize: 15,
-      lineHeight: 22,
-      textAlign: "justify",
-      color: theme.blackText,
-      fontFamily: "Lato_400Regular",
-    },
-
-    subsContainer: {
-      marginLeft: 20,
-    },
-    titleRow: {
-      marginBottom: 5,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    card: {
-      width: "100%",
-      backgroundColor: theme.background,
-      borderRadius: 10,
-      padding: 20,
-      marginBottom: 30,
-      elevation: 3,
-    },
-    title: {
-      marginBottom: 10,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 20,
-    },
-    prediction: {
-      marginTop: 15,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 18,
-    },
-    subtitleText: {
-      marginTop: 10,
-      fontFamily: "Lato_700Bold",
-      fontSize: 16,
-      color: theme.blackText,
-    },
-    descText: {
-      marginTop: 10,
-      fontFamily: "Lato_400Regular",
-      fontSize: 15,
-      color: theme.blackText,
-    },
-    list: {
-      marginLeft: 10,
-      marginTop: 4,
-    },
-    listItem: {
-      fontSize: 15,
-      fontFamily: "Lato_400Regular",
-      marginBottom: 5,
-      color: theme.blackText,
-    },
-  });
-
-  return styles;
-};

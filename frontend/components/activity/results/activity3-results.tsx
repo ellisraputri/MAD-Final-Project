@@ -17,28 +17,11 @@ import Equation from "../../ui/equation";
 import Table from "../../ui/table";
 import Accordion from "../../ui/accordion";
 import VideoModal from "../../ui/video-modal";
+import { createResultStyles } from "./activity-result-style";
+import ResultSection from "./activity-result-section";
 
 const defaultLogo =
   "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  const theme = useAppTheme();
-  const styles = createStyles(theme);
-
-  return (
-    <View style={{ marginBottom: 50 }}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.divider} />
-      {children}
-    </View>
-  );
-}
 
 function ActivityThreeResultCard(props: {
   item: number;
@@ -48,7 +31,7 @@ function ActivityThreeResultCard(props: {
   accuracy: number;
 }) {
   const theme = useAppTheme();
-  const resultStyles = createStyles(theme);
+  const resultStyles = createResultStyles(theme);
 
   const [showVideoModal, setShowVideoModal] = useState(false);
   const degToRad = (deg: number) => (deg * Math.PI) / 180;
@@ -137,7 +120,7 @@ export default function ActivityThreeResultsScreen(props: {
   onBack: () => void;
 }) {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createResultStyles(theme);
   const { id } = useLocalSearchParams();
   const { team } = useAppContext();
 
@@ -195,7 +178,7 @@ export default function ActivityThreeResultsScreen(props: {
         contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
       >
         {/* Theory */}
-        <Section title="Theory">
+        <ResultSection title="Theory">
           <Text style={[styles.paragraph, { marginBottom: 30 }]}>
             {theoryActivity["theory3"]}
           </Text>
@@ -271,11 +254,11 @@ export default function ActivityThreeResultsScreen(props: {
             These are rough classroom values to let students estimate forces.
             The point is to see relative differences between materials.
           </Text>
-        </Section>
+        </ResultSection>
 
         {/* Results */}
         {data && (
-          <Section title="Results">
+          <ResultSection title="Results">
             {data?.outcomes?.map((outcome, index) => (
               <ActivityThreeResultCard
                 key={index}
@@ -286,10 +269,10 @@ export default function ActivityThreeResultsScreen(props: {
                 accuracy={outcome.score}
               />
             ))}
-          </Section>
+          </ResultSection>
         )}
 
-        <Section title="Leaderboard Rank">
+        <ResultSection title="Leaderboard Rank">
           {result === undefined ? (
             <Text style={styles.paragraph}>
               Still compiling leaderboard data. Please wait until tomorrow.
@@ -303,7 +286,7 @@ export default function ActivityThreeResultsScreen(props: {
               attemptNo={result.attemptNo.toString()}
             />
           )}
-        </Section>
+        </ResultSection>
 
         <Button
           width={250}
@@ -324,114 +307,3 @@ export default function ActivityThreeResultsScreen(props: {
     </>
   );
 }
-
-const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-      paddingHorizontal: 5,
-    },
-
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: theme.text,
-      fontFamily: "Lato_700Bold",
-    },
-
-    divider: {
-      height: 2,
-      backgroundColor: theme.text,
-      marginVertical: 10,
-    },
-
-    paragraph: {
-      fontSize: 15,
-      lineHeight: 22,
-      textAlign: "justify",
-      fontFamily: "Lato_400Regular",
-      color: theme.blackText,
-    },
-
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-    },
-    subtitle: {
-      marginTop: 40,
-      fontSize: 17,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      marginBottom: 10,
-    },
-    subsContainer: {
-      marginLeft: 20,
-    },
-    titleRow: {
-      marginBottom: 5,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    card: {
-      width: "100%",
-      backgroundColor: theme.background,
-      borderRadius: 10,
-      padding: 20,
-      marginBottom: 30,
-      elevation: 3,
-    },
-    title: {
-      marginBottom: 20,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 20,
-    },
-    videoPlaceholder: {
-      height: 400,
-      width: "100%",
-      borderWidth: 2,
-      borderColor: theme.text,
-      backgroundColor: theme.hoverBackground,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: 10,
-      overflow: "hidden",
-    },
-    prediction: {
-      marginTop: 15,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 18,
-    },
-    subtitleText: {
-      marginTop: 10,
-      fontFamily: "Lato_700Bold",
-      fontSize: 16,
-      color: theme.blackText,
-    },
-    descText: {
-      marginTop: 10,
-      fontFamily: "Lato_400Regular",
-      fontSize: 15,
-      color: theme.blackText,
-    },
-    closeBtnText: {
-      color: "#fff",
-      fontFamily: "Lato_400Regular",
-      fontSize: 14,
-    },
-    list: {
-      marginLeft: 10,
-      marginTop: 4,
-    },
-    listItem: {
-      fontSize: 15,
-      fontFamily: "Lato_400Regular",
-      marginBottom: 5,
-      color: theme.blackText,
-    },
-  });
-  return styles;
-};
