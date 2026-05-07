@@ -1,27 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import theoryActivity from "@/data/activity_theory.json";
-import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { ResultDetailActivityOne } from "@/services/result/result.type";
-import { getResultDetail } from "@/services/result/result";
-import { toast } from "sonner-native";
 import Loading from "../../ui/loading";
-import RatingPopup from "../../ui/rating-popup";
-import { ActivityRankDetail } from "@/services/summary/summary.type";
-import { getActivityRank } from "@/services/summary/summary";
-import { useAppContext } from "@/context/AppContext";
-import RankingCard from "../../ui/ranking-card";
 import Equation from "../../ui/equation";
 import Accordion from "../../ui/accordion";
 import Table from "../../ui/table";
 import VideoModal from "../../ui/video-modal";
-import ResultSection from "./activity-result-section";
 import { createResultStyles } from "./activity-result-style";
-
-const defaultLogo =
-  "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+import useActivityResult from "./useActivityResults";
+import { ActivityResultBaseScreen } from "./activity-result-base";
 
 function ActivityOneResultCard(props: {
   item: number;
@@ -87,10 +76,10 @@ function ActivityOneResultCard(props: {
         </Text>
         <View style={resultStyles.list}>
           <Text style={resultStyles.listItem}>
-            • Predicted: {props.timePredict}
+            • Predicted: {props.timePredict?.toFixed(3)}
           </Text>
           <Text style={resultStyles.listItem}>
-            • Outcome: {props.timeCalculated}
+            • Outcome: {props.timeCalculated?.toFixed(3)}
           </Text>
         </View>
 
@@ -107,7 +96,8 @@ function ActivityOneResultCard(props: {
             First, we know that the height is 30 cm or 0.3 m.
           </Text>
           <Text style={resultStyles.calculationText}>
-            Then, from the measurements, the time is {props.timeCalculated} s.
+            Then, from the measurements, the time is{" "}
+            {props.timeCalculated?.toFixed(3)} s.
           </Text>
           <Text style={resultStyles.calculationText}>
             Since the toy is dropped, the initial velocity is 0 m/s.
@@ -250,68 +240,24 @@ export default function ActivityOneResultsScreen(props: {
 }) {
   const theme = useAppTheme();
   const styles = createResultStyles(theme);
-  const { team } = useAppContext();
 
   const { id } = useLocalSearchParams();
-  const [data, setData] = useState<ResultDetailActivityOne>();
-  const [loading, setLoading] = useState(false);
-  const [showRating, setShowRating] = useState(false);
-  const [result, setResult] = useState<ActivityRankDetail>();
-
-  const fetchDetail = async () => {
-    setLoading(true);
-
-    const response = await getResultDetail({ resultId: props.resultId });
-    if (!response.success || response.data === null) {
-      toast.error(response.message);
-      setLoading(false);
-      return;
-    }
-
-    if (Number(response.data.activityId) !== 1) {
-      console.warn(
-        "[ActivityOne] Wrong activityId received, skipping render. Got:",
-        response.data.activityId
-      );
-      return;
-    }
-    setData(response.data as ResultDetailActivityOne);
-    if (!response.data?.ratings) setShowRating(true);
-
-    const rankingRes = await getActivityRank({ activityId: "1" });
-    if (!rankingRes.success) {
-      toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
-      );
-    }
-    for (let i = 0; i < rankingRes.rankings.length; i++) {
-      if (rankingRes.rankings[i].resultId === props.resultId) {
-        setResult(rankingRes.rankings[i]);
-        break;
-      }
-    }
-
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchDetail();
-  }, []);
+  const { data, loading, showRating, setShowRating, result } =
+    useActivityResult<ResultDetailActivityOne>(props.resultId, 1);
 
   return loading ? (
     <Loading />
   ) : (
-    <>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
-      >
-        {/* Theory */}
-        <ResultSection title="Theory">
-          <Text style={[styles.paragraph, { marginBottom: 30 }]}>
-            {theoryActivity["theory1"]}
-          </Text>
-
+    <ActivityResultBaseScreen
+      activityId="1"
+      resultId={props.resultId}
+      theoryKey="theory1"
+      result={result}
+      showRating={showRating}
+      onCloseRating={() => setShowRating(false)}
+      onBack={props.onBack}
+      theoryChildren={
+        <>
           <Text style={styles.subtitle}>Forces Acting on the Toy</Text>
 
           <Table
@@ -411,57 +357,21 @@ export default function ActivityOneResultsScreen(props: {
             Case 2 (bounce):
           </Text>
           <Equation latex="\\Delta v = v_{impact} + v_{up}" fontSize={13} />
-        </ResultSection>
-
-        {/* Results */}
-        <ResultSection title="Results">
-          {data?.outcomes?.map((outcome, index) => (
-            <ActivityOneResultCard
-              key={index}
-              item={index + 1}
-              videoUri={data.medias?.[index]?.content}
-              mass={data?.predictions[index]?.mass}
-              timeCalculated={outcome?.touch_time}
-              timePredict={data.predictions?.[index]?.prediction}
-              timeStop={outcome?.stop_time}
-              accuracy={outcome?.score}
-            />
-          ))}
-        </ResultSection>
-
-        <ResultSection title="Leaderboard Rank">
-          {result === undefined ? (
-            <Text style={styles.paragraph}>
-              Still compiling leaderboard data. Please wait until tomorrow.
-            </Text>
-          ) : (
-            <RankingCard
-              rank={result.rank?.toString() || "-"}
-              score={result ? `${Math.round(result.score * 100)}%` : "-"}
-              teamName={team?.name || "-"}
-              imageUrl={team?.logo || defaultLogo}
-              attemptNo={result.attemptNo.toString()}
-            />
-          )}
-        </ResultSection>
-
-        <Button
-          width={250}
-          onPress={props.onBack}
-          fontSize={20}
-          marginTop={5}
-          text="Back"
+        </>
+      }
+    >
+      {data?.outcomes?.map((outcome, index) => (
+        <ActivityOneResultCard
+          key={index}
+          item={index + 1}
+          videoUri={data.medias?.[index]?.content}
+          mass={data?.predictions[index]?.mass}
+          timeCalculated={outcome?.touch_time}
+          timePredict={data.predictions?.[index]?.prediction}
+          timeStop={outcome?.stop_time}
+          accuracy={outcome?.score}
         />
-      </ScrollView>
-
-      {data?.resultId && (
-        <RatingPopup
-          activityId={"1"}
-          resultId={data?.resultId}
-          showModal={showRating}
-          onClose={() => setShowRating(false)}
-        />
-      )}
-    </>
+      ))}
+    </ActivityResultBaseScreen>
   );
 }
