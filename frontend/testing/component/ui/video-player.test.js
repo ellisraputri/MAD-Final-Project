@@ -30,9 +30,7 @@ describe("VideoPlayer", () => {
   });
 
   it("accepts custom rate", () => {
-    render(
-      <VideoPlayer link="https://test.com/video.mp4" rate={0.5} />,
-    );
+    render(<VideoPlayer link="https://test.com/video.mp4" rate={0.5} />);
 
     // no crash = enough (rate is internal effect-based)
     expect(true).toBe(true);

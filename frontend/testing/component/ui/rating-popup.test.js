@@ -26,7 +26,7 @@ jest.mock("@/components/ui/button", () => {
 });
 
 describe("RatingPopup", () => {
-    const TextInput = require('react-native');
+  const TextInput = require("react-native");
   const onClose = jest.fn();
 
   beforeEach(() => {
@@ -100,7 +100,7 @@ describe("RatingPopup", () => {
   });
 
   it("submits rating successfully", async () => {
-    (submitRating).mockResolvedValue({
+    submitRating.mockResolvedValue({
       success: true,
     });
 
@@ -133,7 +133,7 @@ describe("RatingPopup", () => {
   });
 
   it("shows toast error when API fails", async () => {
-    (submitRating).mockResolvedValue({
+    submitRating.mockResolvedValue({
       success: false,
       message: "Failed",
     });
@@ -157,7 +157,7 @@ describe("RatingPopup", () => {
   });
 
   it("handles thrown error", async () => {
-    (submitRating).mockRejectedValue(new Error("Network error"));
+    submitRating.mockRejectedValue(new Error("Network error"));
 
     const consoleSpy = jest
       .spyOn(console, "error")

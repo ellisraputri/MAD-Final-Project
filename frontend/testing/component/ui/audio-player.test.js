@@ -37,10 +37,7 @@ describe("AudioPlayer", () => {
 
   it("renders correctly", () => {
     const { getByText } = render(
-      <AudioPlayer
-        uri="audio.mp3"
-        levels={[10, 20, 30, 40]}
-      />
+      <AudioPlayer uri="audio.mp3" levels={[10, 20, 30, 40]} />,
     );
 
     expect(getByText("play")).toBeTruthy();
@@ -48,10 +45,7 @@ describe("AudioPlayer", () => {
 
   it("loads and plays audio when pressed", async () => {
     const { getByText } = render(
-      <AudioPlayer
-        uri="audio.mp3"
-        levels={[10, 20, 30]}
-      />
+      <AudioPlayer uri="audio.mp3" levels={[10, 20, 30]} />,
     );
 
     fireEvent.press(getByText("play"));
@@ -69,29 +63,19 @@ describe("AudioPlayer", () => {
     const levels = [5, 10, 15, 20, 25];
 
     const { getByText } = render(
-        <AudioPlayer
-        uri="audio.mp3"
-        levels={levels}
-        />
+      <AudioPlayer uri="audio.mp3" levels={levels} />,
     );
 
     expect(getByText("play")).toBeTruthy();
     expect(levels.length).toBe(5);
-    });
+  });
 
   it("handles playback error gracefully", async () => {
-    Audio.Sound.createAsync.mockRejectedValue(
-      new Error("Playback failed")
-    );
+    Audio.Sound.createAsync.mockRejectedValue(new Error("Playback failed"));
 
     console.error = jest.fn();
 
-    const { getByText } = render(
-      <AudioPlayer
-        uri="audio.mp3"
-        levels={[10]}
-      />
-    );
+    const { getByText } = render(<AudioPlayer uri="audio.mp3" levels={[10]} />);
 
     fireEvent.press(getByText("play"));
 

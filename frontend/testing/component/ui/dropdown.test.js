@@ -26,11 +26,7 @@ describe("CustomDropdown", () => {
 
   it("renders placeholder correctly", () => {
     const { getByText } = render(
-      <CustomDropdown
-        data={mockData}
-        placeholder="Select Grade"
-        value=""
-      />
+      <CustomDropdown data={mockData} placeholder="Select Grade" value="" />,
     );
 
     expect(getByText("Select Grade")).toBeTruthy();
@@ -38,11 +34,7 @@ describe("CustomDropdown", () => {
 
   it("renders selected value correctly", () => {
     const { getByText } = render(
-      <CustomDropdown
-        data={mockData}
-        placeholder="Select Grade"
-        value="10"
-      />
+      <CustomDropdown data={mockData} placeholder="Select Grade" value="10" />,
     );
 
     expect(getByText("10")).toBeTruthy();
@@ -57,25 +49,21 @@ describe("CustomDropdown", () => {
         placeholder="Select Grade"
         value=""
         onSelect={onSelect}
-      />
+      />,
     );
 
-    fireEvent.press(getByText('Select Grade'));
+    fireEvent.press(getByText("Select Grade"));
 
     expect(onSelect).toHaveBeenCalledWith("10");
   });
 
   it("does not crash without onSelect", () => {
     const { getByText } = render(
-      <CustomDropdown
-        data={mockData}
-        placeholder="Select Grade"
-        value=""
-      />
+      <CustomDropdown data={mockData} placeholder="Select Grade" value="" />,
     );
 
-    fireEvent.press(getByText('Select Grade'));
+    fireEvent.press(getByText("Select Grade"));
 
-    expect(getByText('Select Grade')).toBeTruthy();
+    expect(getByText("Select Grade")).toBeTruthy();
   });
 });

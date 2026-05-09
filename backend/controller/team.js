@@ -211,7 +211,7 @@ export const getDetailBatch = async (req, res) => {
       }
     }
 
-    if (nowTeamIds.length > 0){
+    if (nowTeamIds.length > 0) {
       const snapshot = await db
         .collection("teams")
         .where(FieldPath.documentId(), "in", nowTeamIds)

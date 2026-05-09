@@ -28,7 +28,7 @@ describe("ActivityListCard", () => {
     expect(getByText("Activity 1: Reaction Time")).toBeTruthy();
 
     expect(
-      getByText("Test your reaction speed with this activity.")
+      getByText("Test your reaction speed with this activity."),
     ).toBeTruthy();
 
     expect(getByText("Engineering")).toBeTruthy();
@@ -38,10 +38,7 @@ describe("ActivityListCard", () => {
 
   it("renders Science badge", () => {
     const { getByText } = render(
-      <ActivityListCard
-        {...props}
-        type="Science"
-      />
+      <ActivityListCard {...props} type="Science" />,
     );
 
     expect(getByText("Science")).toBeTruthy();
@@ -58,12 +55,7 @@ describe("ActivityListCard", () => {
   });
 
   it("renders correct activity index", () => {
-    const { getByText } = render(
-      <ActivityListCard
-        {...props}
-        index={5}
-      />
-    );
+    const { getByText } = render(<ActivityListCard {...props} index={5} />);
 
     expect(getByText("Activity 5: Reaction Time")).toBeTruthy();
   });
@@ -73,10 +65,7 @@ describe("ActivityListCard", () => {
       "This is a very long description for the activity card component test.";
 
     const { getByText } = render(
-      <ActivityListCard
-        {...props}
-        description={longDescription}
-      />
+      <ActivityListCard {...props} description={longDescription} />,
     );
 
     expect(getByText(longDescription)).toBeTruthy();

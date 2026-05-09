@@ -22,55 +22,55 @@ const columns = [
   { key: "level", title: "Sound Level (dB)", flex: 0.7 },
   { key: "example", title: "Example Sounds", flex: 1.2 },
   { key: "risk", title: "Risk to Hearing", flex: 1.1 },
-]
+];
 
 const rows = [
   {
     level: "<30 dB",
     example: "Whisper, quiet library",
-    risk: "No risk"
+    risk: "No risk",
   },
   {
     level: "30-60 dB",
     example: "Normal conversation, classroom noise",
-    risk: "Safe for long periods"
+    risk: "Safe for long periods",
   },
   {
     level: "60-85 dB",
     example: "Busy traffic, vacuum cleaner",
-    risk: "Generally safe, but long exposure can cause fatigue"
+    risk: "Generally safe, but long exposure can cause fatigue",
   },
   {
     level: "85–90 dB",
     example: "Lawn mower, loud classroom, heavy traffic",
-    risk: "Hearing damage possible after long exposure"
+    risk: "Hearing damage possible after long exposure",
   },
   {
     level: "90-100 dB",
     example: "Motorbike, power tools, loud music",
-    risk: "Hearing damage likely after short exposure"
+    risk: "Hearing damage likely after short exposure",
   },
   {
     level: "100-110 dB",
     example: "Nightclub, rock concert, chainsaw",
-    risk: "Serious hearing damage in minutes"
+    risk: "Serious hearing damage in minutes",
   },
   {
     level: "110-120 dB",
     example: "Siren close by, car horn at 1 m",
-    risk: "Painful; immediate damage possible"
+    risk: "Painful; immediate damage possible",
   },
   {
     level: "120-130 dB",
     example: "Jet engine at close range",
-    risk: "Immediate and severe hearing damage"
+    risk: "Immediate and severe hearing damage",
   },
   {
     level: "140+ dB",
     example: "Explosion, gunshot",
-    risk: "Instant, permanent hearing damage"
-  }
-]
+    risk: "Instant, permanent hearing damage",
+  },
+];
 
 const defaultLogo =
   "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
@@ -214,14 +214,9 @@ export default function ActivityTwoResultsScreen(props: {
       >
         {/* Theory */}
         <Section title="Theory">
-          <Text style={[styles.paragraph]}>
-            {theoryActivity["theory2"]}
-          </Text>
+          <Text style={[styles.paragraph]}>{theoryActivity["theory2"]}</Text>
 
-          <Table
-            columns={columns}
-            data={rows}
-          />
+          <Table columns={columns} data={rows} />
 
           <View style={{ marginBottom: 30 }} />
         </Section>
