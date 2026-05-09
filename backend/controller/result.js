@@ -202,7 +202,7 @@ export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
 
   if (activityId == 6) {
     preds = [];
-    for (const p of predictions) {
+    for (const p of r.predictions) {
       preds.push({
         prediction: p.prediction,
       });
