@@ -17,6 +17,7 @@ import { router } from "expo-router";
 import { useAppContext } from "@/context/AppContext";
 import { editStudentDetail } from "@/services/student/student";
 import { toast } from "sonner-native";
+import { socket } from "@/services/socket";
 
 const dropdownValue = [
   { label: "Light", value: "light" },
@@ -71,6 +72,10 @@ export default function SettingsScreen() {
       {
         text: "OK",
         onPress: async () => {
+          if (socket.connected) {
+            socket.disconnect();
+          }
+
           const res = await logout();
           alert(res.message);
           if (res.success) router.push("/(auth)/login");

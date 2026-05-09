@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   Image,
   Modal,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import Svg, { Polygon } from "react-native-svg";
 import CustomDropdown from "@/components/ui/dropdown";
 import Button from "@/components/ui/button";
@@ -39,6 +39,7 @@ export default function TeamConfirmationScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const { setUser } = useAppContext();
+  const params = useLocalSearchParams();
 
   const router = useRouter();
   const [teamName, setTeamName] = useState("");
@@ -48,6 +49,7 @@ export default function TeamConfirmationScreen() {
   const [joinTeamModalVisible, setJoinTeamModalVisible] = useState(false);
   const [newTeamModalLoading, setNewTeamModalLoading] = useState(false);
   const [joinTeamModalLoading, setJoinTeamModalLoading] = useState(false);
+  const [scanQrLoading, setScanQrLoading] = useState(false);
 
   useEffect(() => {
     checkTeam();
@@ -88,13 +90,35 @@ export default function TeamConfirmationScreen() {
     router.push("/(tabs)");
   };
 
-  const handleJoinTeam = async () => {
+  useFocusEffect(
+    useCallback(() => {
+      // Runs whenever screen comes back into focus
+      setScanQrLoading(false);
+    }, []),
+  );
+
+  useEffect(() => {
+    const joinTeamFromQR = async () => {
+      if (params.scannedTeamId) {
+        const scannedId = String(params.scannedTeamId);
+
+        setTeamId(scannedId);
+        await handleJoinTeam(scannedId);
+      }
+    };
+
+    joinTeamFromQR();
+  }, [params.scannedTeamId]);
+
+  const handleJoinTeam = async (customTeamId?: string) => {
     if (joinTeamModalLoading) return;
+
     setJoinTeamModalLoading(true);
 
     const response = await joinTeam({
-      teamId: teamId,
+      teamId: customTeamId || teamId,
     });
+
     if (!response.success) {
       toast.error(response.message);
       setJoinTeamModalLoading(false);
@@ -220,7 +244,7 @@ export default function TeamConfirmationScreen() {
           <View style={styles.popup}>
             {/* Header */}
             <View style={styles.headerPopup}>
-              <Text style={styles.title}>Join Team</Text>
+              <Text style={styles.title}>Join Team By ID</Text>
 
               <TouchableOpacity onPress={() => setJoinTeamModalVisible(false)}>
                 <Text style={styles.close}>✕</Text>
@@ -241,9 +265,24 @@ export default function TeamConfirmationScreen() {
               onPress={handleJoinTeam}
               text="OK"
               width={150}
-              fontSize={20}
-              marginTop={30}
+              fontSize={16}
+              marginTop={10}
               isLoading={joinTeamModalLoading}
+            />
+
+            <Text style={styles.title2}>Or, Join Team By QR Code</Text>
+
+            {/* Scan QR Button */}
+            <Button
+              text="Scan QR Code"
+              onPress={() => {
+                setScanQrLoading(true);
+                router.push("/(auth)/scan_team");
+              }}
+              width={200}
+              marginTop={0}
+              fontSize={16}
+              isLoading={scanQrLoading}
             />
           </View>
         </View>
@@ -337,10 +376,17 @@ export const createStyles = (theme: any) => {
       alignItems: "center",
     },
     title: {
-      fontSize: 24,
+      fontSize: 20,
       color: theme.text,
       fontWeight: "600",
       fontFamily: "Nunito_700Bold",
+    },
+    title2: {
+      fontSize: 20,
+      color: theme.text,
+      fontWeight: "600",
+      fontFamily: "Nunito_700Bold",
+      marginTop: 50,
     },
     close: {
       fontSize: 28,
