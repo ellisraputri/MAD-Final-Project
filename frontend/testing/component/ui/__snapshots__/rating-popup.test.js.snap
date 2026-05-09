@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RatingPopup matches snapshot 1`] = `
+[
+  <TouchableOpacity
+    onPress={[MockFunction]}
+  >
+    <Text>
+      close
+    </Text>
+  </TouchableOpacity>,
+  <Text>
+    Rate Activity 
+    6
+  </Text>,
+  <TouchableOpacity
+    onPress={[Function]}
+  >
+    <Text>
+      star-outline
+    </Text>
+  </TouchableOpacity>,
+  <TouchableOpacity
+    onPress={[Function]}
+  >
+    <Text>
+      star-outline
+    </Text>
+  </TouchableOpacity>,
+  <TouchableOpacity
+    onPress={[Function]}
+  >
+    <Text>
+      star-outline
+    </Text>
+  </TouchableOpacity>,
+  <TouchableOpacity
+    onPress={[Function]}
+  >
+    <Text>
+      star-outline
+    </Text>
+  </TouchableOpacity>,
+  <TouchableOpacity
+    onPress={[Function]}
+  >
+    <Text>
+      star-outline
+    </Text>
+  </TouchableOpacity>,
+  <Text>
+    Comment
+  </Text>,
+  <TextInput
+    multiline={true}
+    onChangeText={[Function]}
+    style={
+      {
+        "borderColor": "#000",
+        "borderRadius": 10,
+        "borderWidth": 2,
+        "color": "#000",
+        "height": 140,
+        "padding": 10,
+        "textAlignVertical": "top",
+      }
+    }
+    value=""
+  />,
+  <Text
+    onPress={[Function]}
+  >
+    Submit
+  </Text>,
+]
+`;

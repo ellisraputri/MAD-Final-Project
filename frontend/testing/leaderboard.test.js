@@ -3,6 +3,12 @@ import { render, waitFor, fireEvent } from "@testing-library/react-native";
 import LeaderboardScreen from "../app/(tabs)/leaderboard";
 
 // --- MOCKS ---
+jest.mock("@/components/ui/ranking-card", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+  return ({ rank, teamName }) => <Text>{`Rank ${rank} ${teamName}`}</Text>;
+});
+
 jest.mock("react-native-element-dropdown", () => {
   const React = require("react");
   const { TouchableOpacity, Text } = require("react-native");
@@ -29,6 +35,15 @@ const mockTeams = [
   { id: "team3", name: "Team 3", logo: "logo3" },
   { id: "team4", name: "Team 4", logo: "logo4" },
 ];
+
+jest.mock("@/components/ui/podium-card", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+
+  return ({ rank, name }) => (
+    <Text>{`Podium ${rank} ${name}`}</Text>
+  );
+});
 
 describe("LeaderboardScreen", () => {
   const { useAppContext } = require("@/context/AppContext");

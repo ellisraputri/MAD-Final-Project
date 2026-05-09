@@ -119,18 +119,6 @@ jest.mock("@/services/socket", () => ({
   },
 }));
 
-jest.mock("@/components/ui/ranking-card", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return ({ rank, teamName }) => <Text>{`Rank ${rank} ${teamName}`}</Text>;
-});
-
-jest.mock("@/components/ui/podium-card", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return ({ rank, name }) => <Text>{`Podium ${rank} ${name}`}</Text>;
-});
-
 jest.mock("react-native-qrcode-svg", () => {
   const React = require("react");
   const { View } = require("react-native");

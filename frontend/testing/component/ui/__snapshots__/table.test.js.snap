@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Table matches snapshot 1`] = `
+[
+  <Text>
+    Name
+  </Text>,
+  <Text>
+    Score
+  </Text>,
+  <Text>
+    Alice
+  </Text>,
+  <Text>
+    90
+  </Text>,
+  <Text>
+    Bob
+  </Text>,
+  <Text>
+    85
+  </Text>,
+]
+`;

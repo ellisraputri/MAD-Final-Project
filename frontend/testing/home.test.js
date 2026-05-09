@@ -2,6 +2,12 @@ import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import HomeScreen from "../app/(tabs)/index.tsx";
 
+jest.mock("@/components/ui/ranking-card", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+  return ({ rank, teamName }) => <Text>{`Rank ${rank} ${teamName}`}</Text>;
+});
+
 describe("HomeScreen", () => {
   const { useAppContext } = require("@/context/AppContext");
   beforeEach(() => {

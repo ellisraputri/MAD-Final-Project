@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ResultCard matches snapshot 1`] = `
+<Pressable
+  onPress={[MockFunction]}
+>
+  <Text>
+    Attempt 
+    1
+  </Text>
+  <Text>
+    12.346
+    %
+  </Text>
+  <Text>
+    chevron-forward-outline
+  </Text>
+</Pressable>
+`;
