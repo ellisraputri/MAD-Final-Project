@@ -3,8 +3,10 @@ import Button from "../components/ui/button.tsx";
 
 jest.mock("../hooks/use-app-theme.ts", () => ({
   useAppTheme: () => ({
-    background: "#fff",
-    placeholderText: "#999",
+    background: '#fff',
+    text: '#000',
+    blackText: '#000',
+    placeholderText: '#999',
   }),
 }));
 
@@ -70,20 +72,23 @@ jest.mock("react-native-keyboard-aware-scroll-view", () => {
   };
 });
 
+const mockPush = jest.fn();
+const mockReplace = jest.fn();
+
 jest.mock("expo-router", () => ({
   useRouter: () => ({
-    replace: jest.fn(),
-    push: jest.fn(),
+    replace: mockReplace,
+    push: mockPush,
   }),
   router: {
-    push: jest.fn(),
-    replace: jest.fn(),
+    push: mockPush,
+    replace: mockReplace,
   },
   useGlobalSearchParams: jest.fn(),
-  useLocalSearchParams: jest.fn(),
+  useLocalSearchParams: jest.fn(() => ({})),
   useFocusEffect: (cb) => {
     const React = require("react");
-    React.useEffect(cb, []); // ✅ only run once
+    React.useEffect(cb, []);
   },
 }));
 
@@ -107,6 +112,7 @@ jest.mock("@/services/socket", () => ({
       }
     }),
     off: jest.fn(),
+    disconnect: jest.fn(),
     connected: true,
   },
 }));
@@ -121,6 +127,15 @@ jest.mock("@/components/ui/podium-card", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return ({ rank, name }) => <Text>{`Podium ${rank} ${name}`}</Text>;
+});
+
+jest.mock("react-native-qrcode-svg", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+
+  return function QRCode() {
+    return React.createElement(View, null);
+  };
 });
 
 jest.mock("@expo/vector-icons", () => {
