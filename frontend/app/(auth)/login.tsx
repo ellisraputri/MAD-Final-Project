@@ -14,6 +14,8 @@ import Svg, { Polygon } from "react-native-svg";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { loginAndGetData } from "@/services/auth/auth";
+import { auth } from '@/services/firebase';
+import { getStudentDetail } from '@/services/student/student';
 import PasswordInput from "@/components/ui/password-input";
 
 export default function LoginScreen() {
@@ -39,7 +41,10 @@ export default function LoginScreen() {
     alert(res.message);
     setIsLoading(false);
 
-    if (res.success) router.replace("/team_confirmation");
+    if (res.success) {
+      await getStudentDetail(); // force session validation first
+      router.replace("/team_confirmation");
+    }
   };
 
   return (
