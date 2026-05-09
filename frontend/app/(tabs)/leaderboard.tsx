@@ -150,10 +150,11 @@ export default function LeaderboardScreen() {
           await fetchMyTeamLatestResult(results as ActivityRankDetail[]);
         }
       }
+
+      setLoading(false);
     };
 
     run();
-    setLoading(false);
   }, [dropdownValue, team?.id]);
 
   const top1 = results[0];
