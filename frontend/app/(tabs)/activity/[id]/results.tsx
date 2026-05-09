@@ -59,7 +59,7 @@ export default function ExplanationScreen() {
       };
 
       load();
-    }, [team?.id, id]),
+    }, [team?.id, id])
   );
 
   if (loading) return <Loading />;

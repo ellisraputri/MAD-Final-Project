@@ -15,6 +15,7 @@ import CustomDropdown from "@/components/ui/dropdown";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { registerAndGetData } from "@/services/auth/auth";
+import PasswordInput from "@/components/ui/password-input";
 
 const gradeDropdown = [
   { label: "1 (SD Kelas 1)", value: "1" },
@@ -38,6 +39,7 @@ export default function RegisterScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [grade, setGrade] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +49,10 @@ export default function RegisterScreen() {
 
     if (email === "" || password === "" || firstName === "" || grade === "") {
       alert("Fields cannot be empty");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Password and password confirmation is not the same");
       return;
     }
     setIsLoading(true);
@@ -115,13 +121,17 @@ export default function RegisterScreen() {
         />
 
         <Text style={styles.label}>Password</Text>
-        <TextInput
+        <PasswordInput
           placeholder="Enter your password"
-          placeholderTextColor={theme.placeholderText}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
+          password={password}
+          setPassword={setPassword}
+        />
+
+        <Text style={styles.label}>Confirm Password</Text>
+        <PasswordInput
+          placeholder="Reenter your password"
+          password={confirmPassword}
+          setPassword={setConfirmPassword}
         />
 
         <Text style={styles.label}>First Name</Text>

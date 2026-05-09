@@ -119,7 +119,9 @@ export default function ActivitySevenScreen() {
     const uploads = Object.values(result).map((audio, index) => {
       const file = {
         uri: audio.uri,
-        name: `audio_${index}_${Math.random().toString(36).substring(2, 7)}.mp3`,
+        name: `audio_${index}_${Math.random()
+          .toString(36)
+          .substring(2, 7)}.mp3`,
         type: "audio/mp3",
       };
 
@@ -236,7 +238,7 @@ export default function ActivitySevenScreen() {
                       onPress: () =>
                         setIsEditing({ title: "Breathing at Rest", type: 1 }),
                     },
-                  ],
+                  ]
                 )
               }
             />
@@ -264,7 +266,7 @@ export default function ActivitySevenScreen() {
                           type: 2,
                         }),
                     },
-                  ],
+                  ]
                 )
               }
             />
@@ -292,7 +294,7 @@ export default function ActivitySevenScreen() {
                           type: 3,
                         }),
                     },
-                  ],
+                  ]
                 )
               }
             />

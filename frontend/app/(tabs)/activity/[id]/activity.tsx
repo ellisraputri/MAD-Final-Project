@@ -43,7 +43,7 @@ export default function ActivityScreen() {
       return () => {
         socket.off("team_active_users", handler);
       };
-    }, [id, team]),
+    }, [id, team])
   );
 
   return (

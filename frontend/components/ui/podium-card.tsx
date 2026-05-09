@@ -23,8 +23,8 @@ export default function PodiumCard({
     rank === 1
       ? require("@/assets/images/gold.png")
       : rank === 2
-        ? require("@/assets/images/silver.png")
-        : require("@/assets/images/bronze.png");
+      ? require("@/assets/images/silver.png")
+      : require("@/assets/images/bronze.png");
 
   return (
     <View style={styles.container}>

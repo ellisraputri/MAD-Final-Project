@@ -136,7 +136,9 @@ export default function ActivityTwoScreen() {
 
     if (filledCount < 3) {
       alert(
-        `You can only submit when there are 3 audios. Please continue to record ${3 - filledCount} more videos.`,
+        `You can only submit when there are 3 audios. Please continue to record ${
+          3 - filledCount
+        } more videos.`
       );
       return;
     }
@@ -145,7 +147,9 @@ export default function ActivityTwoScreen() {
     const uploads = audios.map((audio, index) => {
       const file = {
         uri: audio.uri,
-        name: `audio_${index}_${Math.random().toString(36).substring(2, 7)}.mp3`,
+        name: `audio_${index}_${Math.random()
+          .toString(36)
+          .substring(2, 7)}.mp3`,
         type: "audio/mp3",
       };
 
@@ -194,7 +198,7 @@ export default function ActivityTwoScreen() {
             });
           },
         },
-      ],
+      ]
     );
   };
 
@@ -290,7 +294,7 @@ export default function ActivityTwoScreen() {
                             text: "OK",
                             onPress: () => handleRerecord(index),
                           },
-                        ],
+                        ]
                       )
                     }
                   />
@@ -379,7 +383,7 @@ export default function ActivityTwoScreen() {
                                 text: "OK",
                                 onPress: () => handleRerecord(index),
                               },
-                            ],
+                            ]
                           )
                         }
                       />

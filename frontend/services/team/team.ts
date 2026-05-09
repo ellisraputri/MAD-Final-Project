@@ -12,7 +12,7 @@ import {
 import { uploadToCloudinary } from "../media/media";
 
 export const getTeamDetail = async (
-  teamId: string,
+  teamId: string
 ): Promise<TeamDetailResponse> => {
   try {
     const response = await apiClient.get(`/api/team/detail/${teamId}`);
@@ -27,7 +27,7 @@ export const getTeamDetail = async (
 };
 
 export const createTeam = async (
-  req: CreateTeamRequest,
+  req: CreateTeamRequest
 ): Promise<TeamBaseResponse> => {
   try {
     const response = await apiClient.post(`/api/team/create`, req);
@@ -39,7 +39,7 @@ export const createTeam = async (
 };
 
 export const joinTeam = async (
-  req: JoinTeamRequest,
+  req: JoinTeamRequest
 ): Promise<TeamBaseResponse> => {
   try {
     const response = await apiClient.post(`/api/team/join`, req);
@@ -51,7 +51,7 @@ export const joinTeam = async (
 };
 
 export const editTeam = async (
-  req: EditTeamRequest,
+  req: EditTeamRequest
 ): Promise<TeamBaseResponse> => {
   try {
     let logoUrl = req.logoUrl;
@@ -76,7 +76,7 @@ export const editTeam = async (
 };
 
 export const getTeamDetailBatch = async (
-  req: TeamBatchDetailRequest,
+  req: TeamBatchDetailRequest
 ): Promise<TeamBatchDetailResponse> => {
   try {
     const response = await apiClient.post(`/api/team/detail-batch`, {

@@ -92,7 +92,7 @@ function ActivityThreeResultCard(props: {
         </View>
 
         <Text style={resultStyles.subtitleText}>
-          Score (accuracy): {props.accuracy?.toFixed(2)}{" "}
+          Score (accuracy): {props.accuracy?.toFixed(3)}{" "}
         </Text>
 
         {/* CALCULATION */}
@@ -108,7 +108,9 @@ function ActivityThreeResultCard(props: {
             The observed bend angle:
           </Text>
           <Equation
-            latex={`\\\\theta = ${props.bendCalculated.toFixed(3)}^{\\\\circ} \\\\approx ${bendRadian.toFixed(3)} rad`}
+            latex={`\\\\theta = ${props.bendCalculated.toFixed(
+              3
+            )}^{\\\\circ} \\\\approx ${bendRadian.toFixed(3)} rad`}
             fontSize={13}
           />
 
@@ -119,7 +121,9 @@ function ActivityThreeResultCard(props: {
           </Text>
           <Equation latex={`F \\\\approx k \\\\cdot \\\\theta`} fontSize={13} />
           <Equation
-            latex={`F \\\\approx ${0.05} \\\\cdot ${bendRadian.toFixed(3)} \\\\approx ${force.toFixed(3)} N`}
+            latex={`F \\\\approx ${0.05} \\\\cdot ${bendRadian.toFixed(
+              3
+            )} \\\\approx ${force.toFixed(3)} N`}
             fontSize={13}
           />
         </Accordion>
@@ -155,7 +159,7 @@ export default function ActivityThreeResultsScreen(props: {
     if (Number(response.data.activityId) !== 3) {
       console.warn(
         "[ActivityThree] Wrong activityId received, skipping render. Got:",
-        response.data.activityId,
+        response.data.activityId
       );
       return;
     }
@@ -165,7 +169,7 @@ export default function ActivityThreeResultsScreen(props: {
     const rankingRes = await getActivityRank({ activityId: "3" });
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
       );
     }
     for (let i = 0; i < rankingRes.rankings.length; i++) {
