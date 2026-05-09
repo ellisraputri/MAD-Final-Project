@@ -5,12 +5,12 @@ import { upload } from "../middleware/upload.js";
 
 const mediaRouter = express.Router();
 
-mediaRouter.post('/upload', authenticate, uploadMedia);
+mediaRouter.post("/upload", authenticate, uploadMedia);
 mediaRouter.post(
   "/upload-cloudinary",
   authenticate,
-  upload.single("file"), 
-  uploadToCloudinary
+  upload.single("file"),
+  uploadToCloudinary,
 );
 
 export default mediaRouter;

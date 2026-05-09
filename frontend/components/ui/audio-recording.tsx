@@ -1,36 +1,36 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Audio } from 'expo-av';
-import { Ionicons } from '@expo/vector-icons';
-import Button from './button';
-import { useAppTheme } from '@/hooks/use-app-theme';
+import React, { useState, useRef, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Audio } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
+import Button from "./button";
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 type liveRecorderProps = {
-    title: string,
-    buttonText: string,
-    buttonWidth: number,
-    type: number,
-    isDisabledButton: boolean,
-    setResult: React.Dispatch<React.SetStateAction<Record<number, any>>>,
-    onPressButton: () => void,
-}
+  title: string;
+  buttonText: string;
+  buttonWidth: number;
+  type: number;
+  isDisabledButton: boolean;
+  setResult: React.Dispatch<React.SetStateAction<Record<number, any>>>;
+  onPressButton: () => void;
+};
 
 export default function LiveRecorder(props: liveRecorderProps) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  
-  const [recording, setRecording] = useState<Audio.Recording|null>(null);
-	const recordingRef = useRef<Audio.Recording|null>(null);
+
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const recordingRef = useRef<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [levels, setLevels] = useState(Array(50).fill(0));
 
   const intervalRef = useRef<number | null>(null);
-	const isStoppedRef = useRef(false);
-	const hasRecordedRef = useRef(false);
+  const isStoppedRef = useRef(false);
+  const hasRecordedRef = useRef(false);
 
   const startRecording = async () => {
-		isStoppedRef.current = false;
-		hasRecordedRef.current = false;
+    isStoppedRef.current = false;
+    hasRecordedRef.current = false;
     try {
       await Audio.requestPermissionsAsync();
 
@@ -45,12 +45,12 @@ export default function LiveRecorder(props: liveRecorderProps) {
       });
 
       setRecording(recording);
-			recordingRef.current = recording;
+      recordingRef.current = recording;
 
       props.setResult((prev) => ({
-            ...prev,
-            [props.type]: recording,
-        }));
+        ...prev,
+        [props.type]: recording,
+      }));
       setIsRecording(true);
 
       // 🎯 Start polling metering
@@ -60,47 +60,46 @@ export default function LiveRecorder(props: liveRecorderProps) {
         if (status.metering !== undefined) {
           const normalized = normalizeMetering(status.metering);
 
-          setLevels(prev => {
+          setLevels((prev) => {
             const next = [...prev, normalized];
             next.shift();
             return next;
           });
         }
       }, 100);
-
     } catch (err) {
       console.error(err);
     }
   };
 
-	const stopRecording = async () => {
-  if (isStoppedRef.current) return;
-  isStoppedRef.current = true; // 🛡️ set BEFORE any await
-	hasRecordedRef.current = true;
+  const stopRecording = async () => {
+    if (isStoppedRef.current) return;
+    isStoppedRef.current = true; // 🛡️ set BEFORE any await
+    hasRecordedRef.current = true;
 
-  if (intervalRef.current !== null) {
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
-  }
-
-  const currentRecording = recordingRef.current; // use ref, not state
-  if (currentRecording) {
-    try {
-      await currentRecording.stopAndUnloadAsync();
-    } catch (e) {
-      console.warn("stopAndUnload error (ignored):", e);
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-    const uri = currentRecording.getURI();
-    props.setResult((prev) => ({
-      ...prev,
-      [props.type]: { uri, levels },
-    }));
-  }
 
-  recordingRef.current = null; // clear ref
-  setRecording(null);
-  setIsRecording(false);
-};
+    const currentRecording = recordingRef.current; // use ref, not state
+    if (currentRecording) {
+      try {
+        await currentRecording.stopAndUnloadAsync();
+      } catch (e) {
+        console.warn("stopAndUnload error (ignored):", e);
+      }
+      const uri = currentRecording.getURI();
+      props.setResult((prev) => ({
+        ...prev,
+        [props.type]: { uri, levels },
+      }));
+    }
+
+    recordingRef.current = null; // clear ref
+    setRecording(null);
+    setIsRecording(false);
+  };
 
   const toggleRecording = () => {
     if (isRecording) stopRecording();
@@ -109,85 +108,84 @@ export default function LiveRecorder(props: liveRecorderProps) {
 
   const [seconds, setSeconds] = useState(0);
 
-    useEffect(() => {
-        let timer: any;
+  useEffect(() => {
+    let timer: any;
 
-        if (isRecording) {
-            timer = setInterval(() => {
-            setSeconds(prev => prev + 1);
-            }, 1000);
-        }
-
-        return () => clearInterval(timer);
-    }, [isRecording]);
-
-    function formatTime(sec: number) {
-        const m = Math.floor(sec / 60).toString().padStart(2, '0');
-        const s = (sec % 60).toString().padStart(2, '0');
-        return `${m}:${s}`;
+    if (isRecording) {
+      timer = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
     }
+
+    return () => clearInterval(timer);
+  }, [isRecording]);
+
+  function formatTime(sec: number) {
+    const m = Math.floor(sec / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (sec % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  }
 
   return (
     <View style={styles.container}>
-        {/* Title */}
-        <Text style={styles.title}>{props.title}</Text>
+      {/* Title */}
+      <Text style={styles.title}>{props.title}</Text>
 
-        {/* Timer */}
-        <Text style={styles.timer}>{formatTime(seconds)}</Text>
+      {/* Timer */}
+      <Text style={styles.timer}>{formatTime(seconds)}</Text>
 
-        {/* Big Mic Button */}
-        <TouchableOpacity
+      {/* Big Mic Button */}
+      <TouchableOpacity
         style={[
-            styles.bigMicInner,
-            isRecording? { backgroundColor: '#d9534f' } : { backgroundColor: "#BADFE7"}
+          styles.bigMicInner,
+          isRecording
+            ? { backgroundColor: "#d9534f" }
+            : { backgroundColor: "#BADFE7" },
         ]}
         onPress={toggleRecording}
-        >
-            <Ionicons
-                name={isRecording ? "stop" : "mic"}
-                size={isRecording? 80 : 100}
-                color={isRecording? "white" : "#388087"}
-            />
-        </TouchableOpacity>
-
-        {/* Waveform */}
-        <View style={styles.waveContainer}>
-            <View style={styles.waveRow}>
-                {levels.map((level, i) => (
-                <View
-                    key={i}
-                    style={[
-                    styles.bar,
-                    { height: level }
-                    ]}
-                />
-                ))}
-            </View>
-        </View>
-
-        {!props.isDisabledButton && <Button 
-            width={props.buttonWidth}
-            onPress={async () => {
-							if (isRecording) {
-								// still recording — stop then proceed
-								await stopRecording();
-								props.onPressButton();
-								isStoppedRef.current = false;
-							} else if (hasRecordedRef.current) {
-								// already stopped and saved — proceed
-								props.onPressButton();
-							} else {
-								// never recorded
-								alert("Please record first.");
-							}
-						}}
-            marginTop={20}
-            fontSize={20}
-            text={props.buttonText}
+      >
+        <Ionicons
+          name={isRecording ? "stop" : "mic"}
+          size={isRecording ? 80 : 100}
+          color={isRecording ? "white" : "#388087"}
         />
-        }
+      </TouchableOpacity>
+
+      {/* Waveform */}
+      <View style={styles.waveContainer}>
+        <View style={styles.waveRow}>
+          {levels.map((level, i) => (
+            <View key={i} style={[styles.bar, { height: level }]} />
+          ))}
+        </View>
+      </View>
+
+      {!props.isDisabledButton && (
+        <Button
+          width={props.buttonWidth}
+          onPress={async () => {
+            if (isRecording) {
+              // still recording — stop then proceed
+              await stopRecording();
+              props.onPressButton();
+              isStoppedRef.current = false;
+            } else if (hasRecordedRef.current) {
+              // already stopped and saved — proceed
+              props.onPressButton();
+            } else {
+              // never recorded
+              alert("Please record first.");
+            }
+          }}
+          marginTop={20}
+          fontSize={20}
+          text={props.buttonText}
+        />
+      )}
     </View>
-    );
+  );
 }
 
 // 🎯 Convert dB → height
@@ -201,12 +199,12 @@ function normalizeMetering(db: number) {
   return normalized * 30 + 5; // height in px
 }
 
-const createStyles = (theme:any) => {
+const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: 'center',
-      justifyContent: 'flex-start',
+      alignItems: "center",
+      justifyContent: "flex-start",
     },
 
     title: {
@@ -227,28 +225,28 @@ const createStyles = (theme:any) => {
       width: 200,
       height: 200,
       borderRadius: 120,
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: "center",
+      justifyContent: "center",
       marginBottom: 20,
       elevation: 3,
     },
 
     waveContainer: {
-      width: '100%',
+      width: "100%",
       height: 50,
       borderRadius: 10,
       borderWidth: 3,
       borderColor: theme.text,
-      justifyContent: 'center',
+      justifyContent: "center",
       paddingHorizontal: 10,
-      overflow: 'hidden',
+      overflow: "hidden",
     },
 
     waveRow: {
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      justifyContent: 'space-between',
-      height: '100%',
+      flexDirection: "row",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      height: "100%",
     },
 
     bar: {
@@ -258,4 +256,4 @@ const createStyles = (theme:any) => {
     },
   });
   return styles;
-}
+};

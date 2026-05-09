@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import CustomDropdown from "@/components/ui/dropdown";
@@ -12,14 +20,14 @@ import { toast } from "sonner-native";
 import { socket } from "@/services/socket";
 
 const dropdownValue = [
-  {label: "Light", value: "light"},
-  {label: "Dark", value: "dark"}
-]
+  { label: "Light", value: "light" },
+  { label: "Dark", value: "dark" },
+];
 
 export default function SettingsScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const {user, setUser} = useAppContext();
+  const { user, setUser } = useAppContext();
 
   const [name, setName] = useState(user?.firstName);
   const [mode, setMode] = useState(user?.appearance ? "light" : "dark");
@@ -38,10 +46,10 @@ export default function SettingsScreen() {
       appearance: user.appearance,
     });
 
-    if(!response.success) {
+    if (!response.success) {
       toast.error(response.message);
       return;
-    }else{
+    } else {
       toast.success(response.message);
       setUser({
         ...user,
@@ -55,16 +63,13 @@ export default function SettingsScreen() {
     setIsEditing(false);
   };
 
-  const handleLogout = async() => {
-    Alert.alert(
-      "Confirm Action",
-      "Are you sure you want to log out?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
+  const handleLogout = async () => {
+    Alert.alert("Confirm Action", "Are you sure you want to log out?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
           text: "OK",
           onPress: async() => {
             if (socket.connected) {
@@ -76,8 +81,7 @@ export default function SettingsScreen() {
             if(res.success) router.push("/(auth)/login");
           },
         },
-      ]
-    )
+    ]);
   };
 
   useEffect(() => {
@@ -96,10 +100,10 @@ export default function SettingsScreen() {
       appearance: isLight,
     });
 
-    if(!response.success) {
+    if (!response.success) {
       toast.error(response.message);
       return;
-    }else{
+    } else {
       toast.success(response.message);
       setUser({
         ...user,
@@ -109,18 +113,17 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView 
-      style={styles.container} 
+    <ScrollView
+      style={styles.container}
       contentContainerStyle={{ paddingBottom: 150 }}
       showsVerticalScrollIndicator={false}
     >
-      
       {/* Title */}
       <Text style={styles.title}>Settings</Text>
 
       {/* Avatar */}
       <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{name? name[0] : "-"}</Text>
+        <Text style={styles.avatarText}>{name ? name[0] : "-"}</Text>
       </View>
 
       {/* First Name */}
@@ -166,7 +169,12 @@ export default function SettingsScreen() {
       <View style={styles.section}>
         <Text style={styles.label}>Mode</Text>
 
-        <CustomDropdown data={dropdownValue} value={mode} placeholder='Select mode' onSelect={handleThemeChange}/>
+        <CustomDropdown
+          data={dropdownValue}
+          value={mode}
+          placeholder="Select mode"
+          onSelect={handleThemeChange}
+        />
       </View>
 
       {/* General Info */}
@@ -177,7 +185,7 @@ export default function SettingsScreen() {
         <Ionicons name="chevron-forward" size={20} color={theme.blackText} />
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.listItem, {marginTop: 10}]}>
+      <TouchableOpacity style={[styles.listItem, { marginTop: 10 }]}>
         <Text style={styles.listText}>Help Center</Text>
         <Ionicons name="chevron-forward" size={20} color={theme.blackText} />
       </TouchableOpacity>
@@ -185,7 +193,7 @@ export default function SettingsScreen() {
       {/* Logout */}
       <Button
         onPress={handleLogout}
-        text='Logout'
+        text="Logout"
         width={300}
         fontSize={20}
         marginTop={60}
@@ -225,7 +233,7 @@ export const createStyles = (theme: any) => {
     avatarText: {
       fontSize: 60,
       color: "white",
-      fontFamily: "Lato_400Regular"
+      fontFamily: "Lato_400Regular",
     },
 
     section: {
@@ -235,7 +243,7 @@ export const createStyles = (theme: any) => {
     label: {
       fontSize: 20,
       color: theme.text,
-      fontFamily: 'Nunito_700Bold',
+      fontFamily: "Nunito_700Bold",
     },
 
     inputRow: {
@@ -250,7 +258,7 @@ export const createStyles = (theme: any) => {
       flex: 1,
       fontSize: 16,
       color: theme.blackText,
-      fontFamily: "Lato_400Regular"
+      fontFamily: "Lato_400Regular",
     },
 
     sectionTitle: {
@@ -283,4 +291,4 @@ export const createStyles = (theme: any) => {
     },
   });
   return styles;
-}
+};

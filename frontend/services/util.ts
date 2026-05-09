@@ -1,6 +1,6 @@
 export const getMillis = (t: any) => {
-    return t._seconds * 1000 + t._nanoseconds / 1e6;
-}
+  return t._seconds * 1000 + t._nanoseconds / 1e6;
+};
 
 export const estimateDistance = (motionData: number[], dt: number = 0.1) => {
   let velocity = 0;
@@ -27,5 +27,5 @@ export const estimateDistance = (motionData: number[], dt: number = 0.1) => {
     position += velocity * dt;
   }
 
-  return Math.abs(position*10); 
+  return Math.abs(position * 10);
 };

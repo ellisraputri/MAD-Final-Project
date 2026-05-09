@@ -12,7 +12,7 @@ export const authenticate = async (req, res, next) => {
 
   try {
     const decodedToken = await auth.verifyIdToken(idToken);
-    req.user = decodedToken; 
+    req.user = decodedToken;
     next();
   } catch (error) {
     console.error("Token verification failed:", error.message);

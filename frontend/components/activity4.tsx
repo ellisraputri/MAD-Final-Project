@@ -1,5 +1,14 @@
 import React, { useRef, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Vibration, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  ScrollView,
+  Vibration,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import ActivityFourSubmissionCard from "./ui/activity4-submission-card";
@@ -10,22 +19,24 @@ import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { uploadMedia45 } from "@/services/media/media";
-import { Accelerometer } from 'expo-sensors';
+import { Accelerometer } from "expo-sensors";
 import { estimateDistance } from "@/services/util";
 
 export default function ActivityFourScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const {team} = useAppContext();
+  const { team } = useAppContext();
 
   const [submitLoading, setSubmitLoading] = useState(false);
   const [screen, setScreen] = useState<"record" | "submission">("record");
-  
-  const [vibrations, setVibrations] = useState<{
-    duration: string;
-    movement: string;
-    distance: number;
-  }[]>([]);
+
+  const [vibrations, setVibrations] = useState<
+    {
+      duration: string;
+      movement: string;
+      distance: number;
+    }[]
+  >([]);
   const [isVibrating, setIsVibrating] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -52,8 +63,7 @@ export default function ActivityFourScreen() {
         const duration = Math.floor((Date.now() - startTime) / 1000);
         setElapsedTime(duration);
       }
-    }
-    else {
+    } else {
       Vibration.vibrate([0, 5000], true);
 
       const start = Date.now();
@@ -63,8 +73,8 @@ export default function ActivityFourScreen() {
       Accelerometer.setUpdateInterval(100);
 
       accelSub.current = Accelerometer.addListener(({ x, y, z }) => {
-        const magnitude = Math.sqrt(x*x + y*y + z*z);
-        setMotionData(prev => [...prev, magnitude]);
+        const magnitude = Math.sqrt(x * x + y * y + z * z);
+        setMotionData((prev) => [...prev, magnitude]);
       });
 
       const interval = setInterval(() => {
@@ -75,7 +85,7 @@ export default function ActivityFourScreen() {
       setIsVibrating(true);
     }
   };
-  
+
   const handleConfirmSubmission = () => {
     if (elapsedTime === 0 || vibrations.length >= 3) return;
 
@@ -89,8 +99,7 @@ export default function ActivityFourScreen() {
         return updated;
       });
       setRerecordIndex(null);
-    } 
-    else {
+    } else {
       if (vibrations.length >= 3) return;
 
       setVibrations((prev) => [
@@ -109,7 +118,7 @@ export default function ActivityFourScreen() {
 
   const handleDelete = (index: number) => {
     setVibrations((prev) => prev.filter((_, i) => i !== index));
-    alert(`Deleted submission ${index+1}`)
+    alert(`Deleted submission ${index + 1}`);
   };
 
   const handleRerecord = (index: number) => {
@@ -124,23 +133,27 @@ export default function ActivityFourScreen() {
       updated[index].movement = value;
       return updated;
     });
-  }
+  };
 
-  const handleSubmit = async() => {
-    if(!team?.id || submitLoading) return;
+  const handleSubmit = async () => {
+    if (!team?.id || submitLoading) return;
 
-    const invalid = vibrations.some(v => !v.movement);
+    const invalid = vibrations.some((v) => !v.movement);
     if (invalid) {
       alert("Please fill all fields.");
       return;
     }
 
     const currLength = vibrations.length;
-    if(currLength < 3){
-      alert(`You can only submit when there are 3 inputs. Please continue to record ${3-currLength} more videos.`)
+    if (currLength < 3) {
+      alert(
+        `You can only submit when there are 3 inputs. Please continue to record ${
+          3 - currLength
+        } more videos.`
+      );
       return;
     }
-    
+
     setSubmitLoading(true);
     const uploads = vibrations.map((vib, index) => {
       return uploadMedia45({
@@ -150,23 +163,23 @@ export default function ActivityFourScreen() {
     });
     const medias = await Promise.all(uploads);
 
-    const ids = medias.map((media,_) => {
-      return media.id
-    })
+    const ids = medias.map((media, _) => {
+      return media.id;
+    });
     const predictions = vibrations.map((vib, _) => {
       return {
         prediction: Number(vib.movement),
-        outcome: vib.distance
-      }
-    })
+        outcome: vib.distance,
+      };
+    });
 
     const response = await submitResult({
-      activityId: "4", 
-      teamId: team?.id, 
-      medias: ids, 
-      predictions: predictions
-    })
-    if(!response.success){
+      activityId: "4",
+      teamId: team?.id,
+      medias: ids,
+      predictions: predictions,
+    });
+    if (!response.success) {
       toast.error(response.message);
       setSubmitLoading(false);
       return;
@@ -183,16 +196,16 @@ export default function ActivityFourScreen() {
             resetState();
             router.push({
               pathname: "/activity/[id]/results",
-              params: { id: '4' }, 
+              params: { id: "4" },
             });
           },
         },
       ]
     );
-  }
+  };
 
   const resetState = () => {
-    if (intervalId) clearInterval(intervalId); 
+    if (intervalId) clearInterval(intervalId);
     Vibration.cancel();
 
     setVibrations([]);
@@ -201,11 +214,12 @@ export default function ActivityFourScreen() {
     setElapsedTime(0);
     setIntervalId(null);
     setRerecordIndex(null);
-    setScreen('record');
+    setScreen("record");
     setSubmitLoading(false);
-  }
+  };
 
-  const confirmDisabled = (elapsedTime === 0) || (rerecordIndex === null && vibrations.length >= 3);
+  const confirmDisabled =
+    elapsedTime === 0 || (rerecordIndex === null && vibrations.length >= 3);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -227,11 +241,12 @@ export default function ActivityFourScreen() {
               : "New Recording"}
           </Text>
 
-          <Text style={styles.timer}>
-            {formatTime(elapsedTime)}
-          </Text>
+          <Text style={styles.timer}>{formatTime(elapsedTime)}</Text>
 
-          <TouchableOpacity style={isVibrating ? styles.stopCircle : styles.circle} onPress={handleVibration}>
+          <TouchableOpacity
+            style={isVibrating ? styles.stopCircle : styles.circle}
+            onPress={handleVibration}
+          >
             <Text style={styles.circleText}>
               {isVibrating ? "Stop\nVibration" : "Start\nVibration"}
             </Text>
@@ -240,10 +255,10 @@ export default function ActivityFourScreen() {
           <View style={styles.buttonContainer}>
             <Button
               onPress={() => setShowModal(true)}
-              width={300} 
-              height={53} 
+              width={300}
+              height={53}
               fontSize={20}
-              marginTop={20} 
+              marginTop={20}
               text={`View Submissions (${vibrations.length}/3)`}
             />
 
@@ -271,7 +286,7 @@ export default function ActivityFourScreen() {
                 movement={item.movement}
                 onChangeMovement={(value) => handleFieldChange(value, index)}
                 onDelete={() => handleDelete(index)}
-                onRerecord={() => 
+                onRerecord={() =>
                   Alert.alert(
                     "Confirm Action",
                     "This will permanently remove the current progress. Are you sure you want to continue?",
@@ -289,102 +304,119 @@ export default function ActivityFourScreen() {
                 }
               />
             ))}
-      
+
             {vibrations.length < 3 && (
-              <Button 
+              <Button
                 onPress={() => {
                   setRerecordIndex(null);
                   setScreen("record");
-                }} 
-                width={260} fontSize={18} height={53}
-                marginTop={20} text="Add Another Submission"/>
+                }}
+                width={260}
+                fontSize={18}
+                height={53}
+                marginTop={20}
+                text="Add Another Submission"
+              />
             )}
-      
-            <Button onPress={handleSubmit} width={150} fontSize={18} 
-                marginTop={20} marginBottom={50} text="Submit" isLoading={submitLoading} />
+
+            <Button
+              onPress={handleSubmit}
+              width={150}
+              fontSize={18}
+              marginTop={20}
+              marginBottom={50}
+              text="Submit"
+              isLoading={submitLoading}
+            />
           </View>
         </>
       )}
 
       <Modal visible={showModal} animationType="slide">
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.titleModalText}>Your Submissions</Text>
+          <View style={styles.modalContainer}>
+            <Text style={styles.titleModalText}>Your Submissions</Text>
 
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setShowModal(false)}
-          >
-            <Ionicons name="close" size={35} color={theme.blackText} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowModal(false)}
+            >
+              <Ionicons name="close" size={35} color={theme.blackText} />
+            </TouchableOpacity>
 
-          <ScrollView
-            style={{ flex: 1, width: '90%' }}
-            contentContainerStyle={styles.scrollView}
-          >
-            {vibrations.length === 0 ? (
-              <Text style={{color: theme.blackText}}>No submissions yet</Text>
-            ) : (
-              vibrations.map((item, index) => (
-                <ActivityFourSubmissionCard
-                  key={index}
-                  item={index + 1}
-                  duration={item.duration}
-                  movement={item.movement}
-                  onChangeMovement={(value) => handleFieldChange(value, index)}
-                  onDelete={() => {
-                    handleDelete(index);
-                    if (vibrations.length === 1) setShowModal(false);
-                  }}
-                  onRerecord={() => 
-                    Alert.alert(
-                      "Confirm Action",
-                      "This will permanently remove the current progress. Are you sure you want to continue?",
-                      [
-                        {
-                          text: "Cancel",
-                          style: "cancel",
-                        },
-                        {
-                          text: "OK",
-                          onPress: () => {setShowModal(false); handleRerecord(index)},
-                        },
-                      ]
-                    )
-                  }
-                />
-              ))
-            )}
-          </ScrollView>
-        </View>
+            <ScrollView
+              style={{ flex: 1, width: "90%" }}
+              contentContainerStyle={styles.scrollView}
+            >
+              {vibrations.length === 0 ? (
+                <Text style={{ color: theme.blackText }}>
+                  No submissions yet
+                </Text>
+              ) : (
+                vibrations.map((item, index) => (
+                  <ActivityFourSubmissionCard
+                    key={index}
+                    item={index + 1}
+                    duration={item.duration}
+                    movement={item.movement}
+                    onChangeMovement={(value) =>
+                      handleFieldChange(value, index)
+                    }
+                    onDelete={() => {
+                      handleDelete(index);
+                      if (vibrations.length === 1) setShowModal(false);
+                    }}
+                    onRerecord={() =>
+                      Alert.alert(
+                        "Confirm Action",
+                        "This will permanently remove the current progress. Are you sure you want to continue?",
+                        [
+                          {
+                            text: "Cancel",
+                            style: "cancel",
+                          },
+                          {
+                            text: "OK",
+                            onPress: () => {
+                              setShowModal(false);
+                              handleRerecord(index);
+                            },
+                          },
+                        ]
+                      )
+                    }
+                  />
+                ))
+              )}
+            </ScrollView>
+          </View>
         </SafeAreaView>
       </Modal>
     </View>
   );
 }
 
-
 export const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
     closeButton: {
-      position: 'absolute',
+      position: "absolute",
       top: 10,
       right: 15,
       zIndex: 10,
       padding: 8,
     },
     buttonContainer: {
-      flexDirection: 'column',
-      justifyContent: 'center',
+      flexDirection: "column",
+      justifyContent: "center",
       marginTop: 40,
     },
 
     timer: {
       fontSize: 28,
       color: theme.text,
-      fontFamily: 'Lato_700Bold',
+      fontFamily: "Lato_700Bold",
       marginBottom: 25,
-      marginTop: 5
+      marginTop: 5,
     },
 
     circle: {
@@ -398,9 +430,9 @@ export const createStyles = (theme: any) => {
     circleText: {
       fontSize: 32,
       color: "#357D89",
-      fontFamily: 'Lato_400Regular',
+      fontFamily: "Lato_400Regular",
       textAlign: "center",
-      lineHeight: 45
+      lineHeight: 45,
     },
 
     stopCircle: {
@@ -408,26 +440,26 @@ export const createStyles = (theme: any) => {
       height: 250,
       borderRadius: 125,
       backgroundColor: "#F6F6F2",
-      borderColor: '#badfe7',
+      borderColor: "#badfe7",
       borderWidth: 5,
       justifyContent: "center",
       alignItems: "center",
     },
-    mainView: { 
-      flex: 1, 
-      alignItems: "center", 
-      justifyContent: "center" 
-    }, 
+    mainView: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
     modalContainer: {
       flex: 1,
       paddingTop: 30,
       paddingHorizontal: 5,
       alignItems: "center",
-      justifyContent: 'flex-start',
+      justifyContent: "flex-start",
     },
     scrollView: {
-      alignItems: 'center',
+      alignItems: "center",
       paddingBottom: 40,
     },
     titleModalText: {
@@ -435,16 +467,16 @@ export const createStyles = (theme: any) => {
       marginBottom: 20,
       fontSize: 20,
       color: theme.text,
-      fontWeight: '500',
+      fontWeight: "500",
       fontFamily: "Lato_700Bold",
     },
     titleText: {
       marginTop: 10,
       fontSize: 24,
       color: theme.text,
-      fontWeight: '500',
+      fontWeight: "500",
       fontFamily: "Lato_700Bold",
     },
   });
   return styles;
-}
+};

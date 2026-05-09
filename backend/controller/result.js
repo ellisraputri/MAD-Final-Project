@@ -28,7 +28,7 @@ export const getResultList = async (req, res) => {
       .where("activityId", "==", activityId)
       .orderBy("attemptNo", "asc"); // optional: sort attempts
 
-    const results = (await snapshot.get()).docs.map(doc => ({
+    const results = (await snapshot.get()).docs.map((doc) => ({
       resultId: doc.id,
       score: doc.data().score,
       attempt: doc.data().attemptNo,
@@ -41,7 +41,6 @@ export const getResultList = async (req, res) => {
       data: results,
       message: "Result list fetched successfully",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
@@ -75,21 +74,21 @@ export const getResultDetail = async (req, res) => {
         .where("__name__", "in", result.medias)
         .get();
 
-      const rawMedia = mediaSnapshot.docs.map(doc => ({
+      const rawMedia = mediaSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
       const mediaMap = new Map();
-      rawMedia.forEach(m => mediaMap.set(m.id, m));
+      rawMedia.forEach((m) => mediaMap.set(m.id, m));
 
-      mediaList = result.medias.map(id => mediaMap.get(id) || null);
+      mediaList = result.medias.map((id) => mediaMap.get(id) || null);
     }
 
     cacheService.set(`result.${resultId}`, {
       resultId: resultDoc.id,
       ...result,
-      medias: mediaList
+      medias: mediaList,
     });
 
     return res.status(200).json({
@@ -101,7 +100,6 @@ export const getResultDetail = async (req, res) => {
         medias: mediaList,
       },
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
@@ -138,13 +136,13 @@ export const submitResult = async (req, res) => {
     const score =
       outcomes.reduce((sum, o) => sum + (o.score || 0), 0) /
       (outcomes.length || 1);
-    
+
     const preds = [];
-    if (activityId == 2|| activityId==4 || activityId==5){
-      for(const p of predictions){
+    if (activityId == 2 || activityId == 4 || activityId == 5) {
+      for (const p of predictions) {
         preds.push({
-          "prediction": p.prediction,
-        })
+          prediction: p.prediction,
+        });
       }
     }
 
@@ -165,13 +163,11 @@ export const submitResult = async (req, res) => {
       message: "Result saved successfully",
       resultId: docRef.id,
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);
   }
 };
-
 
 export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
   const resultRef = db.collection("results");
@@ -196,20 +192,20 @@ export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
     return latestAttemptNo + 1;
   });
 
-  const medias = results.flatMap(r => r.medias || []);
-  let preds = results.flatMap(r => r.predictions);
+  const medias = results.flatMap((r) => r.medias || []);
+  let preds = results.flatMap((r) => r.predictions);
 
   const outcomes = await scorePredictions(medias, preds, activityId);
   const score =
     outcomes.reduce((sum, o) => sum + (o.score || 0), 0) /
     (outcomes.length || 1);
 
-  if (activityId==6){
-    preds =[];
-    for(const p of predictions){
+  if (activityId == 6) {
+    preds = [];
+    for (const p of predictions) {
       preds.push({
-        "prediction": p.prediction,
-      })
+        prediction: p.prediction,
+      });
     }
   }
 
@@ -228,7 +224,7 @@ export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
 
 export const rate = async (req, res) => {
   try {
-    const { resultId, ratings, comments } = req.body; 
+    const { resultId, ratings, comments } = req.body;
 
     const resultRef = db.collection("results").doc(resultId);
     const doc = await resultRef.get();
@@ -245,7 +241,6 @@ export const rate = async (req, res) => {
       success: true,
       message: "Rating done successfully",
     });
-
   } catch (error) {
     console.error(error);
     return error500(res);

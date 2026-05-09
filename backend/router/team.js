@@ -1,6 +1,12 @@
 import express from "express";
 import { authenticate } from "../middleware/auth.js";
-import { createTeam, editDetail, getDetail, getDetailBatch, joinTeam } from "../controller/team.js";
+import {
+  createTeam,
+  editDetail,
+  getDetail,
+  getDetailBatch,
+  joinTeam,
+} from "../controller/team.js";
 
 const teamRouter = express.Router();
 

@@ -1,25 +1,25 @@
 export type MediaRequest = {
-    file: RNFile,
-    type: string,
-    additional?: string,
-}
+  file: RNFile;
+  type: string;
+  additional?: string;
+};
 
 export type Media45Request = {
-    text: string,
-    type: string,
-}
+  text: string;
+  type: string;
+};
 
 export type MediaResponse = {
-    id: string,
-    success: boolean,
-    message: string,
-}
+  id: string;
+  success: boolean;
+  message: string;
+};
 
 export type CloudinaryUploadResponse = {
-    url: string,
-    success: boolean,
-    message: string
-}
+  url: string;
+  success: boolean;
+  message: string;
+};
 
 export type RNFile = {
   uri: string;
@@ -28,12 +28,12 @@ export type RNFile = {
 };
 
 export type MediaDetail = {
-    id: string,
-    type: string,
-    content: string
-}
+  id: string;
+  type: string;
+  content: string;
+};
 
 export type ContentAudio = {
-    url: string,
-    levels: number[],
-}
+  url: string;
+  levels: number[];
+};

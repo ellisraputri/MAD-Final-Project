@@ -12,10 +12,13 @@ export const analyzeVideo3 = (videoPath) => {
 
     const ffmpeg = spawn("ffmpeg", [
       "-y",
-      "-i", videoPath,
-      "-vcodec", "libx264",
-      "-acodec", "aac",
-      fixedPath
+      "-i",
+      videoPath,
+      "-vcodec",
+      "libx264",
+      "-acodec",
+      "aac",
+      fixedPath,
     ]);
 
     ffmpeg.on("error", (err) => {
@@ -30,7 +33,10 @@ export const analyzeVideo3 = (videoPath) => {
         return reject("FFmpeg failed");
       }
 
-      const pythonPath = path.join(__dirname, "../scripts/.venv/Scripts/python.exe");
+      const pythonPath = path.join(
+        __dirname,
+        "../scripts/.venv/Scripts/python.exe",
+      );
       const scriptPath = path.join(__dirname, "../scripts/activity3.py");
 
       const py = spawn(pythonPath, [scriptPath, fixedPath]);

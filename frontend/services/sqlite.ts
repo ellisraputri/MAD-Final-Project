@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import {StudentDetail} from "./student/student.type"
+import { StudentDetail } from "./student/student.type";
 import { TeamDetail } from "./team/team.type";
 
 const db = SQLite.openDatabaseAsync("app.db");
@@ -59,5 +59,3 @@ export const getTeam = async (): Promise<TeamDetail | null> => {
     return null;
   }
 };
-
-

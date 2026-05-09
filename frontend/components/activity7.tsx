@@ -1,15 +1,20 @@
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import LiveRecorder from "./ui/audio-recording";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Alert,
+} from "react-native";
 import AudioPlayer from "./ui/audio-player";
 import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
-import { submitResult } from "@/services/result/result";
-import { toast } from "sonner-native";
 import { socket } from "@/services/socket";
 
 type CardActivitySevenProps = {
@@ -19,17 +24,19 @@ type CardActivitySevenProps = {
   uri: string;
   levels: Array<any>;
   type: number;
-	setIsEditing: () => void;
+  setIsEditing: () => void;
 };
 
 function CardActivitySeven(props: CardActivitySevenProps) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  
+
   return (
-    <View style={[styles.cardContainer, {borderWidth:1, borderColor:"white"}]}>
+    <View
+      style={[styles.cardContainer, { borderWidth: 1, borderColor: "white" }]}
+    >
       <Text style={styles.cardTitle}>{props.title}</Text>
-      <AudioPlayer uri={props.uri} levels={props.levels}/>
+      <AudioPlayer uri={props.uri} levels={props.levels} />
       <Text style={styles.cardSubtitle}>Prediction</Text>
 
       <Text style={styles.cardLabel}>Breath per Minute</Text>
@@ -39,7 +46,8 @@ function CardActivitySeven(props: CardActivitySevenProps) {
           keyboardType="decimal-pad"
           value={props.input[props.type]?.toString() || ""}
           onChangeText={(text) => {
-            if (/^\d*\.?\d*$/.test(text)) { // allow digits and one dot
+            if (/^\d*\.?\d*$/.test(text)) {
+              // allow digits and one dot
               props.setInput((prev) => ({
                 ...prev,
                 [props.type]: text,
@@ -51,257 +59,298 @@ function CardActivitySeven(props: CardActivitySevenProps) {
       </View>
 
       <TouchableOpacity style={styles.editBtn} onPress={props.setIsEditing}>
-				<Text style={styles.editBtnText}>Edit</Text>
-			</TouchableOpacity>
+        <Text style={styles.editBtnText}>Edit</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 export default function ActivitySevenScreen() {
-    const theme = useAppTheme();
-    const styles = createStyles(theme);
-    const {user, team} = useAppContext();
-    const  [submitLoading, setSubmitLoading] = useState(false);
+  const theme = useAppTheme();
+  const styles = createStyles(theme);
+  const { user, team } = useAppContext();
+  const [submitLoading, setSubmitLoading] = useState(false);
 
-    const [phase, setPhase] = useState<1|2|3|4>(1);
-    const [result, setResult] =  useState<Record<number, any>>({
-        1:null, 2:null, 3:null
+  const [phase, setPhase] = useState<1 | 2 | 3 | 4>(1);
+  const [result, setResult] = useState<Record<number, any>>({
+    1: null,
+    2: null,
+    3: null,
+  });
+  const [userInput, setUserInput] = useState<Record<number, string>>({
+    1: "",
+    2: "",
+    3: "",
+  });
+  const [isEditing, setIsEditing] = useState({
+    title: "",
+    type: 0,
+  });
+  const [isWaitingResult, setIsWaitingResult] = useState(false);
+
+  const handleRetry = () => {
+    setPhase(1);
+    setResult({ 1: null, 2: null, 3: null });
+    setUserInput({ 1: "", 2: "", 3: "" });
+  };
+
+  useEffect(() => {
+    const handler = ({ activityId, isDone }: any) => {
+      if (activityId !== "7") return;
+
+      if (isDone) {
+        router.push(`/(tabs)/activity/7/results`);
+        setIsWaitingResult(false);
+        handleRetry();
+      }
+    };
+
+    socket.on("submit_result_done", handler);
+
+    return () => {
+      socket.off("submit_result_done", handler);
+    };
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!team?.id) return;
+
+    setSubmitLoading(true);
+    const uploads = Object.values(result).map((audio, index) => {
+      const file = {
+        uri: audio.uri,
+        name: `audio_${index}_${Math.random()
+          .toString(36)
+          .substring(2, 7)}.mp3`,
+        type: "audio/mp3",
+      };
+
+      return uploadMedia({
+        file,
+        type: "audio",
+        additional: audio.levels.toString(),
+      });
     });
-    const [userInput, setUserInput] = useState<Record<number, string>>({
-        1:"", 2:"", 3:""
-    })
-		const [isEditing, setIsEditing] = useState({
-			title:"", type:0
-		});
-    const [isWaitingResult, setIsWaitingResult] = useState(false);
 
-    const handleRetry =() =>{
-        setPhase(1);
-        setResult({1:null, 2:null, 3:null});
-        setUserInput({1:"", 2:"", 3:""});
-    }
-    
-    useEffect(() => {
-      const handler = ({ activityId, isDone }: any) => {
-        if (activityId !== "7") return;
-  
-        if (isDone) {
-          router.push(`/(tabs)/activity/7/results`);
-          setIsWaitingResult(false);
-          handleRetry();
-        }
+    const medias = await Promise.all(uploads.filter(Boolean));
+
+    const ids = medias.map((media, _) => {
+      return media.id;
+    });
+    const predictions = Object.values(userInput).map((inp, _) => {
+      return {
+        prediction: Number(inp),
       };
-  
-      socket.on("submit_result_done", handler);
-  
-      return () => {
-        socket.off("submit_result_done", handler);
-      };
-    }, []);
+    });
 
-    const handleSubmit = async() =>{
-      if(!team?.id) return;
+    socket.emit("submit_result_user", {
+      teamId: team.id,
+      activityId: "7",
+      result: {
+        userId: user?.id,
+        predictions: predictions,
+        medias: ids,
+      },
+    });
 
-      setSubmitLoading(true);
-      const uploads = Object.values(result).map((audio, index) => {
-        const file = {
-          uri: audio.uri,
-          name: `audio_${index}_${Math.random().toString(36).substring(2, 7)}.mp3`,
-          type: "audio/mp3",
-        };
+    setSubmitLoading(false);
+    alert("Successfully submitted the audios and predictions!");
+    setIsWaitingResult(true);
+  };
 
-        return uploadMedia({
-          file,
-          type: "audio",
-          additional: audio.levels.toString(),
-        });
-      });
-
-      const medias = await Promise.all(uploads.filter(Boolean));
-
-      const ids = medias.map((media,_) => {
-        return media.id
-      })
-      const predictions = Object.values(userInput).map((inp, _) => {
-        return {
-          prediction: Number(inp),
-        }
-      })
-  
-      socket.emit("submit_result_user", {
-        teamId: team.id,
-        activityId: "7",
-        result: {
-          userId: user?.id, 
-          predictions: predictions,
-          medias: ids, 
-        }
-      });
-  
-      setSubmitLoading(false);
-      alert("Successfully submitted the audios and predictions!");
-      setIsWaitingResult(true);
-    }
-
-    if (isWaitingResult) {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.title}>Waiting for teammates...</Text>
-          <Text style={{ textAlign: "center", marginTop: 10 }}>
-            All team members must submit before viewing results.
-          </Text>
-        </View>
-      );
-    }
-    
-
-    return(
-        <KeyboardAwareScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: 20 }}
-            keyboardShouldPersistTaps="handled"
-            enableOnAndroid={true}        // critical for Android
-            extraScrollHeight={10}        // extra space above keyboard
-            enableAutomaticScroll={true}  
-        >
-            {phase === 1 && (
-                <LiveRecorder 
-                    onPressButton={()=>setPhase(2)}
-                    type={1}
-                    setResult={setResult}
-                    buttonWidth={120} buttonText='Next' title='Breathing at Rest'
-                    isDisabledButton={false}
-                />
-            )}
-
-            {phase === 2 && (
-                <LiveRecorder 
-                    onPressButton={()=>setPhase(3)}
-                    type={2}
-                    setResult={setResult}
-                    buttonWidth={120} buttonText='Next' title='Breathing after Exercise 1'
-                    isDisabledButton={false}
-                />
-            )}
-
-            {phase === 3 && (
-                <LiveRecorder 
-                    onPressButton={()=>setPhase(4)}
-                    type={3}
-                    setResult={setResult}
-                    buttonWidth={140} buttonText='Confirm' title='Breathing after Exercise 2'
-                    isDisabledButton={false}
-                />
-            )}
-
-            {phase===4 && 
-							(isEditing.type === 0? 
-								<>
-                    <CardActivitySeven 
-                        title="Breathing at Rest" type={1}
-                        input={userInput} setInput={setUserInput}
-                        uri={result[1].uri} levels={result[1].levels}
-												setIsEditing={() => 
-                          Alert.alert(
-                            "Confirm Action",
-                            "This will permanently remove the current progress. Are you sure you want to continue?",
-                            [
-                              {
-                                text: "Cancel",
-                                style: "cancel",
-                              },
-                              {
-                                text: "OK",
-                                onPress: () => setIsEditing({title:"Breathing at Rest", type:1}),
-                              },
-                            ]
-                          )
-                        }
-                    />
-                    <CardActivitySeven 
-                        title="Breathing after Exercise 1" type={2}
-                        input={userInput} setInput={setUserInput}
-                        uri={result[2].uri} levels={result[2].levels}
-                        setIsEditing={() => 
-                          Alert.alert(
-                            "Confirm Action",
-                            "This will permanently remove the current progress. Are you sure you want to continue?",
-                            [
-                              {
-                                text: "Cancel",
-                                style: "cancel",
-                              },
-                              {
-                                text: "OK",
-                                onPress: () => setIsEditing({title:"Breathing after Exercise 1", type:2}),
-                              },
-                            ]
-                          )
-                        }
-                    />
-                    <CardActivitySeven 
-                        title="Breathing after Exercise 2" type={3}
-                        input={userInput} setInput={setUserInput}
-                        uri={result[3].uri} levels={result[3].levels}
-                        setIsEditing={() => 
-                          Alert.alert(
-                            "Confirm Action",
-                            "This will permanently remove the current progress. Are you sure you want to continue?",
-                            [
-                              {
-                                text: "Cancel",
-                                style: "cancel",
-                              },
-                              {
-                                text: "OK",
-                                onPress: () => setIsEditing({title:"Breathing after Exercise 2", type:3}),
-                              },
-                            ]
-                          )
-                        }
-                    />
-
-                    <View style={{ flexDirection: "row", gap: 10, alignItems: "center", justifyContent: "center" }}>
-											<Button 
-													onPress={handleRetry}
-													width={120}
-													fontSize={18}
-													marginTop={10}
-													text={"Retry"}
-											/>
-											<Button 
-													onPress={handleSubmit}
-													width={120}
-													fontSize={18}
-													marginTop={10}
-													text={"Confirm"}
-                          isLoading={submitLoading}
-											/>
-                    </View>
-                </>
-								:
-								<>
-									<LiveRecorder 
-                    onPressButton={()=>setIsEditing({title:"", type:0})}
-                    type={isEditing.type}
-                    setResult={setResult}
-                    buttonWidth={140} buttonText='Confirm' title={isEditing.title}
-                    isDisabledButton={false}
-                	/>
-								</>
-							)
-                
-            }
-
-
-        </KeyboardAwareScrollView>
+  if (isWaitingResult) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Waiting for teammates...</Text>
+        <Text style={{ textAlign: "center", marginTop: 10 }}>
+          All team members must submit before viewing results.
+        </Text>
+      </View>
     );
+  }
+
+  return (
+    <KeyboardAwareScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      keyboardShouldPersistTaps="handled"
+      enableOnAndroid={true} // critical for Android
+      extraScrollHeight={10} // extra space above keyboard
+      enableAutomaticScroll={true}
+    >
+      {phase === 1 && (
+        <LiveRecorder
+          onPressButton={() => setPhase(2)}
+          type={1}
+          setResult={setResult}
+          buttonWidth={120}
+          buttonText="Next"
+          title="Breathing at Rest"
+          isDisabledButton={false}
+        />
+      )}
+
+      {phase === 2 && (
+        <LiveRecorder
+          onPressButton={() => setPhase(3)}
+          type={2}
+          setResult={setResult}
+          buttonWidth={120}
+          buttonText="Next"
+          title="Breathing after Exercise 1"
+          isDisabledButton={false}
+        />
+      )}
+
+      {phase === 3 && (
+        <LiveRecorder
+          onPressButton={() => setPhase(4)}
+          type={3}
+          setResult={setResult}
+          buttonWidth={140}
+          buttonText="Confirm"
+          title="Breathing after Exercise 2"
+          isDisabledButton={false}
+        />
+      )}
+
+      {phase === 4 &&
+        (isEditing.type === 0 ? (
+          <>
+            <CardActivitySeven
+              title="Breathing at Rest"
+              type={1}
+              input={userInput}
+              setInput={setUserInput}
+              uri={result[1].uri}
+              levels={result[1].levels}
+              setIsEditing={() =>
+                Alert.alert(
+                  "Confirm Action",
+                  "This will permanently remove the current progress. Are you sure you want to continue?",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "OK",
+                      onPress: () =>
+                        setIsEditing({ title: "Breathing at Rest", type: 1 }),
+                    },
+                  ]
+                )
+              }
+            />
+            <CardActivitySeven
+              title="Breathing after Exercise 1"
+              type={2}
+              input={userInput}
+              setInput={setUserInput}
+              uri={result[2].uri}
+              levels={result[2].levels}
+              setIsEditing={() =>
+                Alert.alert(
+                  "Confirm Action",
+                  "This will permanently remove the current progress. Are you sure you want to continue?",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "OK",
+                      onPress: () =>
+                        setIsEditing({
+                          title: "Breathing after Exercise 1",
+                          type: 2,
+                        }),
+                    },
+                  ]
+                )
+              }
+            />
+            <CardActivitySeven
+              title="Breathing after Exercise 2"
+              type={3}
+              input={userInput}
+              setInput={setUserInput}
+              uri={result[3].uri}
+              levels={result[3].levels}
+              setIsEditing={() =>
+                Alert.alert(
+                  "Confirm Action",
+                  "This will permanently remove the current progress. Are you sure you want to continue?",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "OK",
+                      onPress: () =>
+                        setIsEditing({
+                          title: "Breathing after Exercise 2",
+                          type: 3,
+                        }),
+                    },
+                  ]
+                )
+              }
+            />
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                onPress={handleRetry}
+                width={120}
+                fontSize={18}
+                marginTop={10}
+                text={"Retry"}
+              />
+              <Button
+                onPress={handleSubmit}
+                width={120}
+                fontSize={18}
+                marginTop={10}
+                text={"Confirm"}
+                isLoading={submitLoading}
+              />
+            </View>
+          </>
+        ) : (
+          <>
+            <LiveRecorder
+              onPressButton={() => setIsEditing({ title: "", type: 0 })}
+              type={isEditing.type}
+              setResult={setResult}
+              buttonWidth={140}
+              buttonText="Confirm"
+              title={isEditing.title}
+              isDisabledButton={false}
+            />
+          </>
+        ))}
+    </KeyboardAwareScrollView>
+  );
 }
 
 const createStyles = (theme: any) => {
   const styles = StyleSheet.create({
-    container: { flex: 1}, 
-    title: { fontSize: 20, fontWeight: "600", color: theme.text, lineHeight: 28, marginBottom: 15 },
+    container: { flex: 1 },
+    title: {
+      fontSize: 20,
+      fontWeight: "600",
+      color: theme.text,
+      lineHeight: 28,
+      marginBottom: 15,
+    },
 
     cardTitle: {
       fontSize: 18,
@@ -322,7 +371,7 @@ const createStyles = (theme: any) => {
       fontSize: 16,
       color: theme.text,
       marginBottom: 5,
-      fontFamily: "Lato_400Regular"
+      fontFamily: "Lato_400Regular",
     },
 
     cardInputRow: {
@@ -365,17 +414,17 @@ const createStyles = (theme: any) => {
       padding: 8,
       borderRadius: 6,
       alignItems: "center",
-      alignSelf: 'flex-end',
+      alignSelf: "flex-end",
       width: 80,
       height: 40,
-      justifyContent: 'center',
+      justifyContent: "center",
       marginTop: 10,
     },
     editBtnText: {
       color: "#fff",
       fontFamily: "Lato_400Regular",
-      fontSize: 14
-    }
-  })
+      fontSize: 14,
+    },
+  });
   return styles;
-}
+};

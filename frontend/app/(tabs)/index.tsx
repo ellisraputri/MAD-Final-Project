@@ -1,4 +1,14 @@
-import { View, Text, StyleSheet, ImageBackground, Image, ScrollView, TouchableOpacity, Animated, TextInput, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import RankingCard from "@/components/ui/ranking-card";
 import { useEffect, useRef, useState } from "react";
@@ -12,19 +22,24 @@ import * as ImagePicker from "expo-image-picker";
 import Button from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
 import { socket } from "@/services/socket";
-import { ActivityRankDetail, GlobalRankDetail } from "@/services/summary/summary.type";
+import {
+  ActivityRankDetail,
+  GlobalRankDetail,
+} from "@/services/summary/summary.type";
 import { getActivityRank, getGlobalRank } from "@/services/summary/summary";
 import QRCode from 'react-native-qrcode-svg';
 
-const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"]
+const colors = ["#6FB3B8", "#B86F6F", "#AEB86F", "#B86FAF"];
 
 export default function HomeScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const {user, setUser, team, setTeam} = useAppContext();
+  const { user, setUser, team, setTeam } = useAppContext();
 
-  const rankings = [1,2,3,4,5,6,7];
-  const [results, setResults] = useState<(ActivityRankDetail | GlobalRankDetail | undefined)[]>([]);
+  const rankings = [1, 2, 3, 4, 5, 6, 7];
+  const [results, setResults] = useState<
+    (ActivityRankDetail | GlobalRankDetail | undefined)[]
+  >([]);
 
   const scrollRef = useRef<ScrollView>(null);
   const [members, setMembers] = useState<string[]>([]);
@@ -35,7 +50,8 @@ export default function HomeScreen() {
   const [loadingEditName, setLoadingEditName] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const defaultLogo = "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+  const defaultLogo =
+    "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
   const hasJoinedRef = useRef(false);
 
   useEffect(() => {
@@ -64,7 +80,7 @@ export default function HomeScreen() {
   useEffect(() => {
     checkTeam();
   }, []);
-  
+
   const checkTeam = async () => {
     const userResponse = await getStudentDetail();
     if (!userResponse.success) {
@@ -94,20 +110,19 @@ export default function HomeScreen() {
   };
 
   const fetchActivityRank = async (teamId: string, type?: string) => {
-    if(type === undefined) return;
+    if (type === undefined) return;
 
     try {
       const res = await getActivityRank({ activityId: type });
-      if (!res.success){
+      if (!res.success) {
         toast.error("Failed to fetch leaderboard data");
       }
 
-      for (let i=0; i<res.rankings.length; i++){
-        if (res.rankings[i].teamId === teamId){
+      for (let i = 0; i < res.rankings.length; i++) {
+        if (res.rankings[i].teamId === teamId) {
           return res.rankings[i];
         }
       }
-
     } catch (err) {
       console.log("Fetch error:", err);
     }
@@ -116,32 +131,31 @@ export default function HomeScreen() {
   const fetchGlobalRank = async (teamId: string) => {
     try {
       const res = await getGlobalRank();
-      if (!res.success){
+      if (!res.success) {
         toast.error("Failed to fetch leaderboard data");
       }
 
-      for (let i=0; i<res.rankings.length; i++){
-        if (res.rankings[i].teamId === teamId){
+      for (let i = 0; i < res.rankings.length; i++) {
+        if (res.rankings[i].teamId === teamId) {
           return res.rankings[i];
         }
       }
-
     } catch (err) {
       console.log("Fetch error:", err);
     }
   };
 
-  const fetchTeamDetail = async(id: string) => {
+  const fetchTeamDetail = async (id: string) => {
     const teamResponse = await getTeamDetail(id);
-    if(!teamResponse.success){
+    if (!teamResponse.success) {
       toast.error(teamResponse.message);
       return;
     }
     setTeam(teamResponse.team);
     hasJoinedRef.current = false;
-  }
+  };
 
-  const handleEditName = async() => {
+  const handleEditName = async () => {
     if (!team?.id || !teamName || !team.logo || loadingEditName) return;
 
     setLoadingEditName(true);
@@ -150,8 +164,8 @@ export default function HomeScreen() {
       teamId: team.id,
       name: teamName,
       logoUrl: team.logo,
-    })
-    if(!response.success) {
+    });
+    if (!response.success) {
       toast.error(response.message);
       return;
     }
@@ -159,54 +173,54 @@ export default function HomeScreen() {
     await fetchTeamDetail(team.id);
     setEditingName(false);
     setLoadingEditName(false);
-  }
+  };
 
   const handleEditLogo = async () => {
     try {
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      alert("Permission required!");
-      return;
-    }
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        alert("Permission required!");
+        return;
+      }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    });
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      });
 
-    if (result.canceled) return;
+      if (result.canceled) return;
 
-    const asset = result.assets[0];
-    const file = {
-      uri: asset.uri,
-      name: asset.fileName || "upload.jpg",
-      type: asset.mimeType || "image/jpeg",
-    };
+      const asset = result.assets[0];
+      const file = {
+        uri: asset.uri,
+        name: asset.fileName || "upload.jpg",
+        type: asset.mimeType || "image/jpeg",
+      };
 
-    if (!team?.id || !team?.name || !team.logo) return;
+      if (!team?.id || !team?.name || !team.logo) return;
 
-    const response = await editTeam({
-      teamId: team.id,
-      name: team.name,
-      logoUrl: team.logo,
-      file: file
-    })
-    if(!response.success) {
-      toast.error(response.message);
-      return;
-    }
+      const response = await editTeam({
+        teamId: team.id,
+        name: team.name,
+        logoUrl: team.logo,
+        file: file,
+      });
+      if (!response.success) {
+        toast.error(response.message);
+        return;
+      }
 
-    await fetchTeamDetail(team.id);
+      await fetchTeamDetail(team.id);
     } catch (error) {
       console.error(error);
     }
-    
-  
   };
 
-  
-
   useEffect(() => {
-    if (!user?.id || !team?.id) {console.log("not complete", user, team); return};
+    if (!user?.id || !team?.id) {
+      console.log("not complete", user, team);
+      return;
+    }
 
     const tryJoin = () => {
       if (hasJoinedRef.current) return;
@@ -249,29 +263,28 @@ export default function HomeScreen() {
       console.log("users", users);
       const names = users.map((u: any) => u.name);
       setMembers(names);
-      setCarouselMembers([...names]); 
+      setCarouselMembers([...names]);
     });
 
     return () => {
-      socket.off("team_active_users"); 
+      socket.off("team_active_users");
     };
   }, []);
 
-
-  return loading? <Loading/> : (
+  return loading ? (
+    <Loading />
+  ) : (
     <View style={styles.container}>
-      
       {/* HEADER */}
       <ImageBackground
         source={require("../../assets/images/header2.jpg")}
         style={styles.header}
-        imageStyle={{opacity: 1.0}}
+        imageStyle={{ opacity: 1.0 }}
       >
         <Image
           source={require("../../assets/images/logo.png")}
           style={styles.logoApp}
-        >
-        </Image>
+        ></Image>
 
         <View style={styles.headerContent}>
           <Text style={styles.welcome}>Welcome, {user?.firstName}!</Text>
@@ -287,7 +300,12 @@ export default function HomeScreen() {
           >
             {carouselMembers.map((name, i) => (
               <View key={i} style={styles.avatarContainer}>
-                <View style={[styles.avatar, {backgroundColor: colors[i % colors.length]}]}>
+                <View
+                  style={[
+                    styles.avatar,
+                    { backgroundColor: colors[i % colors.length] },
+                  ]}
+                >
                   <Text style={styles.avatarText}>{name[0]}</Text>
                 </View>
                 <Text style={styles.memberName}>{name}</Text>
@@ -298,8 +316,10 @@ export default function HomeScreen() {
       </ImageBackground>
 
       {/* CONTENT */}
-      <ScrollView style={styles.content}  contentContainerStyle={{ paddingBottom: 150 }}>
-        
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={{ paddingBottom: 150 }}
+      >
         {/* TEAM INFO */}
         <View style={{marginBottom: 5}}>
           <QRCode
@@ -323,7 +343,7 @@ export default function HomeScreen() {
                 name="pencil"
                 size={18}
                 color={theme.text}
-                onPress={()=>setEditingName(true)}
+                onPress={() => setEditingName(true)}
               />
             </>
           </View>
@@ -335,7 +355,7 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.logoWrapper}>
             <Image
               source={{
-                uri: team?.logo
+                uri: team?.logo,
               }}
               style={styles.logo}
             />
@@ -351,7 +371,7 @@ export default function HomeScreen() {
 
         {/* GLOBAL RANKING */}
         <Text style={styles.section}>Global Ranking:</Text>
-        <RankingCard 
+        <RankingCard
           rank={results[0]?.rank?.toString() || "-"}
           score={results[0] ? `${Math.round(results[0].score * 100)}%` : "-"}
           teamName={team?.name || "-"}
@@ -360,46 +380,51 @@ export default function HomeScreen() {
 
         {rankings.map((item) => (
           <View key={item}>
-            <Text style={styles.section}>
-              Highest Ranking Activity {item}:
-            </Text>
+            <Text style={styles.section}>Highest Ranking Activity {item}:</Text>
 
-            <RankingCard 
+            <RankingCard
               rank={results[item]?.rank?.toString() || "-"}
-              score={results[item] ? `${Math.round(results[item].score * 100)}%` : "-"}
+              score={
+                results[item]
+                  ? `${Math.round(results[item].score * 100)}%`
+                  : "-"
+              }
               teamName={team?.name || "-"}
               imageUrl={team?.logo || defaultLogo}
-              attemptNo={results[item] && "attemptNo" in results[item] ? results[item].attemptNo.toString() : undefined}
+              attemptNo={
+                results[item] && "attemptNo" in results[item]
+                  ? results[item].attemptNo.toString()
+                  : undefined
+              }
             />
           </View>
         ))}
 
-
-        <Modal
-          visible={editingName}
-          transparent
-          animationType="fade"
-        >
+        <Modal visible={editingName} transparent animationType="fade">
           <View style={styles.overlayPopup}>
             <View style={styles.popup}>
-              
               {/* Header */}
               <View style={styles.headerPopup}>
                 <Text style={styles.title}>Team Name</Text>
-  
-                <TouchableOpacity onPress={() => {setTeamName(team?.name); setEditingName(false)}}>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setTeamName(team?.name);
+                    setEditingName(false);
+                  }}
+                >
                   <Text style={styles.close}>✕</Text>
                 </TouchableOpacity>
               </View>
-  
+
               <TextInput
-                  placeholder="Enter your team ID"
-                  placeholderTextColor={theme.placeholderText}
-                  value={teamName}
-                  onChangeText={setTeamName}
-                  style={styles.input}
+                placeholder="Enter your team ID"
+                placeholderTextColor={theme.placeholderText}
+                value={teamName}
+                onChangeText={setTeamName}
+                style={styles.input}
               />
-  
+
               {/* OK Button */}
               <Button
                 fontSize={16}
@@ -409,13 +434,10 @@ export default function HomeScreen() {
                 onPress={handleEditName}
                 isLoading={loadingEditName}
               />
-  
             </View>
           </View>
         </Modal>
-
       </ScrollView>
-
     </View>
   );
 }
@@ -436,13 +458,13 @@ export const createStyles = (theme: any) => {
       fontSize: 28,
       color: "white",
       marginTop: 40,
-      fontFamily: "Nunito_700Bold"
+      fontFamily: "Nunito_700Bold",
     },
     subtitle: {
       color: "white",
       marginTop: 10,
       fontSize: 18,
-      fontFamily: "Lato_400Regular"
+      fontFamily: "Lato_400Regular",
     },
     members: {
       marginTop: 15,
@@ -482,9 +504,9 @@ export const createStyles = (theme: any) => {
 
     label: {
       fontSize: 18,
-      fontFamily: "Lato_400Regular", 
+      fontFamily: "Lato_400Regular",
       marginBottom: 20,
-      color: theme.blackText
+      color: theme.blackText,
     },
 
     row: {
@@ -496,7 +518,7 @@ export const createStyles = (theme: any) => {
       flexDirection: "row",
       alignItems: "center",
       marginLeft: 10,
-      marginTop: -20
+      marginTop: -20,
     },
 
     teamName: {
@@ -532,7 +554,7 @@ export const createStyles = (theme: any) => {
       borderRadius: 10,
       padding: 2,
       elevation: 3,
-      color: theme.text
+      color: theme.text,
     },
 
     section: {
@@ -540,20 +562,20 @@ export const createStyles = (theme: any) => {
       fontSize: 18,
       marginTop: 30,
       marginBottom: 10,
-      color: theme.blackText
+      color: theme.blackText,
     },
 
     logoApp: {
-      position: 'absolute',
+      position: "absolute",
       top: 10,
       right: 25,
       width: 40,
       height: 60,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
 
     teamInput: {
-      borderBottomWidth: 2, 
+      borderBottomWidth: 2,
       borderColor: theme.text,
       minWidth: 120,
       marginRight: 10,
@@ -565,7 +587,7 @@ export const createStyles = (theme: any) => {
       backgroundColor: theme.background,
       borderRadius: 25,
       padding: 24,
-      elevation: 6
+      elevation: 6,
     },
     headerPopup: {
       flexDirection: "row",
@@ -581,7 +603,7 @@ export const createStyles = (theme: any) => {
     },
     close: {
       fontSize: 28,
-      color: theme.blackText, 
+      color: theme.blackText,
     },
     overlayPopup: {
       flex: 1,
@@ -594,10 +616,10 @@ export const createStyles = (theme: any) => {
       borderBottomColor: theme.text,
       fontSize: 16,
       paddingVertical: 8,
-      fontFamily: 'Lato_400Regular',
+      fontFamily: "Lato_400Regular",
       marginTop: 2,
-      color: theme.blackText, 
+      color: theme.blackText,
     },
   });
   return styles;
-}
+};

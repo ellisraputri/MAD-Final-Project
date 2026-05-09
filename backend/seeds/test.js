@@ -1,8 +1,8 @@
-import { db } from '../config/firestore.js';
+import { db } from "../config/firestore.js";
 
 const updateScoresAndOutcomes = async () => {
   try {
-    const snapshot = await db.collection('teams').get();
+    const snapshot = await db.collection("teams").get();
 
     const batch = db.batch();
     let count = 0;

@@ -1,9 +1,15 @@
-import { useAppTheme } from '@/hooks/use-app-theme';
-import React, { useState } from 'react';
-import { View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { useAppTheme } from "@/hooks/use-app-theme";
+import React, { useState } from "react";
+import { View } from "react-native";
+import { WebView } from "react-native-webview";
 
-export default function Equation({ latex, fontSize=18 }: { latex: string, fontSize?: number }) {
+export default function Equation({
+  latex,
+  fontSize = 18,
+}: {
+  latex: string;
+  fontSize?: number;
+}) {
   const [height, setHeight] = useState(40);
   const theme = useAppTheme();
 
@@ -46,9 +52,9 @@ export default function Equation({ latex, fontSize=18 }: { latex: string, fontSi
   `;
 
   return (
-    <View style={{ width: '100%', alignSelf: 'center', minHeight: height }}>
+    <View style={{ width: "100%", alignSelf: "center", minHeight: height }}>
       <WebView
-        originWhitelist={['*']}
+        originWhitelist={["*"]}
         source={{ html }}
         scrollEnabled={false}
         onMessage={(event) => {
@@ -56,7 +62,7 @@ export default function Equation({ latex, fontSize=18 }: { latex: string, fontSi
         }}
         style={{
           height,
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
         }}
       />
     </View>

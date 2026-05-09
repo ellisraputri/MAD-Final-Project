@@ -1,7 +1,13 @@
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { Link } from "expo-router";
 import React from "react";
-import { View, Text, StyleSheet, ImageBackground, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Pressable,
+} from "react-native";
 
 type ActivityProps = {
   name: string;
@@ -17,16 +23,20 @@ export default function ActivityListCard(props: ActivityProps) {
 
   return (
     <View style={styles.container}>
-      
       {/* Top Image Section */}
       <ImageBackground
         source={props.image}
         style={styles.image}
         imageStyle={styles.imageStyle}
       >
-        <View style={[styles.badge, 
-            props.type === "Engineering"? {backgroundColor: "#BADFE7"} : {backgroundColor: "#C2EDCE"}]
-        }>
+        <View
+          style={[
+            styles.badge,
+            props.type === "Engineering"
+              ? { backgroundColor: "#BADFE7" }
+              : { backgroundColor: "#C2EDCE" },
+          ]}
+        >
           <Text style={styles.badgeText}>{props.type}</Text>
         </View>
       </ImageBackground>
@@ -44,19 +54,15 @@ export default function ActivityListCard(props: ActivityProps) {
         <Link
           href={{
             pathname: "/(tabs)/activity/[id]/instructions",
-            params: { id: props.index.toString() }
+            params: { id: props.index.toString() },
           }}
           asChild
         >
           <Pressable>
-            <Text style={[styles.link]}>
-              Find out more...
-            </Text>
+            <Text style={[styles.link]}>Find out more...</Text>
           </Pressable>
         </Link>
-
       </View>
-
     </View>
   );
 }
@@ -73,7 +79,7 @@ export const createStyles = (theme: any) => {
       shadowOpacity: 0.1,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
-      elevation: 4
+      elevation: 4,
     },
 
     image: {
@@ -131,4 +137,4 @@ export const createStyles = (theme: any) => {
     },
   });
   return styles;
-}
+};

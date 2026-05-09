@@ -16,23 +16,23 @@ import Button from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { getStudentDetail } from '@/services/student/student';
 import { useAppContext } from '@/context/AppContext';
-import { createTeam, getTeamDetail, joinTeam } from '@/services/team/team';
+import { createTeam, joinTeam } from '@/services/team/team';
 import { toast } from 'sonner-native';
 
 const gradeDropdown = [
-  {label: "1 (SD Kelas 1)", value: "1"},
-  {label: "2 (SD Kelas 2)", value: "2"},
-  {label: "3 (SD Kelas 3)", value: "3"},
-  {label: "4 (SD Kelas 4)", value: "4"},
-  {label: "5 (SD Kelas 5)", value: "5"},
-  {label: "6 (SD Kelas 6)", value: "6"},
-  {label: "7 (SMP Kelas 1)", value: "7"},
-  {label: "8 (SMP Kelas 2)", value: "8"},
-  {label: "9 (SMP Kelas 3)", value: "9"},
-  {label: "10 (SMA Kelas 1)", value: "10"},
-  {label: "11 (SMA Kelas 2)", value: "11"},
-  {label: "12 (SMA Kelas 3)", value: "12"},
-]
+  { label: "1 (SD Kelas 1)", value: "1" },
+  { label: "2 (SD Kelas 2)", value: "2" },
+  { label: "3 (SD Kelas 3)", value: "3" },
+  { label: "4 (SD Kelas 4)", value: "4" },
+  { label: "5 (SD Kelas 5)", value: "5" },
+  { label: "6 (SD Kelas 6)", value: "6" },
+  { label: "7 (SMP Kelas 1)", value: "7" },
+  { label: "8 (SMP Kelas 2)", value: "8" },
+  { label: "9 (SMP Kelas 3)", value: "9" },
+  { label: "10 (SMA Kelas 1)", value: "10" },
+  { label: "11 (SMA Kelas 2)", value: "11" },
+  { label: "12 (SMA Kelas 3)", value: "12" },
+];
 
 export default function TeamConfirmationScreen() {
   const theme = useAppTheme();
@@ -54,39 +54,40 @@ export default function TeamConfirmationScreen() {
     checkTeam();
   }, []);
 
-  const checkTeam = async() => {
+  const checkTeam = async () => {
     const userResponse = await getStudentDetail();
-    if(!userResponse.success){
-      toast.error(userResponse.message)
+    if (!userResponse.success) {
+      toast.error(userResponse.message);
       return;
     }
     setUser(userResponse.data);
     console.log(userResponse);
 
-    if(userResponse.data?.teamId !== null && userResponse.data?.teamId) {
+    if (userResponse.data?.teamId !== null && userResponse.data?.teamId) {
       router.push("/(tabs)");
     }
-  }
+  };
 
-  const handleCreateTeam = async() => {
-    if(newTeamModalLoading) return;
+  const handleCreateTeam = async () => {
+    if (newTeamModalLoading) return;
 
     setNewTeamModalLoading(true);
 
     const response = await createTeam({
-      name: teamName, grade: Number(grade)
-    })
-    if(!response.success) {
-      toast.error(response.message)
+      name: teamName,
+      grade: Number(grade),
+    });
+    if (!response.success) {
+      toast.error(response.message);
       setNewTeamModalLoading(false);
       return;
     }
-    
+
     setNewTeamModalLoading(false);
     setNewTeamModalVisible(false);
 
     router.push("/(tabs)");
-  }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -127,29 +128,25 @@ export default function TeamConfirmationScreen() {
     setJoinTeamModalVisible(false);
 
     router.push("/(tabs)");
-  }
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-    >
+    <KeyboardAvoidingView style={styles.container}>
       {/* Header Image */}
       <ImageBackground
-        source={require('../../assets/images/header.png')}
+        source={require("../../assets/images/header.png")}
         style={styles.header}
         resizeMode="cover"
       >
         <Image
           source={require("../../assets/images/logo.png")}
           style={styles.logo}
-        >
-        </Image>
+        ></Image>
 
         <Image
           source={require("../../assets/images/text_logo.png")}
           style={styles.textLogo}
-        >
-        </Image>
+        ></Image>
 
         <View style={styles.overlay}>
           <Text style={styles.subtitle}>
@@ -169,17 +166,20 @@ export default function TeamConfirmationScreen() {
             fill={theme.background}
           />
         </Svg>
-
       </ImageBackground>
 
       {/* Form */}
       <View style={styles.form}>
-        <Text style={styles.text}>Looks like you're not part of a team yet!</Text>
-        <Text style={styles.text}>Create one or join a team to jump into the fun 🚀✨</Text>
-        
+        <Text style={styles.text}>
+          Looks like you are not part of a team yet!
+        </Text>
+        <Text style={styles.text}>
+          Create one or join a team to jump into the fun 🚀✨
+        </Text>
+
         <Button
           onPress={() => setNewTeamModalVisible(true)}
-          text='Create New Team'
+          text="Create New Team"
           width={300}
           fontSize={20}
           marginTop={50}
@@ -187,21 +187,16 @@ export default function TeamConfirmationScreen() {
 
         <Button
           onPress={() => setJoinTeamModalVisible(true)}
-          text='Join a Team'
+          text="Join a Team"
           width={300}
           fontSize={20}
           marginTop={10}
         />
       </View>
 
-      <Modal
-        visible={newTeamModalVisible}
-        transparent
-        animationType="fade"
-      >
+      <Modal visible={newTeamModalVisible} transparent animationType="fade">
         <View style={styles.overlayPopup}>
           <View style={styles.popup}>
-            
             {/* Header */}
             <View style={styles.headerPopup}>
               <Text style={styles.title}>Create New Team</Text>
@@ -214,39 +209,38 @@ export default function TeamConfirmationScreen() {
             {/* Team Name */}
             <Text style={styles.label}>Team Name</Text>
             <TextInput
-                placeholder="Enter your team name"
-                placeholderTextColor={theme.placeholderText}
-                value={teamName}
-                onChangeText={setTeamName}
-                style={styles.input}
+              placeholder="Enter your team name"
+              placeholderTextColor={theme.placeholderText}
+              value={teamName}
+              onChangeText={setTeamName}
+              style={styles.input}
             />
 
             {/* Grade dropdown placeholder */}
             <Text style={styles.label}>Grade</Text>
-            <CustomDropdown data={gradeDropdown} value={grade} placeholder='Select grade' onSelect={setGrade}/>
+            <CustomDropdown
+              data={gradeDropdown}
+              value={grade}
+              placeholder="Select grade"
+              onSelect={setGrade}
+            />
 
             {/* OK Button */}
             <Button
               onPress={handleCreateTeam}
-              text='OK'
+              text="OK"
               width={150}
               fontSize={20}
               marginTop={30}
               isLoading={newTeamModalLoading}
             />
-
           </View>
         </View>
       </Modal>
 
-      <Modal
-        visible={joinTeamModalVisible}
-        transparent
-        animationType="fade"
-      >
+      <Modal visible={joinTeamModalVisible} transparent animationType="fade">
         <View style={styles.overlayPopup}>
           <View style={styles.popup}>
-            
             {/* Header */}
             <View style={styles.headerPopup}>
               <Text style={styles.title}>Join Team By ID</Text>
@@ -258,17 +252,17 @@ export default function TeamConfirmationScreen() {
 
             <Text style={styles.label}>Team ID</Text>
             <TextInput
-                placeholder="Enter your team ID"
-                placeholderTextColor={theme.placeholderText}
-                value={teamId}
-                onChangeText={setTeamId}
-                style={styles.input}
+              placeholder="Enter your team ID"
+              placeholderTextColor={theme.placeholderText}
+              value={teamId}
+              onChangeText={setTeamId}
+              style={styles.input}
             />
 
             {/* OK Button */}
             <Button
               onPress={handleJoinTeam}
-              text='OK'
+              text="OK"
               width={150}
               fontSize={16}
               marginTop={10}
@@ -305,7 +299,7 @@ export const createStyles = (theme: any) => {
     },
     header: {
       height: 300,
-      justifyContent: 'flex-end',
+      justifyContent: "flex-end",
     },
     form: {
       flex: 1,
@@ -318,7 +312,7 @@ export const createStyles = (theme: any) => {
     label: {
       fontSize: 16,
       color: theme.text,
-      fontFamily: 'Nunito_700Bold',
+      fontFamily: "Nunito_700Bold",
       marginTop: 20,
     },
     input: {
@@ -326,9 +320,9 @@ export const createStyles = (theme: any) => {
       borderBottomColor: theme.text,
       fontSize: 16,
       paddingVertical: 8,
-      fontFamily: 'Lato_400Regular',
+      fontFamily: "Lato_400Regular",
       marginTop: 2,
-      color: theme.blackText
+      color: theme.blackText,
     },
     text: {
       fontSize: 20,
@@ -337,35 +331,35 @@ export const createStyles = (theme: any) => {
       fontFamily: "Lato_400Regular",
     },
     diagonal: {
-      position: 'absolute',
+      position: "absolute",
       bottom: -1,
-      width: '100%',
+      width: "100%",
     },
     logo: {
-      position: 'absolute',
+      position: "absolute",
       top: 60,
       left: 15,
       width: 60,
       height: 80,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     textLogo: {
-      position: 'absolute',
+      position: "absolute",
       top: 150,
       left: 20,
       width: 180,
       height: 50,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     overlay: {
-      position: 'absolute',
+      position: "absolute",
       bottom: 60,
       left: 0,
       right: 20,
       padding: 20,
     },
     subtitle: {
-      color: '#fff',
+      color: "#fff",
       fontSize: 18,
       fontFamily: "Lato_700Bold",
     },
@@ -374,7 +368,7 @@ export const createStyles = (theme: any) => {
       backgroundColor: theme.background,
       borderRadius: 25,
       padding: 24,
-      elevation: 6
+      elevation: 6,
     },
     headerPopup: {
       flexDirection: "row",
@@ -396,7 +390,7 @@ export const createStyles = (theme: any) => {
     },
     close: {
       fontSize: 28,
-      color: theme.blackText
+      color: theme.blackText,
     },
     overlayPopup: {
       flex: 1,
@@ -406,4 +400,4 @@ export const createStyles = (theme: any) => {
     },
   });
   return styles;
-}
+};

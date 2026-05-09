@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "pretty": "prettier --write ."
   },
   "dependencies": {
     "@expo-google-fonts/lato": "^0.4.1",
@@ -40,6 +41,7 @@
     "expo-video": "~3.0.16",
     "expo-web-browser": "~15.0.10",
     "firebase": "^12.11.0",
+    "prettier": "^3.8.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",

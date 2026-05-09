@@ -1,21 +1,21 @@
 {
-    "overview": "Students analyse breathing patterns at rest and after exercise.",
-    "equipments": [
-        {
-            "image": "https://upload-os-bbs.hoyolab.com/upload/2022/09/08/97023210/b17448ff1e6d2cd72058140277e7adaa_5266023538865960094.png",
-            "caption": "Mobile phone with STEMM Lab App"
-        },
-        {
-            "image": "https://upload-os-bbs.hoyolab.com/upload/2022/09/08/97023210/b17448ff1e6d2cd72058140277e7adaa_5266023538865960094.png",
-            "caption": "Flat surface"
-        }
-    ],
-    "tutorial": [
-        "Place the phone gently on the chest.",
-        "Record breathing at rest.",
-        "Perform light exercise (Jog one minute on the spot, 100 star jump)",
-        "Record breathing again and compare results.",
-        "Rotate for each team member"
-    ],
-    "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "overview": "Students analyse breathing patterns at rest and after exercise.",
+  "equipments": [
+    {
+      "image": "https://upload-os-bbs.hoyolab.com/upload/2022/09/08/97023210/b17448ff1e6d2cd72058140277e7adaa_5266023538865960094.png",
+      "caption": "Mobile phone with STEMM Lab App"
+    },
+    {
+      "image": "https://upload-os-bbs.hoyolab.com/upload/2022/09/08/97023210/b17448ff1e6d2cd72058140277e7adaa_5266023538865960094.png",
+      "caption": "Flat surface"
+    }
+  ],
+  "tutorial": [
+    "Place the phone gently on the chest.",
+    "Record breathing at rest.",
+    "Perform light exercise (Jog one minute on the spot, 100 star jump)",
+    "Record breathing again and compare results.",
+    "Rotate for each team member"
+  ],
+  "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 }

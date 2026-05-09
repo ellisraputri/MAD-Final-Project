@@ -7,7 +7,10 @@ const __dirname = path.dirname(__filename);
 
 export const analyzeBreathing = (audioPath) => {
   return new Promise((resolve, reject) => {
-    const pythonPath = path.join(__dirname, "../scripts/.venv/Scripts/python.exe");
+    const pythonPath = path.join(
+      __dirname,
+      "../scripts/.venv/Scripts/python.exe",
+    );
     const scriptPath = path.join(__dirname, "../scripts/activity7.py");
 
     const py = spawn(pythonPath, [scriptPath, audioPath]);
@@ -34,8 +37,8 @@ export const analyzeBreathing = (audioPath) => {
         console.log(result);
       } catch (e) {
         reject("Invalid JSON: " + data);
-      } finally{
-        console.log('sukses777');
+      } finally {
+        console.log("sukses777");
       }
     });
   });

@@ -1,7 +1,13 @@
 import { getUser, initDB, saveTeam, saveUser } from "@/services/sqlite";
 import { StudentDetail } from "@/services/student/student.type";
 import { TeamDetail } from "@/services/team/team.type";
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
 type AppContextType = {
   user: StudentDetail | null;
@@ -25,10 +31,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     saveUser(newUser);
   };
 
-  const setTeamState = (newTeam: TeamDetail |null) => {
+  const setTeamState = (newTeam: TeamDetail | null) => {
     setTeam(newTeam);
     saveTeam(newTeam);
-  }
+  };
 
   return (
     <AppContext.Provider value={{ user, setUser, team, setTeam }}>

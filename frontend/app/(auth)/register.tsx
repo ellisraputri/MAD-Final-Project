@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -7,54 +7,61 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
-} from 'react-native';
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useRouter } from 'expo-router';
-import Svg, { Polygon } from 'react-native-svg';
-import CustomDropdown from '@/components/ui/dropdown';
-import Button from '@/components/ui/button';
-import { useAppTheme } from '@/hooks/use-app-theme';
-import { registerAndGetData } from '@/services/auth/auth';
+import { useRouter } from "expo-router";
+import Svg, { Polygon } from "react-native-svg";
+import CustomDropdown from "@/components/ui/dropdown";
+import Button from "@/components/ui/button";
+import { useAppTheme } from "@/hooks/use-app-theme";
+import { registerAndGetData } from "@/services/auth/auth";
+import PasswordInput from "@/components/ui/password-input";
 
 const gradeDropdown = [
-  {label: "1 (SD Kelas 1)", value: "1"},
-  {label: "2 (SD Kelas 2)", value: "2"},
-  {label: "3 (SD Kelas 3)", value: "3"},
-  {label: "4 (SD Kelas 4)", value: "4"},
-  {label: "5 (SD Kelas 5)", value: "5"},
-  {label: "6 (SD Kelas 6)", value: "6"},
-  {label: "7 (SMP Kelas 1)", value: "7"},
-  {label: "8 (SMP Kelas 2)", value: "8"},
-  {label: "9 (SMP Kelas 3)", value: "9"},
-  {label: "10 (SMA Kelas 1)", value: "10"},
-  {label: "11 (SMA Kelas 2)", value: "11"},
-  {label: "12 (SMA Kelas 3)", value: "12"},
-]
+  { label: "1 (SD Kelas 1)", value: "1" },
+  { label: "2 (SD Kelas 2)", value: "2" },
+  { label: "3 (SD Kelas 3)", value: "3" },
+  { label: "4 (SD Kelas 4)", value: "4" },
+  { label: "5 (SD Kelas 5)", value: "5" },
+  { label: "6 (SD Kelas 6)", value: "6" },
+  { label: "7 (SMP Kelas 1)", value: "7" },
+  { label: "8 (SMP Kelas 2)", value: "8" },
+  { label: "9 (SMP Kelas 3)", value: "9" },
+  { label: "10 (SMA Kelas 1)", value: "10" },
+  { label: "11 (SMA Kelas 2)", value: "11" },
+  { label: "12 (SMA Kelas 3)", value: "12" },
+];
 
 export default function RegisterScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [grade, setGrade] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [grade, setGrade] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = async() => {
-    if(isLoading) return;
+  const handleRegister = async () => {
+    if (isLoading) return;
 
-    if(email==='' || password==='' || firstName==='' || grade==='') {
+    if (email === "" || password === "" || firstName === "" || grade === "") {
       alert("Fields cannot be empty");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Password and password confirmation is not the same");
+      return;
     }
     setIsLoading(true);
 
-    const res = await registerAndGetData({email, password, firstName, grade});
+    const res = await registerAndGetData({ email, password, firstName, grade });
     alert(res.message);
     setIsLoading(false);
 
-    if(res.success) router.replace('/team_confirmation');
+    if (res.success) router.replace("/team_confirmation");
   };
 
   return (
@@ -63,26 +70,24 @@ export default function RegisterScreen() {
       contentContainerStyle={{ paddingBottom: 20 }}
       keyboardShouldPersistTaps="handled"
       enableOnAndroid={true}
-      extraScrollHeight={10}        // extra space above keyboard
-      enableAutomaticScroll={true}  // auto scrolls to focused input
+      extraScrollHeight={10} // extra space above keyboard
+      enableAutomaticScroll={true} // auto scrolls to focused input
     >
       {/* Header Image */}
       <ImageBackground
-        source={require('../../assets/images/header.png')}
+        source={require("../../assets/images/header.png")}
         style={styles.header}
         resizeMode="cover"
       >
         <Image
           source={require("../../assets/images/logo.png")}
           style={styles.logo}
-        >
-        </Image>
+        ></Image>
 
         <Image
           source={require("../../assets/images/text_logo.png")}
           style={styles.textLogo}
-        >
-        </Image>
+        ></Image>
 
         <View style={styles.overlay}>
           <Text style={styles.subtitle}>
@@ -102,7 +107,6 @@ export default function RegisterScreen() {
             fill={theme.background}
           />
         </Svg>
-
       </ImageBackground>
 
       {/* Form */}
@@ -117,13 +121,17 @@ export default function RegisterScreen() {
         />
 
         <Text style={styles.label}>Password</Text>
-        <TextInput
+        <PasswordInput
           placeholder="Enter your password"
-          placeholderTextColor={theme.placeholderText}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
+          password={password}
+          setPassword={setPassword}
+        />
+
+        <Text style={styles.label}>Confirm Password</Text>
+        <PasswordInput
+          placeholder="Reenter your password"
+          password={confirmPassword}
+          setPassword={setConfirmPassword}
         />
 
         <Text style={styles.label}>First Name</Text>
@@ -136,11 +144,16 @@ export default function RegisterScreen() {
         />
 
         <Text style={styles.label}>Grade</Text>
-        <CustomDropdown data={gradeDropdown} value={grade} placeholder='Select grade' onSelect={setGrade}/>
+        <CustomDropdown
+          data={gradeDropdown}
+          value={grade}
+          placeholder="Select grade"
+          onSelect={setGrade}
+        />
 
         <Button
           onPress={handleRegister}
-          text='Register'
+          text="Register"
           width={200}
           fontSize={20}
           marginTop={30}
@@ -148,10 +161,8 @@ export default function RegisterScreen() {
         />
 
         <View style={styles.loginContainer}>
-          <Text style={styles.loginText}>
-            Already have an account?{' '}
-          </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+          <Text style={styles.loginText}>Already have an account? </Text>
+          <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
             <Text style={styles.loginLink}>Login here</Text>
           </TouchableOpacity>
         </View>
@@ -168,7 +179,7 @@ export const createStyles = (theme: any) => {
     },
     header: {
       height: 300,
-      justifyContent: 'flex-end',
+      justifyContent: "flex-end",
     },
     form: {
       flex: 1,
@@ -182,7 +193,7 @@ export const createStyles = (theme: any) => {
     label: {
       fontSize: 18,
       color: theme.text,
-      fontFamily: 'Nunito_700Bold',
+      fontFamily: "Nunito_700Bold",
       marginTop: 24,
     },
     input: {
@@ -190,13 +201,13 @@ export const createStyles = (theme: any) => {
       borderBottomColor: theme.text,
       fontSize: 14,
       paddingVertical: 8,
-      fontFamily: 'Lato_400Regular',
+      fontFamily: "Lato_400Regular",
       marginTop: 0,
-      color: theme.blackText
+      color: theme.blackText,
     },
     loginContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
+      flexDirection: "row",
+      justifyContent: "center",
       marginTop: 40,
     },
     loginText: {
@@ -207,41 +218,41 @@ export const createStyles = (theme: any) => {
       fontSize: 16,
       fontWeight: "bold",
       color: theme.text,
-      textDecorationLine: 'underline',
+      textDecorationLine: "underline",
     },
     diagonal: {
-      position: 'absolute',
+      position: "absolute",
       bottom: -1,
-      width: '100%',
+      width: "100%",
     },
     logo: {
-      position: 'absolute',
+      position: "absolute",
       top: 60,
       left: 15,
       width: 60,
       height: 80,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     textLogo: {
-      position: 'absolute',
+      position: "absolute",
       top: 150,
       left: 20,
       width: 180,
       height: 50,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     overlay: {
-      position: 'absolute',
+      position: "absolute",
       bottom: 60,
       left: 0,
       right: 20,
       padding: 20,
     },
     subtitle: {
-      color: '#fff',
+      color: "#fff",
       fontSize: 18,
       fontFamily: "Lato_700Bold",
     },
   });
   return styles;
-}
+};

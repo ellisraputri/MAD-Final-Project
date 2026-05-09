@@ -1,36 +1,36 @@
 {
-    "overview": "Students design structures that withstand vibration, simulating earthquakes.",
-    "equipments": [
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
-            "caption": "Mobile phone with vibration sensor"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
-            "caption": "Cardboard"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
-            "caption": "Paper"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
-            "caption": "Scissors"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
-            "caption": "Sticky tape"
-        },
-        {
-            "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
-            "caption": "Plastic or paper cup"
-        }
-    ],
-    "tutorial": [
-        "Build an anti-vibration layer, by folding paper/cardboard.",
-        "Place a flat cardboard platform on top.",
-        "Place the phone in the centre and activate vibration mode on the STEMM App.",
-        "Modify the structure to reduce movement (e.g. more pillars, more folds, etc)"
-    ],
-    "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "overview": "Students design structures that withstand vibration, simulating earthquakes.",
+  "equipments": [
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "caption": "Mobile phone with vibration sensor"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "caption": "Cardboard"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "caption": "Paper"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "caption": "Scissors"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "caption": "Sticky tape"
+    },
+    {
+      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "caption": "Plastic or paper cup"
+    }
+  ],
+  "tutorial": [
+    "Build an anti-vibration layer, by folding paper/cardboard.",
+    "Place a flat cardboard platform on top.",
+    "Place the phone in the centre and activate vibration mode on the STEMM App.",
+    "Modify the structure to reduce movement (e.g. more pillars, more folds, etc)"
+  ],
+  "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 }

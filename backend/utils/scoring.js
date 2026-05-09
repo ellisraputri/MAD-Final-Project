@@ -14,9 +14,7 @@ const calculateScore = (pred, actual) => {
 };
 
 const getMedias = async (medias) => {
-  const mediaRefs = medias.map(id =>
-    db.collection("medias").doc(id)
-  );
+  const mediaRefs = medias.map((id) => db.collection("medias").doc(id));
 
   const mediaDocs = await db.getAll(...mediaRefs);
 
@@ -30,20 +28,20 @@ const getMedias = async (medias) => {
 
 export const scorePredictions = async (medias, predictions, activityId) => {
   const mediaList = await getMedias(medias);
-  console.log('medialist: ', mediaList);
+  console.log("medialist: ", mediaList);
 
   switch (activityId) {
-    case '1':
+    case "1":
       return await scoreActivity1(mediaList, predictions);
-    case '3':
+    case "3":
       return await scoreActivity3(mediaList, predictions);
-    case '7':
+    case "7":
       return await scoreActivity7(mediaList, predictions);
-    case '2':
-    case '4':
-    case '5':
-    case '6':
-      return await scoreActivity2456(predictions, activityId); 
+    case "2":
+    case "4":
+    case "5":
+    case "6":
+      return await scoreActivity2456(predictions, activityId);
 
     default:
       return [0, 0, 0];
@@ -56,7 +54,7 @@ const processMediaList = async ({
   getTempPath,
   analyzeFn,
   mapSuccess,
-  mapError
+  mapError,
 }) => {
   let outcomes = [];
 
@@ -71,13 +69,11 @@ const processMediaList = async ({
 
       const pred = predictions[i]?.prediction ?? 0;
       outcomes.push(mapSuccess(result, pred));
-
     } catch (err) {
       console.error("Processing error:", err);
 
       const pred = predictions[i]?.prediction ?? null;
       outcomes.push(mapError(pred));
-
     } finally {
       if (fs.existsSync(tempPath)) {
         fs.unlinkSync(tempPath);
@@ -93,8 +89,7 @@ export const scoreActivity1 = async (mediaList, predictions) => {
     mediaList,
     predictions,
 
-    getTempPath: (i) =>
-      path.resolve(`./temp/${Date.now()}_video3_${i}.mp4`),
+    getTempPath: (i) => path.resolve(`./temp/${Date.now()}_video3_${i}.mp4`),
 
     analyzeFn: analyzeVideo,
 
@@ -102,7 +97,7 @@ export const scoreActivity1 = async (mediaList, predictions) => {
       touch_time: result.touch_time,
       stop_time: result.stop_time,
       prediction: pred,
-      score: calculateScore(pred, result.touch_time)
+      score: calculateScore(pred, result.touch_time),
     }),
 
     mapError: (pred) => ({
@@ -110,8 +105,8 @@ export const scoreActivity1 = async (mediaList, predictions) => {
       stop_time: null,
       prediction: pred,
       score: 0,
-      error: true
-    })
+      error: true,
+    }),
   });
 };
 
@@ -120,23 +115,22 @@ export const scoreActivity3 = async (mediaList, predictions) => {
     mediaList,
     predictions,
 
-    getTempPath: (i) =>
-      path.resolve(`./temp/${Date.now()}_video3_${i}.mp4`),
+    getTempPath: (i) => path.resolve(`./temp/${Date.now()}_video3_${i}.mp4`),
 
     analyzeFn: analyzeVideo3,
 
     mapSuccess: (result, pred) => ({
       max_bend: result.max_bend,
       prediction: pred,
-      score: calculateScore(pred, result.max_bend)
+      score: calculateScore(pred, result.max_bend),
     }),
 
     mapError: (pred) => ({
       max_bend: null,
       prediction: pred,
       score: 0,
-      error: true
-    })
+      error: true,
+    }),
   });
 };
 
@@ -145,8 +139,7 @@ export const scoreActivity7 = async (mediaList, predictions) => {
     mediaList,
     predictions,
 
-    getTempPath: (i) =>
-      path.resolve(`./temp/${Date.now()}_audio7_${i}.mp4`),
+    getTempPath: (i) => path.resolve(`./temp/${Date.now()}_audio7_${i}.mp4`),
 
     analyzeFn: analyzeBreathing,
 
@@ -154,7 +147,7 @@ export const scoreActivity7 = async (mediaList, predictions) => {
       breath_count: result.breath_count,
       bpm: result.bpm,
       prediction: pred,
-      score: calculateScore(pred, result.bpm)
+      score: calculateScore(pred, result.bpm),
     }),
 
     mapError: (pred) => ({
@@ -162,13 +155,13 @@ export const scoreActivity7 = async (mediaList, predictions) => {
       bpm: null,
       prediction: pred,
       score: 0,
-      error: true
-    })
+      error: true,
+    }),
   });
 };
 
 export const scoreActivity2456 = async (predictions, activityId) => {
-  console.log(typeof(activityId));
+  console.log(typeof activityId);
   if (activityId == 2) {
     const sorted = [...predictions].sort((a, b) => b.outcome - a.outcome);
 
@@ -177,22 +170,21 @@ export const scoreActivity2456 = async (predictions, activityId) => {
       rankMap.set(item.prediction, index + 1);
     });
 
-    predictions = predictions.map(item => ({
+    predictions = predictions.map((item) => ({
       prediction: item.prediction,
-      realOutcome: item.outcome,              // 👈 keep original
-      outcome: rankMap.get(item.prediction)   // 👈 new ranked value
+      realOutcome: item.outcome, // 👈 keep original
+      outcome: rankMap.get(item.prediction), // 👈 new ranked value
     }));
   }
 
   const outcomes = [];
   for (const prediction of predictions) {
-    if(activityId !=2){
+    if (activityId != 2) {
       outcomes.push({
         outcome: prediction.outcome,
         score: calculateScore(prediction.prediction, prediction.outcome),
       });
-    }
-    else {
+    } else {
       outcomes.push({
         outcome: prediction.outcome,
         score: calculateScore(prediction.prediction, prediction.outcome),

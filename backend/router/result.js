@@ -1,6 +1,11 @@
 import express from "express";
 import { authenticate } from "../middleware/auth.js";
-import { getResultDetail, getResultList, rate, submitResult } from "../controller/result.js";
+import {
+  getResultDetail,
+  getResultList,
+  rate,
+  submitResult,
+} from "../controller/result.js";
 
 const resultRouter = express.Router();
 

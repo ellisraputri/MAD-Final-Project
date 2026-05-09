@@ -6,8 +6,8 @@ export const resultModel = ({
   outcomes,
   medias,
   predictions,
-  ratings = null, 
-  comments = null
+  ratings = null,
+  comments = null,
 }) => {
   return {
     activityId: activityId,
@@ -19,6 +19,6 @@ export const resultModel = ({
     predictions: predictions,
     ratings: ratings,
     comments: comments,
-    timestamp: new Date()
+    timestamp: new Date(),
   };
 };

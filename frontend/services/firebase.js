@@ -33,4 +33,4 @@ apiClient.interceptors.request.use(async (config) => {
   return config;
 });
 
-export {auth, apiClient};
+export { auth, apiClient };
