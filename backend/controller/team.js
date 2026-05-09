@@ -211,22 +211,24 @@ export const getDetailBatch = async (req, res) => {
       }
     }
 
-    const snapshot = await db
-      .collection("teams")
-      .where(FieldPath.documentId(), "in", nowTeamIds)
-      .get();
+    if (nowTeamIds.length > 0){
+      const snapshot = await db
+        .collection("teams")
+        .where(FieldPath.documentId(), "in", nowTeamIds)
+        .get();
 
-    const teams2 = snapshot.docs.map((doc) => {
-      const teamDetail = {
-        id: doc.id,
-        name: doc.data().name,
-        logo: doc.data().logo,
-      };
+      const teams2 = snapshot.docs.map((doc) => {
+        const teamDetail = {
+          id: doc.id,
+          name: doc.data().name,
+          logo: doc.data().logo,
+        };
 
-      cacheService.set(`team.${doc.id}`, teamDetail);
-      return teamDetail;
-    });
-    teams.push(...teams2);
+        cacheService.set(`team.${doc.id}`, teamDetail);
+        return teamDetail;
+      });
+      teams.push(...teams2);
+    }
 
     return res.status(200).json({
       teams,
