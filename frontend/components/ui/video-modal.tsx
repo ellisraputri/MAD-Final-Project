@@ -9,6 +9,7 @@ type VideoModalProps = {
   videoUri: string;
   openModal: () => void;
   closeModal: () => void;
+  showTime?: boolean;
 };
 
 export default function VideoModal({
@@ -16,6 +17,7 @@ export default function VideoModal({
   videoUri,
   openModal,
   closeModal,
+  showTime = false,
 }: VideoModalProps) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
@@ -56,6 +58,7 @@ export default function VideoModal({
               rate={rate}
               vidHeight={400}
               vidWidth={320}
+              showCurrTime={showTime}
             />
           </View>
 
@@ -122,6 +125,7 @@ export const createStyles = (theme: any) => {
       color: "#aaa",
       fontSize: 12,
       textAlign: "center",
+      fontFamily: "Lato_400Regular",
       paddingHorizontal: 20,
       marginTop: 10,
     },

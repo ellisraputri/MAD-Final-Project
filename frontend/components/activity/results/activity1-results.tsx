@@ -1,44 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import theoryActivity from "@/data/activity_theory.json";
-import Button from "./ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { ResultDetailActivityOne } from "@/services/result/result.type";
-import { getResultDetail } from "@/services/result/result";
-import { toast } from "sonner-native";
-import Loading from "./ui/loading";
-import RatingPopup from "./ui/rating-popup";
-import { ActivityRankDetail } from "@/services/summary/summary.type";
-import { getActivityRank } from "@/services/summary/summary";
-import { useAppContext } from "@/context/AppContext";
-import RankingCard from "./ui/ranking-card";
-import Equation from "./ui/equation";
-import Accordion from "./ui/accordion";
-import Table from "./ui/table";
-import VideoModal from "./ui/video-modal";
-
-const defaultLogo =
-  "https://static.vecteezy.com/system/resources/previews/036/280/650/non_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  const theme = useAppTheme();
-  const styles = createStyles(theme);
-
-  return (
-    <View style={{ marginBottom: 50 }}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.divider} />
-      {children}
-    </View>
-  );
-}
+import Loading from "../../ui/loading";
+import Equation from "../../ui/equation";
+import Accordion from "../../ui/accordion";
+import Table from "../../ui/table";
+import VideoModal from "../../ui/video-modal";
+import { createResultStyles } from "./activity-result-style";
+import useActivityResult from "./useActivityResults";
+import { ActivityResultBaseScreen } from "./activity-result-base";
+import CustomDropdown from "@/components/ui/dropdown";
+import { TextInput } from "react-native-gesture-handler";
 
 function ActivityOneResultCard(props: {
   item: number;
@@ -50,9 +24,23 @@ function ActivityOneResultCard(props: {
   accuracy: number | undefined;
 }) {
   const theme = useAppTheme();
-  const resultStyles = createStyles(theme);
+  const resultStyles = createResultStyles(theme);
+
+  const dropdownValue = [
+    { label: "Case 1: Object does not bounce", value: "no-bounce" },
+    { label: "Case 2: Object bounces", value: "bounce" },
+  ];
 
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [isBounce, setIsBounce] = useState<"no-bounce" | "bounce" | null>(null);
+  const [timeUp, setTimeUp] = useState("");
+
+  const isValidPositiveNumber = (value: string) => {
+    if (!value.trim()) return false;
+    const num = Number(value);
+    return !isNaN(num) && isFinite(num) && num > 0;
+  };
+
   const condition = props.timeCalculated && props.timeCalculated > 0;
   const gForceCondition = props.timeStop && props.timeStop > 0;
 
@@ -66,9 +54,22 @@ function ActivityOneResultCard(props: {
   const weight = props.mass ? props.mass * 9.8 : undefined;
   const dragForce = weight && netForce ? weight - netForce : undefined;
 
-  const gForce = gForceCondition
-    ? finalVelocity! / props.timeStop! / 9.8
+  const velocityUp = isValidPositiveNumber(timeUp)
+    ? 9.8 * Number(timeUp)
     : undefined;
+  const [deltaV, setDeltaV] = useState(finalVelocity);
+
+  const gForce = gForceCondition ? deltaV! / props.timeStop! / 9.8 : undefined;
+
+  useEffect(() => {
+    if (isBounce === "bounce") {
+      if (finalVelocity && velocityUp) {
+        setDeltaV(finalVelocity + velocityUp);
+      }
+    } else {
+      setDeltaV(finalVelocity);
+    }
+  }, [isBounce, finalVelocity, velocityUp]);
 
   return (
     <View
@@ -89,6 +90,7 @@ function ActivityOneResultCard(props: {
               videoUri={props.videoUri}
               openModal={() => setShowVideoModal(true)}
               closeModal={() => setShowVideoModal(false)}
+              showTime={true}
             />
           ) : (
             <Text style={resultStyles.descText}>No video</Text>
@@ -104,10 +106,10 @@ function ActivityOneResultCard(props: {
         </Text>
         <View style={resultStyles.list}>
           <Text style={resultStyles.listItem}>
-            • Predicted: {props.timePredict}
+            • Predicted: {props.timePredict?.toFixed(3)}
           </Text>
           <Text style={resultStyles.listItem}>
-            • Outcome: {props.timeCalculated}
+            • Outcome: {props.timeCalculated?.toFixed(3)}
           </Text>
         </View>
 
@@ -124,7 +126,8 @@ function ActivityOneResultCard(props: {
             First, we know that the height is 30 cm or 0.3 m.
           </Text>
           <Text style={resultStyles.calculationText}>
-            Then, from the measurements, the time is {props.timeCalculated} s.
+            Then, from the measurements, the time is{" "}
+            {props.timeCalculated?.toFixed(3)} s.
           </Text>
           <Text style={resultStyles.calculationText}>
             Since the toy is dropped, the initial velocity is 0 m/s.
@@ -217,42 +220,168 @@ function ActivityOneResultCard(props: {
         </Accordion>
 
         <Accordion title="G-Force Calculations" marginBottom={15}>
+          <View style={{ marginBottom: 20 }}>
+            <CustomDropdown
+              data={dropdownValue}
+              value={isBounce ?? ""}
+              placeholder="Object bounces?"
+              onSelect={(val) => setIsBounce(val as "no-bounce" | "bounce")}
+              heightCustom={54}
+            />
+          </View>
+
           {gForceCondition && (
             <>
-              <Text
-                style={[
-                  resultStyles.calculationText,
-                  { fontFamily: "Lato_700Bold" },
-                ]}
-              >
-                Case 1: Object does not bounce
-              </Text>
+              {isBounce === null ? (
+                <Text
+                  style={[
+                    resultStyles.descText,
+                    { textAlign: "center", marginTop: 10 },
+                  ]}
+                >
+                  Please select a bounce case above to see the G-Force
+                  calculation.
+                </Text>
+              ) : isBounce === "no-bounce" ? (
+                <>
+                  <Text
+                    style={[resultStyles.calculationText, { marginBottom: 2 }]}
+                  >
+                    Object goes from impact speed downward to 0 m/s.
+                  </Text>
 
-              <Text style={[resultStyles.calculationText, { marginBottom: 2 }]}>
-                Object goes from impact speed downward to 0 m/s.
-              </Text>
-              <Equation latex="\\Delta v = v_{impact}" fontSize={13} />
+                  <Equation latex="\\Delta v = v_{impact}" fontSize={13} />
 
-              <Text
-                style={[
-                  resultStyles.calculationText,
-                  { marginTop: 5, marginBottom: 2 },
-                ]}
-              >
-                Calculations:
-              </Text>
-              <Equation
-                latex={`\\\\text{g-force} = \\\\frac{v_{final}}{\\\\text{stop time}} \\\\div 9.8`}
-                fontSize={13}
-              />
-              <Equation
-                latex={`\\\\text{g-force} = \\\\frac{${finalVelocity?.toFixed(
-                  3,
-                )}}{${props.timeStop?.toFixed(
-                  3,
-                )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
-                fontSize={13}
-              />
+                  <Text
+                    style={[
+                      resultStyles.calculationText,
+                      { marginTop: 5, marginBottom: 2 },
+                    ]}
+                  >
+                    Calculations:
+                  </Text>
+
+                  <Equation
+                    latex={`\\\\text{g-force} = \\\\frac{v_{final}}{\\\\text{stop time}} \\\\div 9.8`}
+                    fontSize={13}
+                  />
+
+                  <Equation
+                    latex={`\\\\text{g-force} = \\\\frac{${deltaV?.toFixed(
+                      3,
+                    )}}{${props.timeStop?.toFixed(
+                      3,
+                    )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
+                    fontSize={13}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text
+                    style={[resultStyles.calculationText, { marginBottom: 2 }]}
+                  >
+                    Object reverses direction after impact.
+                  </Text>
+
+                  <Equation
+                    latex="\\Delta v = v_{down} + v_{up}"
+                    fontSize={13}
+                  />
+
+                  <View style={resultStyles.descContainer}>
+                    <Text style={resultStyles.calculationText}>
+                      To find the upward velocity, we need the time when the toy
+                      reach the max height.
+                    </Text>
+
+                    <Text style={resultStyles.calculationText}>
+                      However, due to the limitation of our model, it is not
+                      possible to output this number.
+                    </Text>
+
+                    <Text style={resultStyles.calculationText}>
+                      Therefore, we need you to see the time in the slow motion
+                      video.
+                    </Text>
+
+                    <Text style={resultStyles.calculationText}>
+                      Then, input the time the toy reach its maximum height when
+                      bouncing here:
+                    </Text>
+                  </View>
+
+                  <View style={resultStyles.inputContainer}>
+                    <TextInput
+                      placeholder="Enter time"
+                      placeholderTextColor={theme.placeholderText}
+                      value={timeUp}
+                      onChangeText={setTimeUp}
+                      style={resultStyles.input}
+                    />
+                    <Text style={resultStyles.calculationText}>seconds</Text>
+                  </View>
+
+                  {isValidPositiveNumber(timeUp) ? (
+                    <>
+                      <Text
+                        style={[
+                          resultStyles.calculationText,
+                          { marginTop: 5, marginBottom: 2 },
+                        ]}
+                      >
+                        Finding bounce speed:
+                      </Text>
+
+                      <Equation
+                        latex="v_{up} = g \\times t_{up}"
+                        fontSize={13}
+                      />
+                      <Equation
+                        latex={`v_{up} = 9.8 \\\\times ${Number(timeUp)?.toFixed(3)} = ${velocityUp?.toFixed(3)}`}
+                        fontSize={13}
+                      />
+
+                      <Equation
+                        latex={`\\\\Delta v = v_{down} + v_{up}`}
+                        fontSize={13}
+                      />
+                      <Equation
+                        latex={`\\\\Delta v = ${finalVelocity?.toFixed(3)} + ${velocityUp?.toFixed(3)} = ${deltaV?.toFixed(3)}`}
+                        fontSize={13}
+                      />
+
+                      <Text
+                        style={[
+                          resultStyles.calculationText,
+                          { marginTop: 8, marginBottom: 2 },
+                        ]}
+                      >
+                        Finding g-force:
+                      </Text>
+
+                      <Equation
+                        latex={`\\\\text{g-force} = \\\\frac{\\\\Delta v}{\\\\text{stop time}} \\\\div 9.8`}
+                        fontSize={13}
+                      />
+
+                      <Equation
+                        latex={`\\\\text{g-force} = \\\\frac{${deltaV?.toFixed(
+                          3,
+                        )}}{${props.timeStop?.toFixed(
+                          3,
+                        )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
+                        fontSize={13}
+                      />
+                    </>
+                  ) : (
+                    <View style={resultStyles.warningContainer}>
+                      <Text style={resultStyles.warning}>
+                        Please enter a valid positive number.
+                      </Text>
+                    </View>
+                  )}
+                </>
+              )}
             </>
           )}
         </Accordion>
@@ -266,69 +395,25 @@ export default function ActivityOneResultsScreen(props: {
   onBack: () => void;
 }) {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
-  const { team } = useAppContext();
+  const styles = createResultStyles(theme);
 
   const { id } = useLocalSearchParams();
-  const [data, setData] = useState<ResultDetailActivityOne>();
-  const [loading, setLoading] = useState(false);
-  const [showRating, setShowRating] = useState(false);
-  const [result, setResult] = useState<ActivityRankDetail>();
-
-  const fetchDetail = async () => {
-    setLoading(true);
-
-    const response = await getResultDetail({ resultId: props.resultId });
-    if (!response.success || response.data === null) {
-      toast.error(response.message);
-      setLoading(false);
-      return;
-    }
-
-    if (Number(response.data.activityId) !== 1) {
-      console.warn(
-        "[ActivityOne] Wrong activityId received, skipping render. Got:",
-        response.data.activityId,
-      );
-      return;
-    }
-    setData(response.data as ResultDetailActivityOne);
-    if (!response.data?.ratings) setShowRating(true);
-
-    const rankingRes = await getActivityRank({ activityId: "1" });
-    if (!rankingRes.success) {
-      toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
-      );
-    }
-    for (let i = 0; i < rankingRes.rankings.length; i++) {
-      if (rankingRes.rankings[i].resultId === props.resultId) {
-        setResult(rankingRes.rankings[i]);
-        break;
-      }
-    }
-
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchDetail();
-  }, []);
+  const { data, loading, showRating, setShowRating, result } =
+    useActivityResult<ResultDetailActivityOne>(props.resultId, 1);
 
   return loading ? (
     <Loading />
   ) : (
-    <>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
-      >
-        {/* Theory */}
-        <Section title="Theory">
-          <Text style={[styles.paragraph, { marginBottom: 30 }]}>
-            {theoryActivity["theory1"]}
-          </Text>
-
+    <ActivityResultBaseScreen
+      activityId="1"
+      resultId={props.resultId}
+      theoryKey="theory1"
+      result={result}
+      showRating={showRating}
+      onCloseRating={() => setShowRating(false)}
+      onBack={props.onBack}
+      theoryChildren={
+        <>
           <Text style={styles.subtitle}>Forces Acting on the Toy</Text>
 
           <Table
@@ -428,175 +513,21 @@ export default function ActivityOneResultsScreen(props: {
             Case 2 (bounce):
           </Text>
           <Equation latex="\\Delta v = v_{impact} + v_{up}" fontSize={13} />
-        </Section>
-
-        {/* Results */}
-        <Section title="Results">
-          {data?.outcomes?.map((outcome, index) => (
-            <ActivityOneResultCard
-              key={index}
-              item={index + 1}
-              videoUri={data.medias?.[index]?.content}
-              mass={data?.predictions[index]?.mass}
-              timeCalculated={outcome?.touch_time}
-              timePredict={data.predictions?.[index]?.prediction}
-              timeStop={outcome?.stop_time}
-              accuracy={outcome?.score}
-            />
-          ))}
-        </Section>
-
-        <Section title="Leaderboard Rank">
-          {result === undefined ? (
-            <Text style={styles.paragraph}>
-              Still compiling leaderboard data. Please wait until tomorrow.
-            </Text>
-          ) : (
-            <RankingCard
-              rank={result.rank?.toString() || "-"}
-              score={result ? `${Math.round(result.score * 100)}%` : "-"}
-              teamName={team?.name || "-"}
-              imageUrl={team?.logo || defaultLogo}
-              attemptNo={result.attemptNo.toString()}
-            />
-          )}
-        </Section>
-
-        <Button
-          width={250}
-          onPress={props.onBack}
-          fontSize={20}
-          marginTop={5}
-          text="Back"
+        </>
+      }
+    >
+      {data?.outcomes?.map((outcome, index) => (
+        <ActivityOneResultCard
+          key={index}
+          item={index + 1}
+          videoUri={data.medias?.[index]?.content}
+          mass={data?.predictions[index]?.mass}
+          timeCalculated={outcome?.touch_time}
+          timePredict={data.predictions?.[index]?.prediction}
+          timeStop={outcome?.stop_time}
+          accuracy={outcome?.score}
         />
-      </ScrollView>
-
-      {data?.resultId && (
-        <RatingPopup
-          activityId={"1"}
-          resultId={data?.resultId}
-          showModal={showRating}
-          onClose={() => setShowRating(false)}
-        />
-      )}
-    </>
+      ))}
+    </ActivityResultBaseScreen>
   );
 }
-
-const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-      paddingHorizontal: 5,
-    },
-
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: theme.text,
-      fontFamily: "Lato_700Bold",
-    },
-
-    divider: {
-      height: 2,
-      backgroundColor: theme.text,
-      marginVertical: 10,
-    },
-
-    paragraph: {
-      fontSize: 15,
-      lineHeight: 22,
-      textAlign: "justify",
-      fontFamily: "Lato_400Regular",
-      color: theme.blackText,
-    },
-
-    subtitle: {
-      marginTop: 20,
-      fontSize: 17,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      marginBottom: 10,
-    },
-
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-    },
-    subsContainer: {
-      marginLeft: 20,
-    },
-    titleRow: {
-      marginBottom: 5,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    card: {
-      width: "100%",
-      backgroundColor: theme.background,
-      borderRadius: 10,
-      padding: 20,
-      marginBottom: 30,
-      elevation: 3,
-    },
-    title: {
-      marginBottom: 20,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 20,
-    },
-    videoPlaceholder: {
-      height: 400,
-      width: "100%",
-      borderWidth: 2,
-      borderColor: theme.text,
-      backgroundColor: theme.hoverBackground,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: 10,
-      overflow: "hidden",
-    },
-    prediction: {
-      marginTop: 15,
-      fontFamily: "Lato_700Bold",
-      color: theme.text,
-      fontSize: 18,
-    },
-    subtitleText: {
-      marginTop: 10,
-      fontFamily: "Lato_700Bold",
-      fontSize: 16,
-      color: theme.blackText,
-    },
-    descText: {
-      marginTop: 10,
-      fontFamily: "Lato_400Regular",
-      fontSize: 15,
-      color: theme.blackText,
-    },
-    closeBtnText: {
-      color: "#fff",
-      fontFamily: "Lato_400Regular",
-      fontSize: 14,
-    },
-    list: {
-      marginLeft: 10,
-      marginTop: 4,
-    },
-    listItem: {
-      fontSize: 15,
-      fontFamily: "Lato_400Regular",
-      marginBottom: 5,
-      color: theme.blackText,
-    },
-    calculationText: {
-      fontSize: 15,
-      fontFamily: "Lato_400Regular",
-      marginBottom: 15,
-      color: theme.blackText,
-    },
-  });
-  return styles;
-};
