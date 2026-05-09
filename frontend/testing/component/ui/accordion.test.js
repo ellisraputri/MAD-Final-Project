@@ -8,12 +8,9 @@ import Accordion from "@/components/ui/accordion";
 describe("Accordion", () => {
   it("renders title correctly", () => {
     const { getByText } = render(
-      <Accordion
-        title="FAQ Section"
-        marginBottom={10}
-      >
+      <Accordion title="FAQ Section" marginBottom={10}>
         <></>
-      </Accordion>
+      </Accordion>,
     );
 
     expect(getByText("FAQ Section")).toBeTruthy();
@@ -21,82 +18,58 @@ describe("Accordion", () => {
 
   it("does not show children initially", () => {
     const { queryByText } = render(
-      <Accordion
-        title="Accordion"
-        marginBottom={10}
-      >
+      <Accordion title="Accordion" marginBottom={10}>
         <>{/* children */}</>
-      </Accordion>
+      </Accordion>,
     );
 
-    expect(
-      queryByText("Accordion Content")
-    ).toBeNull();
+    expect(queryByText("Accordion Content")).toBeNull();
   });
 
   it("shows children when pressed", () => {
     const { Text } = require("react-native");
     const { getByText } = render(
-      <Accordion
-        title="Accordion"
-        marginBottom={10}
-      >
+      <Accordion title="Accordion" marginBottom={10}>
         <Text>Accordion Content</Text>
-      </Accordion>
+      </Accordion>,
     );
 
     fireEvent.press(getByText("Accordion"));
 
-    expect(
-      getByText("Accordion Content")
-    ).toBeTruthy();
+    expect(getByText("Accordion Content")).toBeTruthy();
   });
 
   it("hides children when pressed twice", () => {
     const { Text } = require("react-native");
     const { getByText, queryByText } = render(
-      <Accordion
-        title="Accordion"
-        marginBottom={10}
-      >
+      <Accordion title="Accordion" marginBottom={10}>
         <Text>Accordion Content</Text>
-      </Accordion>
+      </Accordion>,
     );
 
     fireEvent.press(getByText("Accordion"));
 
-    expect(
-      getByText("Accordion Content")
-    ).toBeTruthy();
+    expect(getByText("Accordion Content")).toBeTruthy();
 
     fireEvent.press(getByText("Accordion"));
 
-    expect(
-      queryByText("Accordion Content")
-    ).toBeNull();
+    expect(queryByText("Accordion Content")).toBeNull();
   });
 
   it("toggles chevron icon", () => {
     const { Text } = require("react-native");
     const { getByText, queryByText } = render(
-      <Accordion
-        title="Accordion"
-        marginBottom={10}
-      >
+      <Accordion title="Accordion" marginBottom={10}>
         <Text>Content</Text>
-      </Accordion>
+      </Accordion>,
     );
 
     // collapsed initially
-    expect(
-      queryByText("chevron-down")
-    ).toBeTruthy();
+    expect(queryByText("chevron-down")).toBeTruthy();
 
     fireEvent.press(getByText("Accordion"));
 
     // expanded
-    expect(
-      queryByText("chevron-up")
-    ).toBeTruthy();
+    expect(queryByText("chevron-up")).toBeTruthy();
   });
 });

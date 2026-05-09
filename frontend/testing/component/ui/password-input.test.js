@@ -18,7 +18,7 @@ describe("PasswordInput", () => {
         placeholder="Enter password"
         password=""
         setPassword={jest.fn()}
-      />
+      />,
     );
 
     expect(getByPlaceholderText("Enter password")).toBeTruthy();
@@ -30,7 +30,7 @@ describe("PasswordInput", () => {
         placeholder="Password"
         password="secret123"
         setPassword={jest.fn()}
-      />
+      />,
     );
 
     expect(getByDisplayValue("secret123")).toBeTruthy();
@@ -44,13 +44,10 @@ describe("PasswordInput", () => {
         placeholder="Password"
         password=""
         setPassword={setPassword}
-      />
+      />,
     );
 
-    fireEvent.changeText(
-      getByPlaceholderText("Password"),
-      "newpassword"
-    );
+    fireEvent.changeText(getByPlaceholderText("Password"), "newpassword");
 
     expect(setPassword).toHaveBeenCalledWith("newpassword");
   });
@@ -61,7 +58,7 @@ describe("PasswordInput", () => {
         placeholder="Password"
         password=""
         setPassword={jest.fn()}
-      />
+      />,
     );
 
     expect(getByText("eye")).toBeTruthy();
@@ -77,7 +74,7 @@ describe("PasswordInput", () => {
         placeholder="Password"
         password=""
         setPassword={jest.fn()}
-      />
+      />,
     ).toJSON();
 
     expect(tree).toMatchSnapshot();

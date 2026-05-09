@@ -38,9 +38,7 @@ describe("Table", () => {
   });
 
   it("matches snapshot", () => {
-    const tree = render(
-      <Table columns={columns} data={data} />,
-    ).toJSON();
+    const tree = render(<Table columns={columns} data={data} />).toJSON();
 
     expect(tree).toMatchSnapshot();
   });

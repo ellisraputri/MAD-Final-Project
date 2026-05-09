@@ -18,9 +18,7 @@ describe("Button", () => {
   });
 
   it("renders correctly", () => {
-    const { getByText } = render(
-      <Button {...defaultProps} />
-    );
+    const { getByText } = render(<Button {...defaultProps} />);
 
     expect(getByText("Submit")).toBeTruthy();
   });
@@ -29,10 +27,7 @@ describe("Button", () => {
     const onPress = jest.fn();
 
     const { getByText } = render(
-      <Button
-        {...defaultProps}
-        onPress={onPress}
-      />
+      <Button {...defaultProps} onPress={onPress} />,
     );
 
     fireEvent.press(getByText("Submit"));
@@ -41,34 +36,21 @@ describe("Button", () => {
   });
 
   it("renders custom height", () => {
-    const { getByText } = render(
-      <Button
-        {...defaultProps}
-        height={60}
-      />
-    );
+    const { getByText } = render(<Button {...defaultProps} height={60} />);
 
     expect(getByText("Submit")).toBeTruthy();
   });
 
   it("renders with marginBottom", () => {
     const { getByText } = render(
-      <Button
-        {...defaultProps}
-        marginBottom={20}
-      />
+      <Button {...defaultProps} marginBottom={20} />,
     );
 
     expect(getByText("Submit")).toBeTruthy();
   });
 
   it("renders different text", () => {
-    const { getByText } = render(
-      <Button
-        {...defaultProps}
-        text="Confirm"
-      />
-    );
+    const { getByText } = render(<Button {...defaultProps} text="Confirm" />);
 
     expect(getByText("Confirm")).toBeTruthy();
   });

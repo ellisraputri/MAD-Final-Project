@@ -44,6 +44,7 @@ export default function HomeScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [members, setMembers] = useState<string[]>([]);
   const [carouselMembers, setCarouselMembers] = useState<string[]>([]);
+  const [activeMembers, setActiveMembers] = useState<string[]>([]);
 
   const [teamName, setTeamName] = useState(team?.name);
   const [editingName, setEditingName] = useState(false);
@@ -152,6 +153,8 @@ export default function HomeScreen() {
       return;
     }
     setTeam(teamResponse.team);
+    if (teamResponse.team !== null)
+      setCarouselMembers(teamResponse.team.members.map((t, _) => t.firstName));
     hasJoinedRef.current = false;
   };
 
@@ -227,7 +230,6 @@ export default function HomeScreen() {
 
       if (!socket.connected) {
         console.log("⏳ socket not ready");
-        return;
       }
 
       console.log("🔥 JOINING TEAM");
@@ -241,6 +243,7 @@ export default function HomeScreen() {
       });
 
       hasJoinedRef.current = true;
+      console.log("🎉 socket is ready");
     };
 
     // try immediately
@@ -255,21 +258,32 @@ export default function HomeScreen() {
   }, [user?.id, team?.id]);
 
   useEffect(() => {
+    const handleActiveUsers = ({ teamId, users }: any) => {
+      console.log("users", users);
+
+      let names = users.map((u: any) => u.name);
+      setMembers(names);
+
+      if (!names.includes(user?.firstName)) {
+        names.push(user?.firstName);
+      }
+
+      setActiveMembers([...names]);
+    };
+
+    console.log("is socket connected?", socket.connected);
+    // LISTENER FIRST
+    socket.on("team_active_users", handleActiveUsers);
+
+    // THEN EMIT
     socket.emit("get_team_active_users", {
       teamId: team?.id,
     });
 
-    socket.on("team_active_users", ({ teamId, users }: any) => {
-      console.log("users", users);
-      const names = users.map((u: any) => u.name);
-      setMembers(names);
-      setCarouselMembers([...names]);
-    });
-
     return () => {
-      socket.off("team_active_users");
+      socket.off("team_active_users", handleActiveUsers);
     };
-  }, []);
+  }, [team?.id, user?.firstName]);
 
   return loading ? (
     <Loading />
@@ -289,7 +303,7 @@ export default function HomeScreen() {
         <View style={styles.headerContent}>
           <Text style={styles.welcome}>Welcome, {user?.firstName}!</Text>
 
-          <Text style={styles.subtitle}>Online team members:</Text>
+          <Text style={styles.subtitle}>Team members:</Text>
 
           <ScrollView
             ref={scrollRef}
@@ -307,6 +321,10 @@ export default function HomeScreen() {
                   ]}
                 >
                   <Text style={styles.avatarText}>{name[0]}</Text>
+
+                  {activeMembers.includes(name) && (
+                    <View style={styles.onlineDot} />
+                  )}
                 </View>
                 <Text style={styles.memberName}>{name}</Text>
               </View>
@@ -616,6 +634,20 @@ export const createStyles = (theme: any) => {
       fontFamily: "Lato_400Regular",
       marginTop: 2,
       color: theme.blackText,
+    },
+    onlineDot: {
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+
+      backgroundColor: "limegreen",
+
+      borderWidth: 2,
+      borderColor: "white",
     },
   });
   return styles;

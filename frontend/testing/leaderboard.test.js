@@ -40,9 +40,7 @@ jest.mock("@/components/ui/podium-card", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
-  return ({ rank, name }) => (
-    <Text>{`Podium ${rank} ${name}`}</Text>
-  );
+  return ({ rank, name }) => <Text>{`Podium ${rank} ${name}`}</Text>;
 });
 
 describe("LeaderboardScreen", () => {

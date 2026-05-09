@@ -10,14 +10,12 @@ const mockGetURI = jest.fn(() => "file://audio.mp3");
 const mockGetStatusAsync = jest.fn(() =>
   Promise.resolve({
     metering: -20,
-  })
+  }),
 );
 
 jest.mock("expo-av", () => ({
   Audio: {
-    requestPermissionsAsync: jest.fn(() =>
-      Promise.resolve({ granted: true })
-    ),
+    requestPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true })),
     setAudioModeAsync: jest.fn(),
     Recording: {
       createAsync: jest.fn(),
@@ -57,9 +55,7 @@ describe("LiveRecorder", () => {
   };
 
   it("renders correctly", () => {
-    const { getByText } = render(
-      <LiveRecorder {...defaultProps} />
-    );
+    const { getByText } = render(<LiveRecorder {...defaultProps} />);
 
     expect(getByText("Breathing Test")).toBeTruthy();
     expect(getByText("00:00")).toBeTruthy();
@@ -68,9 +64,7 @@ describe("LiveRecorder", () => {
   });
 
   it("starts recording when mic button is pressed", async () => {
-    const { getByText } = render(
-      <LiveRecorder {...defaultProps} />
-    );
+    const { getByText } = render(<LiveRecorder {...defaultProps} />);
 
     fireEvent.press(getByText("mic"));
 
@@ -86,9 +80,7 @@ describe("LiveRecorder", () => {
   });
 
   it("stops recording when stop button is pressed", async () => {
-    const { getByText } = render(
-      <LiveRecorder {...defaultProps} />
-    );
+    const { getByText } = render(<LiveRecorder {...defaultProps} />);
 
     fireEvent.press(getByText("mic"));
 
@@ -106,9 +98,7 @@ describe("LiveRecorder", () => {
   });
 
   it("calls onPressButton after recording finished", async () => {
-    const { getByText } = render(
-      <LiveRecorder {...defaultProps} />
-    );
+    const { getByText } = render(<LiveRecorder {...defaultProps} />);
 
     fireEvent.press(getByText("mic"));
 
@@ -130,23 +120,16 @@ describe("LiveRecorder", () => {
   it("shows alert if button pressed before recording", () => {
     global.alert = jest.fn();
 
-    const { getByText } = render(
-      <LiveRecorder {...defaultProps} />
-    );
+    const { getByText } = render(<LiveRecorder {...defaultProps} />);
 
     fireEvent.press(getByText("Next"));
 
-    expect(global.alert).toHaveBeenCalledWith(
-      "Please record first."
-    );
+    expect(global.alert).toHaveBeenCalledWith("Please record first.");
   });
 
   it("does not render action button when disabled", () => {
     const { queryByText } = render(
-      <LiveRecorder
-        {...defaultProps}
-        isDisabledButton={true}
-      />
+      <LiveRecorder {...defaultProps} isDisabledButton={true} />,
     );
 
     expect(queryByText("Next")).toBeNull();
@@ -156,12 +139,10 @@ describe("LiveRecorder", () => {
     console.error = jest.fn();
 
     Audio.Recording.createAsync.mockRejectedValue(
-      new Error("Recording failed")
+      new Error("Recording failed"),
     );
 
-    const { getByText } = render(
-      <LiveRecorder {...defaultProps} />
-    );
+    const { getByText } = render(<LiveRecorder {...defaultProps} />);
 
     fireEvent.press(getByText("mic"));
 

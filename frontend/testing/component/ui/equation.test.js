@@ -25,17 +25,13 @@ jest.mock("react-native-webview", () => {
 
 describe("Equation", () => {
   it("renders correctly", () => {
-    const { getByText } = render(
-      <Equation latex={"E = mc^2"} />
-    );
+    const { getByText } = render(<Equation latex={"E = mc^2"} />);
 
     expect(getByText("Mock WebView")).toBeTruthy();
   });
 
   it("handles webview message and updates height", () => {
-    const { getByText } = render(
-      <Equation latex={"a^2+b^2=c^2"} />
-    );
+    const { getByText } = render(<Equation latex={"a^2+b^2=c^2"} />);
 
     fireEvent.press(getByText("Mock WebView"));
 
@@ -43,17 +39,13 @@ describe("Equation", () => {
   });
 
   it("renders with custom font size", () => {
-    const { getByText } = render(
-      <Equation latex={"x=1"} fontSize={30} />
-    );
+    const { getByText } = render(<Equation latex={"x=1"} fontSize={30} />);
 
     expect(getByText("Mock WebView")).toBeTruthy();
   });
 
   it("renders different latex expressions", () => {
-    const { rerender, getByText } = render(
-      <Equation latex={"\\frac{1}{2}"} />
-    );
+    const { rerender, getByText } = render(<Equation latex={"\\frac{1}{2}"} />);
 
     expect(getByText("Mock WebView")).toBeTruthy();
 
