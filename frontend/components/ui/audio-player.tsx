@@ -53,7 +53,7 @@ export default function AudioPlayer({
     const { sound } = await Audio.Sound.createAsync(
       { uri },
       { shouldPlay: false, progressUpdateIntervalMillis: 50, isLooping: false },
-      onPlaybackStatusUpdate
+      onPlaybackStatusUpdate,
     );
 
     soundRef.current = sound;

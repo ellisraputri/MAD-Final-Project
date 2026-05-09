@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { ResultDetailActivityOne } from "@/services/result/result.type";
@@ -11,6 +11,8 @@ import VideoModal from "../../ui/video-modal";
 import { createResultStyles } from "./activity-result-style";
 import useActivityResult from "./useActivityResults";
 import { ActivityResultBaseScreen } from "./activity-result-base";
+import CustomDropdown from "@/components/ui/dropdown";
+import { TextInput } from "react-native-gesture-handler";
 
 function ActivityOneResultCard(props: {
   item: number;
@@ -24,7 +26,21 @@ function ActivityOneResultCard(props: {
   const theme = useAppTheme();
   const resultStyles = createResultStyles(theme);
 
+  const dropdownValue = [
+    { label: "Case 1: Object does not bounce", value: "no-bounce" },
+    { label: "Case 2: Object bounces", value: "bounce" },
+  ];
+
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [isBounce, setIsBounce] = useState<"no-bounce" | "bounce" | null>(null);
+  const [timeUp, setTimeUp] = useState("");
+
+  const isValidPositiveNumber = (value: string) => {
+    if (!value.trim()) return false;
+    const num = Number(value);
+    return !isNaN(num) && isFinite(num) && num > 0;
+  };
+
   const condition = props.timeCalculated && props.timeCalculated > 0;
   const gForceCondition = props.timeStop && props.timeStop > 0;
 
@@ -38,9 +54,22 @@ function ActivityOneResultCard(props: {
   const weight = props.mass ? props.mass * 9.8 : undefined;
   const dragForce = weight && netForce ? weight - netForce : undefined;
 
-  const gForce = gForceCondition
-    ? finalVelocity! / props.timeStop! / 9.8
+  const velocityUp = isValidPositiveNumber(timeUp)
+    ? 9.8 * Number(timeUp)
     : undefined;
+  const [deltaV, setDeltaV] = useState(finalVelocity);
+
+  const gForce = gForceCondition ? deltaV! / props.timeStop! / 9.8 : undefined;
+
+  useEffect(() => {
+    if (isBounce === "bounce") {
+      if (finalVelocity && velocityUp) {
+        setDeltaV(finalVelocity + velocityUp);
+      }
+    } else {
+      setDeltaV(finalVelocity);
+    }
+  }, [isBounce, finalVelocity, velocityUp]);
 
   return (
     <View
@@ -61,6 +90,7 @@ function ActivityOneResultCard(props: {
               videoUri={props.videoUri}
               openModal={() => setShowVideoModal(true)}
               closeModal={() => setShowVideoModal(false)}
+              showTime={true}
             />
           ) : (
             <Text style={resultStyles.descText}>No video</Text>
@@ -114,7 +144,7 @@ function ActivityOneResultCard(props: {
               />
               <Equation
                 latex={`v_{final} = \\\\frac{0.3}{${props.timeCalculated?.toFixed(
-                  3
+                  3,
                 )}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`}
                 fontSize={13}
               />
@@ -133,9 +163,9 @@ function ActivityOneResultCard(props: {
               />
               <Equation
                 latex={`a = \\\\frac{${finalVelocity?.toFixed(
-                  3
+                  3,
                 )} - 0}{${props.timeCalculated?.toFixed(
-                  3
+                  3,
                 )}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`}
                 fontSize={13}
               />
@@ -151,7 +181,7 @@ function ActivityOneResultCard(props: {
               <Equation latex="F_N = mass \\times a" fontSize={13} />
               <Equation
                 latex={`F_N = ${props.mass} \\\\times ${acceleration?.toFixed(
-                  3
+                  3,
                 )} = ${netForce?.toFixed(3)} \\\\text{ } N`}
                 fontSize={13}
               />
@@ -181,7 +211,7 @@ function ActivityOneResultCard(props: {
               <Equation latex="F_D = w - F_N" fontSize={13} />
               <Equation
                 latex={`F_D = ${weight} - ${netForce?.toFixed(
-                  3
+                  3,
                 )} \\\\approx ${dragForce?.toFixed(3)} \\\\text{ } N`}
                 fontSize={13}
               />
@@ -190,42 +220,168 @@ function ActivityOneResultCard(props: {
         </Accordion>
 
         <Accordion title="G-Force Calculations" marginBottom={15}>
+          <View style={{ marginBottom: 20 }}>
+            <CustomDropdown
+              data={dropdownValue}
+              value={isBounce ?? ""}
+              placeholder="Object bounces?"
+              onSelect={(val) => setIsBounce(val as "no-bounce" | "bounce")}
+              heightCustom={54}
+            />
+          </View>
+
           {gForceCondition && (
             <>
-              <Text
-                style={[
-                  resultStyles.calculationText,
-                  { fontFamily: "Lato_700Bold" },
-                ]}
-              >
-                Case 1: Object does not bounce
-              </Text>
+              {isBounce === null ? (
+                <Text
+                  style={[
+                    resultStyles.descText,
+                    { textAlign: "center", marginTop: 10 },
+                  ]}
+                >
+                  Please select a bounce case above to see the G-Force
+                  calculation.
+                </Text>
+              ) : isBounce === "no-bounce" ? (
+                <>
+                  <Text
+                    style={[resultStyles.calculationText, { marginBottom: 2 }]}
+                  >
+                    Object goes from impact speed downward to 0 m/s.
+                  </Text>
 
-              <Text style={[resultStyles.calculationText, { marginBottom: 2 }]}>
-                Object goes from impact speed downward to 0 m/s.
-              </Text>
-              <Equation latex="\\Delta v = v_{impact}" fontSize={13} />
+                  <Equation latex="\\Delta v = v_{impact}" fontSize={13} />
 
-              <Text
-                style={[
-                  resultStyles.calculationText,
-                  { marginTop: 5, marginBottom: 2 },
-                ]}
-              >
-                Calculations:
-              </Text>
-              <Equation
-                latex={`\\\\text{g-force} = \\\\frac{v_{final}}{\\\\text{stop time}} \\\\div 9.8`}
-                fontSize={13}
-              />
-              <Equation
-                latex={`\\\\text{g-force} = \\\\frac{${finalVelocity?.toFixed(
-                  3
-                )}}{${props.timeStop?.toFixed(
-                  3
-                )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
-                fontSize={13}
-              />
+                  <Text
+                    style={[
+                      resultStyles.calculationText,
+                      { marginTop: 5, marginBottom: 2 },
+                    ]}
+                  >
+                    Calculations:
+                  </Text>
+
+                  <Equation
+                    latex={`\\\\text{g-force} = \\\\frac{v_{final}}{\\\\text{stop time}} \\\\div 9.8`}
+                    fontSize={13}
+                  />
+
+                  <Equation
+                    latex={`\\\\text{g-force} = \\\\frac{${deltaV?.toFixed(
+                      3,
+                    )}}{${props.timeStop?.toFixed(
+                      3,
+                    )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
+                    fontSize={13}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text
+                    style={[resultStyles.calculationText, { marginBottom: 2 }]}
+                  >
+                    Object reverses direction after impact.
+                  </Text>
+
+                  <Equation
+                    latex="\\Delta v = v_{down} + v_{up}"
+                    fontSize={13}
+                  />
+
+                  <View style={resultStyles.descContainer}>
+                    <Text style={resultStyles.calculationText}>
+                      To find the upward velocity, we need the time when the toy
+                      reach the max height.
+                    </Text>
+
+                    <Text style={resultStyles.calculationText}>
+                      However, due to the limitation of our model, it is not
+                      possible to output this number.
+                    </Text>
+
+                    <Text style={resultStyles.calculationText}>
+                      Therefore, we need you to see the time in the slow motion
+                      video.
+                    </Text>
+
+                    <Text style={resultStyles.calculationText}>
+                      Then, input the time the toy reach its maximum height when
+                      bouncing here:
+                    </Text>
+                  </View>
+
+                  <View style={resultStyles.inputContainer}>
+                    <TextInput
+                      placeholder="Enter time"
+                      placeholderTextColor={theme.placeholderText}
+                      value={timeUp}
+                      onChangeText={setTimeUp}
+                      style={resultStyles.input}
+                    />
+                    <Text style={resultStyles.calculationText}>seconds</Text>
+                  </View>
+
+                  {isValidPositiveNumber(timeUp) ? (
+                    <>
+                      <Text
+                        style={[
+                          resultStyles.calculationText,
+                          { marginTop: 5, marginBottom: 2 },
+                        ]}
+                      >
+                        Finding bounce speed:
+                      </Text>
+
+                      <Equation
+                        latex="v_{up} = g \\times t_{up}"
+                        fontSize={13}
+                      />
+                      <Equation
+                        latex={`v_{up} = 9.8 \\\\times ${Number(timeUp)?.toFixed(3)} = ${velocityUp?.toFixed(3)}`}
+                        fontSize={13}
+                      />
+
+                      <Equation
+                        latex={`\\\\Delta v = v_{down} + v_{up}`}
+                        fontSize={13}
+                      />
+                      <Equation
+                        latex={`\\\\Delta v = ${finalVelocity?.toFixed(3)} + ${velocityUp?.toFixed(3)} = ${deltaV?.toFixed(3)}`}
+                        fontSize={13}
+                      />
+
+                      <Text
+                        style={[
+                          resultStyles.calculationText,
+                          { marginTop: 8, marginBottom: 2 },
+                        ]}
+                      >
+                        Finding g-force:
+                      </Text>
+
+                      <Equation
+                        latex={`\\\\text{g-force} = \\\\frac{\\\\Delta v}{\\\\text{stop time}} \\\\div 9.8`}
+                        fontSize={13}
+                      />
+
+                      <Equation
+                        latex={`\\\\text{g-force} = \\\\frac{${deltaV?.toFixed(
+                          3,
+                        )}}{${props.timeStop?.toFixed(
+                          3,
+                        )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
+                        fontSize={13}
+                      />
+                    </>
+                  ) : (
+                    <View style={resultStyles.warningContainer}>
+                      <Text style={resultStyles.warning}>
+                        Please enter a valid positive number.
+                      </Text>
+                    </View>
+                  )}
+                </>
+              )}
             </>
           )}
         </Accordion>

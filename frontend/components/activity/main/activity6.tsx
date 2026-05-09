@@ -114,7 +114,7 @@ export default function ActivitySixScreen() {
       setTraceData(null);
       setUserInput({ 1: "", 2: "", 3: "", 4: "" });
       startTime.current = 0;
-    }, [])
+    }, []),
   );
 
   const startReactionTest = () => {

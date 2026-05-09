@@ -11,6 +11,7 @@ type DropdownProps = {
   placeholder?: string;
   value: string;
   onSelect?: (value: string) => void;
+  heightCustom?: number;
 };
 
 export default function CustomDropdown({
@@ -18,9 +19,10 @@ export default function CustomDropdown({
   placeholder,
   value,
   onSelect,
+  heightCustom,
 }: DropdownProps) {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, heightCustom);
 
   return (
     <View>
@@ -50,10 +52,10 @@ export default function CustomDropdown({
   );
 }
 
-export const createStyles = (theme: any) => {
+export const createStyles = (theme: any, heightCustom?: number) => {
   const styles = StyleSheet.create({
     dropdown: {
-      height: 40,
+      height: heightCustom ?? 40,
       borderBottomWidth: 1,
       borderBottomColor: theme.text,
       fontFamily: "Lato_400Regular",

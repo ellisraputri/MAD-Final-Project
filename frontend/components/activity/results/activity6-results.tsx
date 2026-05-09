@@ -119,7 +119,10 @@ export default function ActivitySixResultsScreen(props: {
     for (let i = 0; i < data.predictions.length; i += team.members.length) {
       grouped_preds.push(data.predictions.slice(i, i + team.members.length));
       grouped_outs.push(
-        data.outcomes.slice(i, i + team.members.length) as ActivityBaseOutcome[]
+        data.outcomes.slice(
+          i,
+          i + team.members.length,
+        ) as ActivityBaseOutcome[],
       );
     }
 
@@ -132,7 +135,7 @@ export default function ActivitySixResultsScreen(props: {
       props.resultId,
       6,
       setupGroupedData,
-      true
+      true,
     );
 
   return loading ? (

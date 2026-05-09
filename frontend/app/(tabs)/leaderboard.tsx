@@ -43,7 +43,7 @@ export default function LeaderboardScreen() {
     GlobalRankDetail | ActivityRankDetail | null
   >(null);
   const [myTeamLatest, setMyTeamLatest] = useState<ActivityRankDetail | null>(
-    null
+    null,
   );
   const [teamMap, setTeamMap] = useState<Record<string, TeamBasicDetail>>({});
 
@@ -102,7 +102,7 @@ export default function LeaderboardScreen() {
   };
 
   const fetchMyTeamBestResult = async (
-    rankings: GlobalRankDetail[] | ActivityRankDetail[]
+    rankings: GlobalRankDetail[] | ActivityRankDetail[],
   ) => {
     if (!team?.id) return;
 
@@ -126,7 +126,7 @@ export default function LeaderboardScreen() {
             ? current
             : latest;
         },
-        null
+        null,
       );
 
     setMyTeamLatest(latestAttempt);
@@ -135,7 +135,7 @@ export default function LeaderboardScreen() {
   useEffect(() => {
     const run = async () => {
       const param = dropdownData.find(
-        (item) => item.value === dropdownValue
+        (item) => item.value === dropdownValue,
       )?.params;
       const activityParam = param || undefined;
 

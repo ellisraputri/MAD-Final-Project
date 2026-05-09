@@ -136,6 +136,40 @@ export const createResultStyles = (theme: any) => {
     overlay: {
       zIndex: 200,
     },
+    inputContainer: {
+      flexDirection: "row",
+      alignContent: "space-between",
+      alignItems: "center",
+      gap: 6,
+    },
+    input: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.text,
+      fontSize: 14,
+      paddingVertical: 8,
+      fontFamily: "Lato_400Regular",
+      marginTop: -4,
+      marginBottom: 20,
+      color: theme.blackText,
+    },
+    descContainer: {
+      flex: 1,
+      flexDirection: "column",
+      gap: 6,
+    },
+    warning: {
+      marginTop: 4,
+      fontFamily: "Lato_400Regular",
+      fontSize: 15,
+      color: theme.text,
+      textAlign: "center",
+    },
+    warningContainer: {
+      borderWidth: 2,
+      borderColor: theme.text,
+      padding: 3,
+      alignItems: "center",
+    },
   });
   return styles;
 };

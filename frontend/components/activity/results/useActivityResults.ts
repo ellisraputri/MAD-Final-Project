@@ -9,7 +9,7 @@ export default function useActivityResult<T>(
   resultId: string,
   activityId: number,
   extraSetup?: (data: T) => Promise<void>,
-  requiresTeam?: boolean
+  requiresTeam?: boolean,
 ) {
   const { team } = useAppContext();
   const [data, setData] = useState<T>();
@@ -31,7 +31,7 @@ export default function useActivityResult<T>(
     if (Number(response.data.activityId) !== activityId) {
       console.warn(
         `[Activity${activityId}] Wrong activityId, Got: `,
-        response.data.activityId
+        response.data.activityId,
       );
       setLoading(false);
       return;
@@ -48,7 +48,7 @@ export default function useActivityResult<T>(
 
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
       );
     }
 

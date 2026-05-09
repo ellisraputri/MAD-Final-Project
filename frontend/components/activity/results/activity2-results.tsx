@@ -77,7 +77,7 @@ export default function ActivityTwoResultsScreen(props: {
     useActivityResult<ResultDetailActivityTwo>(
       props.resultId,
       2,
-      setupContents
+      setupContents,
     );
 
   return loading ? (

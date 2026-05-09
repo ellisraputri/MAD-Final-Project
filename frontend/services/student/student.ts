@@ -20,7 +20,7 @@ export const getStudentDetail = async (): Promise<StudentDetailResponse> => {
 };
 
 export const editStudentDetail = async (
-  req: UpdateStudentRequest
+  req: UpdateStudentRequest,
 ): Promise<UpdateStudentResponse> => {
   try {
     const response = await apiClient.put("/api/auth/update", req);

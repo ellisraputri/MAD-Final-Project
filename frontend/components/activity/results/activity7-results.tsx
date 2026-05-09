@@ -94,8 +94,8 @@ export default function ActivitySevenResultsScreen(props: {
       grouped_outs.push(
         data.outcomes.slice(
           i,
-          i + team.members.length
-        ) as ActivitySevenOutcome[]
+          i + team.members.length,
+        ) as ActivitySevenOutcome[],
       );
     }
     for (let i = 0; i < parsedContents.length; i += team.members.length) {
@@ -112,7 +112,7 @@ export default function ActivitySevenResultsScreen(props: {
       props.resultId,
       7,
       setupGroupedData,
-      true
+      true,
     );
 
   const isReady =
