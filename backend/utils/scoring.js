@@ -89,7 +89,7 @@ export const scoreActivity1 = async (mediaList, predictions) => {
     mediaList,
     predictions,
 
-    getTempPath: (i) => path.resolve(`./temp/${Date.now()}_video3_${i}.mp4`),
+    getTempPath: (i) => path.resolve(`./temp/${Date.now()}_video1_${i}.mp4`),
 
     analyzeFn: analyzeVideo,
 
@@ -97,7 +97,7 @@ export const scoreActivity1 = async (mediaList, predictions) => {
       touch_time: result.touch_time,
       stop_time: result.stop_time,
       prediction: pred,
-      score: calculateScore(pred, result.touch_time),
+      score: calculateScore(pred, result.stop_time),
     }),
 
     mapError: (pred) => ({

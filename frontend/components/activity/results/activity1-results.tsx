@@ -19,7 +19,6 @@ function ActivityOneResultCard(props: {
   videoUri: string | null | undefined;
   mass: number | undefined;
   timePredict: number | undefined;
-  timeCalculated: number | undefined;
   timeStop: number | undefined;
   accuracy: number | undefined;
 }) {
@@ -41,12 +40,12 @@ function ActivityOneResultCard(props: {
     return !isNaN(num) && isFinite(num) && num > 0;
   };
 
-  const condition = props.timeCalculated && props.timeCalculated > 0;
+  const condition = props.timeStop && props.timeStop > 0;
   const gForceCondition = props.timeStop && props.timeStop > 0;
 
-  const finalVelocity = condition ? 0.3 / props.timeCalculated! : undefined;
+  const finalVelocity = condition ? 0.3 / props.timeStop! : undefined;
   const acceleration = condition
-    ? finalVelocity! / props.timeCalculated!
+    ? finalVelocity! / props.timeStop!
     : undefined;
 
   const netForce =
@@ -109,13 +108,10 @@ function ActivityOneResultCard(props: {
             • Predicted: {props.timePredict?.toFixed(3)}
           </Text>
           <Text style={resultStyles.listItem}>
-            • Outcome: {props.timeCalculated?.toFixed(3)}
+            • Outcome: {props.timeStop?.toFixed(3)}
           </Text>
         </View>
 
-        <Text style={resultStyles.subtitleText}>
-          Time to stop (seconds): {props.timeStop?.toFixed(3)}{" "}
-        </Text>
         <Text style={resultStyles.subtitleText}>
           Score (accuracy): {props.accuracy?.toFixed(3)}{" "}
         </Text>
@@ -127,7 +123,7 @@ function ActivityOneResultCard(props: {
           </Text>
           <Text style={resultStyles.calculationText}>
             Then, from the measurements, the time is{" "}
-            {props.timeCalculated?.toFixed(3)} s.
+            {props.timeStop?.toFixed(3)} s.
           </Text>
           <Text style={resultStyles.calculationText}>
             Since the toy is dropped, the initial velocity is 0 m/s.
@@ -143,7 +139,7 @@ function ActivityOneResultCard(props: {
                 fontSize={13}
               />
               <Equation
-                latex={`v_{final} = \\\\frac{0.3}{${props.timeCalculated?.toFixed(
+                latex={`v_{final} = \\\\frac{0.3}{${props.timeStop?.toFixed(
                   3,
                 )}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`}
                 fontSize={13}
@@ -164,7 +160,7 @@ function ActivityOneResultCard(props: {
               <Equation
                 latex={`a = \\\\frac{${finalVelocity?.toFixed(
                   3,
-                )} - 0}{${props.timeCalculated?.toFixed(
+                )} - 0}{${props.timeStop?.toFixed(
                   3,
                 )}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`}
                 fontSize={13}
@@ -522,7 +518,6 @@ export default function ActivityOneResultsScreen(props: {
           item={index + 1}
           videoUri={data.medias?.[index]?.content}
           mass={data?.predictions[index]?.mass}
-          timeCalculated={outcome?.touch_time}
           timePredict={data.predictions?.[index]?.prediction}
           timeStop={outcome?.stop_time}
           accuracy={outcome?.score}
