@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   Modal,
   ScrollView,
   Vibration,
@@ -11,8 +10,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import ActivityFourSubmissionCard from "./ui/activity4-submission-card";
-import Button from "./ui/button";
+import ActivityFourSubmissionCard from "../submission/activity4-submission-card";
+import Button from "../../ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { useAppContext } from "@/context/AppContext";
 import { submitResult } from "@/services/result/result";
@@ -21,10 +20,11 @@ import { router } from "expo-router";
 import { uploadMedia45 } from "@/services/media/media";
 import { Accelerometer } from "expo-sensors";
 import { estimateDistance } from "@/services/util";
+import { createMainActivityStyles } from "./main-activity-style";
 
 export default function ActivityFourScreen() {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createMainActivityStyles(theme);
   const { team } = useAppContext();
 
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -235,7 +235,7 @@ export default function ActivityFourScreen() {
       {screen === "record" ? (
         <>
           {/* === RECORDING UI === */}
-          <Text style={styles.titleText}>
+          <Text style={styles.titleText45}>
             {rerecordIndex !== null
               ? `Re-record Submission ${rerecordIndex + 1}`
               : "New Recording"}
@@ -395,88 +395,3 @@ export default function ActivityFourScreen() {
     </View>
   );
 }
-
-export const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    closeButton: {
-      position: "absolute",
-      top: 10,
-      right: 15,
-      zIndex: 10,
-      padding: 8,
-    },
-    buttonContainer: {
-      flexDirection: "column",
-      justifyContent: "center",
-      marginTop: 40,
-    },
-
-    timer: {
-      fontSize: 28,
-      color: theme.text,
-      fontFamily: "Lato_700Bold",
-      marginBottom: 25,
-      marginTop: 5,
-    },
-
-    circle: {
-      width: 250,
-      height: 250,
-      borderRadius: 125,
-      backgroundColor: "#BADFE7",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    circleText: {
-      fontSize: 32,
-      color: "#357D89",
-      fontFamily: "Lato_400Regular",
-      textAlign: "center",
-      lineHeight: 45,
-    },
-
-    stopCircle: {
-      width: 250,
-      height: 250,
-      borderRadius: 125,
-      backgroundColor: "#F6F6F2",
-      borderColor: "#badfe7",
-      borderWidth: 5,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    mainView: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-
-    modalContainer: {
-      flex: 1,
-      paddingTop: 30,
-      paddingHorizontal: 5,
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-    scrollView: {
-      alignItems: "center",
-      paddingBottom: 40,
-    },
-    titleModalText: {
-      marginTop: 20,
-      marginBottom: 20,
-      fontSize: 20,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Lato_700Bold",
-    },
-    titleText: {
-      marginTop: 10,
-      fontSize: 24,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Lato_700Bold",
-    },
-  });
-  return styles;
-};

@@ -1,10 +1,10 @@
-import ActivityOneResultsScreen from "@/components/activity1-results";
-import ActivityTwoResultsScreen from "@/components/activity2-results";
-import ActivityThreeResultsScreen from "@/components/activity3-results";
-import ActivityFourResultsScreen from "@/components/activity4-results";
-import ActivityFiveResultsScreen from "@/components/activity5-results";
-import ActivitySixResultsScreen from "@/components/activity6-results";
-import ActivitySevenResultsScreen from "@/components/activity7-results";
+import ActivityOneResultsScreen from "@/components/activity/results/activity1-results";
+import ActivityTwoResultsScreen from "@/components/activity/results/activity2-results";
+import ActivityThreeResultsScreen from "@/components/activity/results/activity3-results";
+import ActivityFourResultsScreen from "@/components/activity/results/activity4-results";
+import ActivityFiveResultsScreen from "@/components/activity/results/activity5-results";
+import ActivitySixResultsScreen from "@/components/activity/results/activity6-results";
+import ActivitySevenResultsScreen from "@/components/activity/results/activity7-results";
 import Loading from "@/components/ui/loading";
 import ResultCard from "@/components/ui/result-card";
 import { useAppContext } from "@/context/AppContext";

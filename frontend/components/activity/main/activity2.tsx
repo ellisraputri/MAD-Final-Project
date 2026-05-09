@@ -3,13 +3,12 @@ import {
   Alert,
   Modal,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import LiveRecorder from "./ui/audio-recording";
-import ActivityTwoSubmissionCard from "./ui/activity2-submission-card";
+import LiveRecorder from "../../ui/audio-recording";
+import ActivityTwoSubmissionCard from "../submission/activity2-submission-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -18,7 +17,8 @@ import { useAppContext } from "@/context/AppContext";
 import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 import { toast } from "sonner-native";
-import Button from "./ui/button";
+import Button from "../../ui/button";
+import { createMainActivityStyles } from "./main-activity-style";
 
 type audioType = {
   uri: string;
@@ -40,7 +40,7 @@ const getAverageDb = (levels: number[]) => {
 
 export default function ActivityTwoScreen() {
   const theme = useAppTheme();
-  const styles = createStyles(theme);
+  const styles = createMainActivityStyles(theme);
   const { team } = useAppContext();
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -398,127 +398,3 @@ export default function ActivityTwoScreen() {
     </View>
   );
 }
-
-const createStyles = (theme: any) => {
-  const styles = StyleSheet.create({
-    closeButton: {
-      position: "absolute",
-      top: 10,
-      right: 15,
-      zIndex: 10,
-      padding: 8,
-    },
-    buttonPopup: {
-      marginTop: 30,
-      borderWidth: 2,
-      borderColor: theme.text,
-      borderRadius: 50,
-      paddingVertical: 8,
-      alignItems: "center",
-      width: 300,
-      height: 53,
-    },
-    disabledBtn: {
-      opacity: 0.4,
-    },
-    buttonText: {
-      fontSize: 20,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Nunito_700Bold",
-    },
-    buttonContainer: {
-      flexDirection: "column",
-      justifyContent: "center",
-      marginTop: 40,
-    },
-
-    recordButtonInner: {
-      width: 35,
-      height: 35,
-      borderRadius: 25,
-      backgroundColor: "#c50000",
-    },
-
-    recordingInner: {
-      width: 25,
-      height: 25,
-      borderRadius: 6,
-      backgroundColor: "#c50000",
-    },
-
-    videoScreen: {
-      width: 320,
-      height: 500,
-    },
-
-    mainView: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-
-    modalContainer: {
-      flex: 1,
-      paddingTop: 30,
-      paddingHorizontal: 5,
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-    scrollView: {
-      alignItems: "center",
-      paddingBottom: 40,
-    },
-    titleModalText: {
-      marginTop: 20,
-      marginBottom: 20,
-      fontSize: 20,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Lato_700Bold",
-    },
-    titleText: {
-      marginTop: 100,
-      marginBottom: 20,
-      fontSize: 20,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Lato_700Bold",
-    },
-    subtitleText: {
-      fontFamily: "Lato_400Regular",
-      fontSize: 16,
-      marginBottom: 60,
-    },
-    backBtn: {
-      padding: 10,
-      marginTop: 30,
-      borderWidth: 2,
-      borderColor: theme.text,
-      borderRadius: 50,
-      paddingVertical: 8,
-      alignItems: "center",
-      width: 260,
-      height: 53,
-    },
-
-    btnText: {
-      fontSize: 18,
-      color: theme.text,
-      fontWeight: "500",
-      fontFamily: "Nunito_700Bold",
-    },
-
-    submitBtn: {
-      marginTop: 30,
-      marginBottom: 50,
-      borderWidth: 2,
-      padding: 10,
-      borderRadius: 50,
-      borderColor: theme.text,
-      width: 150,
-      alignItems: "center",
-    },
-  });
-  return styles;
-};
