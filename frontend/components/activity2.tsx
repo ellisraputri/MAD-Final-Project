@@ -138,7 +138,7 @@ export default function ActivityTwoScreen() {
       alert(
         `You can only submit when there are 3 audios. Please continue to record ${
           3 - filledCount
-        } more videos.`
+        } more videos.`,
       );
       return;
     }
@@ -198,7 +198,7 @@ export default function ActivityTwoScreen() {
             });
           },
         },
-      ]
+      ],
     );
   };
 
@@ -294,7 +294,7 @@ export default function ActivityTwoScreen() {
                             text: "OK",
                             onPress: () => handleRerecord(index),
                           },
-                        ]
+                        ],
                       )
                     }
                   />
@@ -383,7 +383,7 @@ export default function ActivityTwoScreen() {
                                 text: "OK",
                                 onPress: () => handleRerecord(index),
                               },
-                            ]
+                            ],
                           )
                         }
                       />

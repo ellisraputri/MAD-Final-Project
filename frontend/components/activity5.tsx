@@ -149,7 +149,7 @@ export default function ActivityFiveScreen() {
       alert(
         `You can only submit when there are 3 inputs. Please continue to record ${
           3 - currLength
-        } more videos.`
+        } more videos.`,
       );
       return;
     }
@@ -200,7 +200,7 @@ export default function ActivityFiveScreen() {
             });
           },
         },
-      ]
+      ],
     );
   };
 
@@ -299,7 +299,7 @@ export default function ActivityFiveScreen() {
                         text: "OK",
                         onPress: () => handleRerecord(index),
                       },
-                    ]
+                    ],
                   )
                 }
               />
@@ -382,7 +382,7 @@ export default function ActivityFiveScreen() {
                               handleRerecord(index);
                             },
                           },
-                        ]
+                        ],
                       )
                     }
                   />

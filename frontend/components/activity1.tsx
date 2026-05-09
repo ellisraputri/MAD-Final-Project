@@ -166,7 +166,7 @@ export default function ActivityOneScreen() {
       alert(
         `You can only submit when there are 3 videos. Please continue to record ${
           3 - currLength
-        } more videos.`
+        } more videos.`,
       );
       return;
     }
@@ -226,7 +226,7 @@ export default function ActivityOneScreen() {
             });
           },
         },
-      ]
+      ],
     );
   };
 
@@ -337,7 +337,7 @@ export default function ActivityOneScreen() {
                         text: "OK",
                         onPress: () => handleRerecord(index),
                       },
-                    ]
+                    ],
                   )
                 }
               />
@@ -422,7 +422,7 @@ export default function ActivityOneScreen() {
                               handleRerecord(index);
                             },
                           },
-                        ]
+                        ],
                       );
                     }}
                   />

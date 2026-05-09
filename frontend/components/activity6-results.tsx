@@ -156,7 +156,7 @@ export default function ActivitySixResultsScreen(props: {
     if (Number(response.data.activityId) !== 6) {
       console.warn(
         "[ActivitySix] Wrong activityId received, skipping render. Got:",
-        response.data.activityId
+        response.data.activityId,
       );
       return;
     }
@@ -172,10 +172,10 @@ export default function ActivitySixResultsScreen(props: {
       i += team?.members.length
     ) {
       grouped_preds.push(
-        response.data.predictions.slice(i, i + team.members.length)
+        response.data.predictions.slice(i, i + team.members.length),
       );
       grouped_outs.push(
-        response.data.outcomes.slice(i, i + team.members.length)
+        response.data.outcomes.slice(i, i + team.members.length),
       );
     }
     setPredictions(grouped_preds);
@@ -184,7 +184,7 @@ export default function ActivitySixResultsScreen(props: {
     const rankingRes = await getActivityRank({ activityId: "6" });
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
       );
     }
     for (let i = 0; i < rankingRes.rankings.length; i++) {

@@ -63,7 +63,10 @@ describe("RegisterScreen", () => {
       "test@mail.com",
     );
     fireEvent.changeText(getByPlaceholderText("Enter your password"), "123456");
-    fireEvent.changeText(getByPlaceholderText("Reenter your password"), "123456");
+    fireEvent.changeText(
+      getByPlaceholderText("Reenter your password"),
+      "123456",
+    );
     fireEvent.changeText(getByPlaceholderText("Enter your first name"), "John");
 
     fireEvent.press(getByText("Select Grade"));

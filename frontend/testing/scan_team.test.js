@@ -10,7 +10,6 @@ let mockPermission = {
   granted: true,
 };
 
-
 jest.mock("expo-camera", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
@@ -29,10 +28,7 @@ jest.mock("expo-camera", () => {
       </Text>
     ),
 
-    useCameraPermissions: () => [
-      mockPermission,
-      mockRequestPermission,
-    ],
+    useCameraPermissions: () => [mockPermission, mockRequestPermission],
   };
 });
 
@@ -48,7 +44,7 @@ describe("ScanTeamScreen", () => {
   it("renders camera when permission granted", () => {
     const { getByTestId, getByText } = render(<ScanTeamScreen />);
 
-    expect(getByText('Camera')).toBeTruthy();
+    expect(getByText("Camera")).toBeTruthy();
     expect(getByText("Scan Team QR Code")).toBeTruthy();
   });
 
@@ -69,10 +65,10 @@ describe("ScanTeamScreen", () => {
   });
 
   it("navigates after scanning QR code", async () => {
-    const {router} = require('expo-router');
+    const { router } = require("expo-router");
     const { getByTestId, getByText } = render(<ScanTeamScreen />);
 
-    fireEvent.press(getByText('Camera'));
+    fireEvent.press(getByText("Camera"));
 
     await waitFor(() => {
       expect(router.replace).toHaveBeenCalledWith({
@@ -85,10 +81,10 @@ describe("ScanTeamScreen", () => {
   });
 
   it("does not scan twice", async () => {
-    const {router} = require('expo-router');
+    const { router } = require("expo-router");
     const { getByTestId, getByText } = render(<ScanTeamScreen />);
 
-    const camera = getByText('Camera');
+    const camera = getByText("Camera");
 
     fireEvent.press(camera);
     fireEvent.press(camera);

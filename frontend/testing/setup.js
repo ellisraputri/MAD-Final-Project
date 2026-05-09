@@ -3,16 +3,16 @@ import Button from "../components/ui/button.tsx";
 
 jest.mock("../hooks/use-app-theme.ts", () => ({
   useAppTheme: () => ({
-    background: '#fff',
-    text: '#000',
-    blackText: '#000',
-    placeholderText: '#999',
+    background: "#fff",
+    text: "#000",
+    blackText: "#000",
+    placeholderText: "#999",
   }),
 }));
 
 jest.mock("../components/ui/button.tsx", () => {
   const React = require("react");
-  const { Text, KeyboardAvoidingView } = require("react-native");
+  const { Text, KeyboardAvoidingView, Pressable } = require("react-native");
   return function MockButton({ onPress, text }) {
     return <Text onPress={onPress}>{text}</Text>;
   };
@@ -51,6 +51,8 @@ jest.mock("react-native", () => {
       React.createElement(React.Fragment, null, children || null),
     Platform: { OS: "ios", select: (obj) => obj.ios ?? obj.default },
     Alert: { alert: jest.fn() },
+    Pressable: ({ children, onPress }) =>
+      React.createElement("Pressable", { onPress }, children || null),
   };
 });
 

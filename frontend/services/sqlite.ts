@@ -14,7 +14,7 @@ export const initDB = async () => {
     CREATE TABLE IF NOT EXISTS team (
       id TEXT PRIMARY KEY,
       data TEXT
-    );`
+    );`,
   );
 };
 
@@ -22,7 +22,7 @@ export const saveUser = async (user: StudentDetail | null) => {
   const database = await db;
   await database.runAsync(
     "INSERT OR REPLACE INTO user (id, data) VALUES (?, ?)",
-    ["current", JSON.stringify(user)]
+    ["current", JSON.stringify(user)],
   );
 };
 
@@ -30,7 +30,7 @@ export const getUser = async (): Promise<StudentDetail | null> => {
   const database = await db;
   const result = await database.getFirstAsync<{ data: string }>(
     "SELECT * FROM user WHERE id = ?",
-    ["current"]
+    ["current"],
   );
   if (result) {
     return JSON.parse(result.data);
@@ -43,7 +43,7 @@ export const saveTeam = async (team: TeamDetail | null) => {
   const database = await db;
   await database.runAsync(
     "INSERT OR REPLACE INTO team (id, data) VALUES (?, ?)",
-    ["current", JSON.stringify(team)]
+    ["current", JSON.stringify(team)],
   );
 };
 
@@ -51,7 +51,7 @@ export const getTeam = async (): Promise<TeamDetail | null> => {
   const database = await db;
   const result = await database.getFirstAsync<{ data: string }>(
     "SELECT * FROM team WHERE id = ?",
-    ["current"]
+    ["current"],
   );
   if (result) {
     return JSON.parse(result.data);

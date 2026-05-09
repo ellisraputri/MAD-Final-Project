@@ -70,17 +70,17 @@ export default function SettingsScreen() {
         style: "cancel",
       },
       {
-          text: "OK",
-          onPress: async() => {
-            if (socket.connected) {
-              socket.disconnect();
-            }
+        text: "OK",
+        onPress: async () => {
+          if (socket.connected) {
+            socket.disconnect();
+          }
 
-            const res = await logout();
-            alert(res.message);
-            if(res.success) router.push("/(auth)/login");
-          },
+          const res = await logout();
+          alert(res.message);
+          if (res.success) router.push("/(auth)/login");
         },
+      },
     ]);
   };
 

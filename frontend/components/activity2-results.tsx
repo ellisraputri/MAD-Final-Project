@@ -116,7 +116,7 @@ export default function ActivityTwoResultsScreen(props: {
     if (Number(response.data.activityId) !== 2) {
       console.warn(
         "[ActivityTwo] Wrong activityId received, skipping render. Got:",
-        response.data.activityId
+        response.data.activityId,
       );
       return;
     }
@@ -132,7 +132,7 @@ export default function ActivityTwoResultsScreen(props: {
     const rankingRes = await getActivityRank({ activityId: "2" });
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
       );
     }
     for (let i = 0; i < rankingRes.rankings.length; i++) {

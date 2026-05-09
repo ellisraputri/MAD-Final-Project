@@ -97,7 +97,7 @@ export default function ActivityFourResultsScreen(props: {
     if (Number(response.data.activityId) !== 4) {
       console.warn(
         "[ActivityFour] Wrong activityId received, skipping render. Got:",
-        response.data.activityId
+        response.data.activityId,
       );
       return;
     }
@@ -107,7 +107,7 @@ export default function ActivityFourResultsScreen(props: {
     const rankingRes = await getActivityRank({ activityId: "4" });
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
       );
     }
     for (let i = 0; i < rankingRes.rankings.length; i++) {

@@ -14,8 +14,8 @@ import Svg, { Polygon } from "react-native-svg";
 import Button from "@/components/ui/button";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { loginAndGetData } from "@/services/auth/auth";
-import { auth } from '@/services/firebase';
-import { getStudentDetail } from '@/services/student/student';
+import { auth } from "@/services/firebase";
+import { getStudentDetail } from "@/services/student/student";
 import PasswordInput from "@/components/ui/password-input";
 
 export default function LoginScreen() {

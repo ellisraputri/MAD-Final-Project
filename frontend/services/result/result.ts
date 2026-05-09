@@ -12,7 +12,7 @@ import {
 import { apiClient } from "../firebase.js";
 
 export const submitResult = async (
-  req: SubmitResultRequest
+  req: SubmitResultRequest,
 ): Promise<SubmitResultResponse> => {
   try {
     const response = await apiClient.post("/api/result/submit", req);
@@ -26,11 +26,11 @@ export const submitResult = async (
 };
 
 export const getResultList = async (
-  req: GetResultListRequest
+  req: GetResultListRequest,
 ): Promise<GetResultListResponse> => {
   try {
     const response = await apiClient.get(
-      `/api/result/list?teamId=${req.teamId}&activityId=${req.activityId}`
+      `/api/result/list?teamId=${req.teamId}&activityId=${req.activityId}`,
     );
     return response.data;
   } catch (error: any) {
@@ -42,11 +42,11 @@ export const getResultList = async (
 };
 
 export const getResultDetail = async (
-  req: GetResultDetailRequest
+  req: GetResultDetailRequest,
 ): Promise<GetResultDetailResponse> => {
   try {
     const response = await apiClient.get(
-      `/api/result/detail?resultId=${req.resultId}`
+      `/api/result/detail?resultId=${req.resultId}`,
     );
     return response.data;
   } catch (error: any) {
@@ -58,7 +58,7 @@ export const getResultDetail = async (
 };
 
 export const submitRating = async (
-  req: SubmitRatingRequest
+  req: SubmitRatingRequest,
 ): Promise<ResultBaseResponse> => {
   try {
     const response = await apiClient.post("/api/result/rating", req);

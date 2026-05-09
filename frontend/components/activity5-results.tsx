@@ -97,7 +97,7 @@ export default function ActivityFiveResultsScreen(props: {
     if (Number(response.data.activityId) !== 5) {
       console.warn(
         "[ActivityFive] Wrong activityId received, skipping render. Got:",
-        response.data.activityId
+        response.data.activityId,
       );
       return;
     }
@@ -107,7 +107,7 @@ export default function ActivityFiveResultsScreen(props: {
     const rankingRes = await getActivityRank({ activityId: "5" });
     if (!rankingRes.success) {
       toast.error(
-        `Failed to fetch leaderboard rank data: ${rankingRes.message}`
+        `Failed to fetch leaderboard rank data: ${rankingRes.message}`,
       );
     }
     for (let i = 0; i < rankingRes.rankings.length; i++) {

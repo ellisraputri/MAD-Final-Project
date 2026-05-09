@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,17 +7,18 @@ import {
   ImageBackground,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Image, Modal,
-} from 'react-native';
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import Svg, { Polygon } from 'react-native-svg';
-import CustomDropdown from '@/components/ui/dropdown';
-import Button from '@/components/ui/button';
-import { useAppTheme } from '@/hooks/use-app-theme';
-import { getStudentDetail } from '@/services/student/student';
-import { useAppContext } from '@/context/AppContext';
-import { createTeam, joinTeam } from '@/services/team/team';
-import { toast } from 'sonner-native';
+  Image,
+  Modal,
+} from "react-native";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import Svg, { Polygon } from "react-native-svg";
+import CustomDropdown from "@/components/ui/dropdown";
+import Button from "@/components/ui/button";
+import { useAppTheme } from "@/hooks/use-app-theme";
+import { getStudentDetail } from "@/services/student/student";
+import { useAppContext } from "@/context/AppContext";
+import { createTeam, joinTeam } from "@/services/team/team";
+import { toast } from "sonner-native";
 
 const gradeDropdown = [
   { label: "1 (SD Kelas 1)", value: "1" },
@@ -37,7 +38,7 @@ const gradeDropdown = [
 export default function TeamConfirmationScreen() {
   const theme = useAppTheme();
   const styles = createStyles(theme);
-  const {setUser} = useAppContext();
+  const { setUser } = useAppContext();
   const params = useLocalSearchParams();
 
   const router = useRouter();
@@ -93,7 +94,7 @@ export default function TeamConfirmationScreen() {
     useCallback(() => {
       // Runs whenever screen comes back into focus
       setScanQrLoading(false);
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
@@ -283,7 +284,6 @@ export default function TeamConfirmationScreen() {
               fontSize={16}
               isLoading={scanQrLoading}
             />
-
           </View>
         </View>
       </Modal>

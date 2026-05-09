@@ -238,7 +238,7 @@ export default function ActivitySevenScreen() {
                       onPress: () =>
                         setIsEditing({ title: "Breathing at Rest", type: 1 }),
                     },
-                  ]
+                  ],
                 )
               }
             />
@@ -266,7 +266,7 @@ export default function ActivitySevenScreen() {
                           type: 2,
                         }),
                     },
-                  ]
+                  ],
                 )
               }
             />
@@ -294,7 +294,7 @@ export default function ActivitySevenScreen() {
                           type: 3,
                         }),
                     },
-                  ]
+                  ],
                 )
               }
             />
