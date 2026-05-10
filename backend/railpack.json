@@ -3,10 +3,6 @@
 
   "providers": ["node", "python"],
 
-  "packages": {
-    "apt": ["ffmpeg", "libgl1"]
-  },
-
   "steps": {
     "install": {
       "commands": [
