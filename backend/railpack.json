@@ -1,15 +1,22 @@
 {
   "$schema": "https://schema.railpack.com",
-  "providers": ["python", "node"],
 
-  "build": {
-    "commands": [
-      "npm install",
-      "pip install -r requirements.txt"
-    ]
+  "providers": ["node", "python"],
+
+  "packages": {
+    "apt": ["ffmpeg", "libgl1"]
   },
 
-  "start": {
-    "command": "npm start"
+  "steps": {
+    "install": {
+      "commands": [
+        "npm install",
+        "pip install -r requirements.txt"
+      ]
+    }
+  },
+
+  "deploy": {
+    "startCommand": "npm start"
   }
 }
