@@ -1,21 +1,18 @@
 {
   "$schema": "https://schema.railpack.com",
 
-  "packages": {
-    "node": "22",
-    "python": "3.13"
-  },
+  "providers": ["node", "python"],
 
   "steps": {
     "install": {
       "commands": [
-        "npm install",
-        "pip install -r requirements.txt"
+        "cd backend && npm install",
+        "cd backend && pip install -r requirements.txt"
       ]
     }
   },
 
   "deploy": {
-    "startCommand": "npm start"
+    "startCommand": "cd backend && npm start"
   }
 }
