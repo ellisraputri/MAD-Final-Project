@@ -9,6 +9,8 @@
   "steps": {
     "install": {
       "commands": [
+        "pwd",
+        "echo 'HELLO FROM RAILPACK'",
         "ls -la",
         "npm install",
         "pip install -r requirements.txt"
