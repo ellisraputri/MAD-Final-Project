@@ -20,7 +20,7 @@ RUN npm install
 COPY requirements.txt ./
 
 # Install python dependencies
-RUN pip3 install --break-system-packages -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Copy everything else
 COPY . .
