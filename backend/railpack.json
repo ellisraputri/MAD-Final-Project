@@ -9,13 +9,13 @@
   "steps": {
     "install": {
       "commands": [
-        "cd backend && npm install",
-        "cd backend && pip install -r requirements.txt"
+        "npm install",
+        "pip install -r requirements.txt"
       ]
     }
   },
 
   "deploy": {
-    "startCommand": "cd backend && npm start"
+    "startCommand": "npm start"
   }
 }
