@@ -10,14 +10,13 @@
     "install": {
       "commands": [
         "ls -la",
-        "ls -la backend",
-        "npm install --prefix backend",
-        "pip install -r backend/requirements.txt"
+        "npm install",
+        "pip install -r requirements.txt"
       ]
     }
   },
 
   "deploy": {
-    "startCommand": "npm start --prefix backend"
+    "startCommand": "npm start"
   }
 }
