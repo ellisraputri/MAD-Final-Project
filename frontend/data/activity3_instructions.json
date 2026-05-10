@@ -2,19 +2,19 @@
   "overview": "Students test how air movement affects flexible materials.",
   "equipments": [
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "image": "mobile",
       "caption": "Mobile phone with STEMM Lab app"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "image": "paperCardboard",
       "caption": "Paper and cardboard"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "image": "scissors",
       "caption": "Scissors"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/NPC_Araja.png/revision/latest?cb=20240419202014",
+      "image": "tape",
       "caption": "Sticky Tape"
     }
   ],

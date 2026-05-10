@@ -2,31 +2,31 @@
   "overview": "Students design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints, aiming to achieve the slowest and safest landing within a target area.",
   "equipments": [
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "image": "mobile",
       "caption": "Mobile phone with STEMM Lab app"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "image": "smallToy",
       "caption": "Small toy (e.g. army toy soldier)"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "image": "table",
       "caption": "Table"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "image": "paperPlastic",
       "caption": "Paper or plastic"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "image": "string",
       "caption": "String"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "image": "scissors",
       "caption": "Scissors"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/c/c9/NPC_Arama.png/revision/latest?cb=20230214084001",
+      "image": "tape",
       "caption": "Tape"
     }
   ],

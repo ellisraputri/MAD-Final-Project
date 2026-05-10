@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ImageSourcePropType, ScrollView, StyleSheet, Text, View } from "react-native";
 import activity1Instructions from "@/data/activity1_instructions.json";
 import activity2Instructions from "@/data/activity2_instructions.json";
 import activity3Instructions from "@/data/activity3_instructions.json";
@@ -9,6 +9,7 @@ import activity7Instructions from "@/data/activity7_instructions.json";
 import { useLocalSearchParams } from "expo-router";
 import VideoPlayer from "@/components/ui/video-player";
 import { useAppTheme } from "@/hooks/use-app-theme";
+import { equipmentImages } from "@/utils/map-image";
 
 type InstructionImage = {
   image: string;
@@ -58,7 +59,7 @@ function EquipmentCard({
 }: {
   index: number;
   name: string;
-  imageUrl: string;
+  imageUrl: ImageSourcePropType;
 }) {
   const theme = useAppTheme();
   const styles = createStyles(theme);
@@ -69,7 +70,7 @@ function EquipmentCard({
         {index}. {name}
       </Text>
 
-      <Image source={{ uri: imageUrl }} style={{ width: 100, height: 100 }} />
+      <Image source={imageUrl} style={{ width: 100, height: 100 }} />
     </View>
   );
 }
@@ -80,6 +81,13 @@ export default function InstructionScreen() {
 
   const { id } = useLocalSearchParams();
   const data = instructionsMap[Number(id)];
+
+  const mapImage = (key: string) => {
+    if(key === 'mobile'){
+      return theme.isDark? equipmentImages['darkMobile'] : equipmentImages['lightMobile'];
+    }
+    return equipmentImages[key];
+  }
 
   return (
     <ScrollView
@@ -99,7 +107,7 @@ export default function InstructionScreen() {
               key={i}
               index={i + 1}
               name={item.caption}
-              imageUrl={item.image}
+              imageUrl={mapImage(item.image)}
             />
           ))}
         </View>
