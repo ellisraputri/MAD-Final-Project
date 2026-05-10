@@ -14,43 +14,43 @@ jest.mock("@/components/ui/result-card", () => {
   };
 });
 
-jest.mock("@/components/activity1-results", () => {
+jest.mock("@/components/activity/results/activity1-results", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity1 Detail</Text>;
 });
 
-jest.mock("@/components/activity2-results", () => {
+jest.mock("@/components/activity/results/activity2-results", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity2 Detail</Text>;
 });
 
-jest.mock("@/components/activity3-results", () => {
+jest.mock("@/components/activity/results/activity3-results", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity3 Detail</Text>;
 });
 
-jest.mock("@/components/activity4-results", () => {
+jest.mock("@/components/activity/results/activity4-results", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity4 Detail</Text>;
 });
 
-jest.mock("@/components/activity5-results", () => {
+jest.mock("@/components/activity/results/activity5-results", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity5 Detail</Text>;
 });
 
-jest.mock("@/components/activity6-results", () => {
+jest.mock("@/components/activity/results/activity6-results", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity6 Detail</Text>;
 });
 
-jest.mock("@/components/activity7-results", () => {
+jest.mock("@/components/activity/results/activity7-results", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity7 Detail</Text>;

@@ -3,7 +3,7 @@
 import React from "react";
 import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
 
-import ActivitySixScreen from "../../components/activity6.tsx";
+import ActivitySixScreen from "../../components/activity/main/activity6.tsx";
 
 jest.mock("react-native-keyboard-aware-scroll-view", () => {
   const React = require("react");
