@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "../components/ui/button.tsx";
 
-jest.mock("../hooks/use-app-theme.ts", () => ({
+jest.mock("@/hooks/use-app-theme.ts", () => ({
   useAppTheme: () => ({
     background: "#fff",
     text: "#000",
@@ -53,6 +53,7 @@ jest.mock("react-native", () => {
     Alert: { alert: jest.fn() },
     Pressable: ({ children, onPress }) =>
       React.createElement("Pressable", { onPress }, children || null),
+    Vibration: {vibrate: jest.fn(), cancel: jest.fn()}
   };
 });
 
@@ -71,6 +72,16 @@ jest.mock("react-native-keyboard-aware-scroll-view", () => {
   return {
     KeyboardAwareScrollView: ({ children }) =>
       React.createElement(React.Fragment, null, children),
+  };
+});
+
+jest.mock("react-native-safe-area-context", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+  return {
+    SafeAreaView: ({ children }) => <View>{children}</View>,
+    SafeAreaProvider: ({ children }) => <View>{children}</View>,
+    useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 0, left: 0 }),
   };
 });
 
