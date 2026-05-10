@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "providers": ["python", "node"],
+
+  "build": {
+    "commands": [
+      "npm install",
+      "pip install -r requirements.txt"
+    ]
+  },
+
+  "start": {
+    "command": "npm start"
+  }
+}
