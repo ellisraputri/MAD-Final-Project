@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.railpack.com", 
+  "$schema": "https://schema.railpack.com",
 
   "packages": {
     "node": "22",
@@ -10,13 +10,13 @@
     "install": {
       "commands": [
         "ls -la",
-        "cd backend && npm install",
-        "cd backend && pip install -r requirements.txt"
+        "npm install --prefix backend",
+        "pip install -r backend/requirements.txt"
       ]
     }
   },
 
   "deploy": {
-    "startCommand": "cd backend && npm start"
+    "startCommand": "npm start --prefix backend"
   }
 }
