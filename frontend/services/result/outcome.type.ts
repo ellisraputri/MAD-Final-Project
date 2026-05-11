@@ -1,6 +1,5 @@
 export type ActivityOneOutcome = {
   touch_time: number;
-  stop_time: number;
   score: number;
   prediction: number;
 };

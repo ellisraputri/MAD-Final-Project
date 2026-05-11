@@ -72,7 +72,7 @@ function ActivityThreeResultCard(props: {
           <Text style={resultStyles.descText}>
             The object is thin paper. So,{" "}
           </Text>
-          <Equation latex="k = 0.05 \\text{ } N/rad" fontSize={13} />
+          <Equation latex="k = 0.05 \\text{ N/rad}" fontSize={13} />
 
           <Text
             style={[resultStyles.descText, { marginTop: 15, marginBottom: 2 }]}
@@ -82,7 +82,7 @@ function ActivityThreeResultCard(props: {
           <Equation
             latex={`\\\\theta = ${props.bendCalculated.toFixed(
               3,
-            )}^{\\\\circ} \\\\approx ${bendRadian.toFixed(3)} rad`}
+            )}^{\\\\circ} \\\\approx ${bendRadian.toFixed(3)} \\\\text{ rad}`}
             fontSize={13}
           />
 
@@ -95,7 +95,7 @@ function ActivityThreeResultCard(props: {
           <Equation
             latex={`F \\\\approx ${0.05} \\\\cdot ${bendRadian.toFixed(
               3,
-            )} \\\\approx ${force.toFixed(3)} N`}
+            )} \\\\approx ${force.toFixed(3)} \\\\text{ N}`}
             fontSize={13}
           />
         </Accordion>
