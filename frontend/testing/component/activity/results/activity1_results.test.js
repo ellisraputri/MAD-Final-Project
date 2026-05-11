@@ -172,7 +172,7 @@ describe("ActivityOneResultsScreen", () => {
         ],
         outcomes: [
           {
-            stop_time: 1.2,
+            touch_time: 1.2,
             score: 0.85,
           },
         ],
@@ -212,7 +212,7 @@ describe("ActivityOneResultsScreen", () => {
         ],
         outcomes: [
           {
-            stop_time: 2,
+            touch_time: 2,
             score: 0.9,
           },
         ],
@@ -246,7 +246,7 @@ describe("ActivityOneResultsScreen", () => {
         ],
         outcomes: [
           {
-            stop_time: 2,
+            touch_time: 2,
             score: 0.9,
           },
         ],
@@ -280,7 +280,7 @@ describe("ActivityOneResultsScreen", () => {
         ],
         outcomes: [
           {
-            stop_time: 2,
+            touch_time: 2,
             score: 0.9,
           },
         ],
