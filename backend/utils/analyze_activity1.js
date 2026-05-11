@@ -11,9 +11,8 @@ export const analyzeVideo = (videoPath) => {
     ? "python3"
     : path.join(__dirname, "../scripts/.venv/Scripts/python.exe");
     const scriptPath = path.join(__dirname, "../scripts/activity1.py");
-    const modelPath = path.join(__dirname, "../scripts/model/yolov8s.pt");
 
-    const py = spawn(pythonPath, [scriptPath, videoPath, modelPath]);
+    const py = spawn(pythonPath, [scriptPath, videoPath]);
 
     let data = "";
     let error = "";
