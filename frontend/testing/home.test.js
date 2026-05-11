@@ -58,6 +58,7 @@ describe("HomeScreen", () => {
         name: "My Team",
         grade: 10,
         logo: "logo.png",
+        members: [{ firstName: "John" }, { firstName: "Jane" }],
       },
     });
 
@@ -86,6 +87,7 @@ describe("HomeScreen", () => {
         name: "My Team",
         grade: 10,
         logo: "logo.png",
+        members: [{ firstName: "John" }, { firstName: "Jane" }],
       },
     });
 
@@ -114,6 +116,7 @@ describe("HomeScreen", () => {
         name: "My Team",
         grade: 10,
         logo: "logo.png",
+        members: [{ firstName: "John" }, { firstName: "Jane" }],
       },
     });
 
@@ -129,7 +132,7 @@ describe("HomeScreen", () => {
     fireEvent.press(getByText("My Team"));
 
     fireEvent.changeText(
-      getByPlaceholderText("Enter your team ID"),
+      getByPlaceholderText("Enter your team name"),
       "New Name",
     );
 

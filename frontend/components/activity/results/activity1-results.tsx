@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useAppTheme } from "@/hooks/use-app-theme";
 import { ResultDetailActivityOne } from "@/services/result/result.type";
@@ -12,7 +12,6 @@ import { createResultStyles } from "./activity-result-style";
 import useActivityResult from "./useActivityResults";
 import { ActivityResultBaseScreen } from "./activity-result-base";
 import CustomDropdown from "@/components/ui/dropdown";
-import { TextInput } from "react-native-gesture-handler";
 
 function ActivityOneResultCard(props: {
   item: number;

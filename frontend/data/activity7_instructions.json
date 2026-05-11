@@ -2,11 +2,11 @@
   "overview": "Students analyse breathing patterns at rest and after exercise.",
   "equipments": [
     {
-      "image": "https://upload-os-bbs.hoyolab.com/upload/2022/09/08/97023210/b17448ff1e6d2cd72058140277e7adaa_5266023538865960094.png",
+      "image": "mobile",
       "caption": "Mobile phone with STEMM Lab App"
     },
     {
-      "image": "https://upload-os-bbs.hoyolab.com/upload/2022/09/08/97023210/b17448ff1e6d2cd72058140277e7adaa_5266023538865960094.png",
+      "image": "openFlatSpace",
       "caption": "Flat surface"
     }
   ],

@@ -3,7 +3,7 @@
 import React from "react";
 import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
 
-import ActivitySevenScreen from "@/components/activity7";
+import ActivitySevenScreen from "@/components/activity/main/activity7.tsx";
 
 // ---- SCREEN SPECIFIC MOCKS ----
 

@@ -2,27 +2,27 @@
   "overview": "Students design structures that withstand vibration, simulating earthquakes.",
   "equipments": [
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "image": "mobile",
       "caption": "Mobile phone with vibration sensor"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "image": "cardboard",
       "caption": "Cardboard"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "image": "paper",
       "caption": "Paper"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "image": "scissors",
       "caption": "Scissors"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "image": "tape",
       "caption": "Sticky tape"
     },
     {
-      "image": "https://static.wikia.nocookie.net/gensin-impact/images/8/8e/NPC_Ararycan.png/revision/latest?cb=20240411220711",
+      "image": "plasticCup",
       "caption": "Plastic or paper cup"
     }
   ],

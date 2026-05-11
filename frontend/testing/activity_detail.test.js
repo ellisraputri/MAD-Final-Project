@@ -7,43 +7,43 @@ jest.mock("@react-navigation/native", () => ({
   useFocusEffect: (cb) => cb(),
 }));
 
-jest.mock("@/components/activity1", () => {
+jest.mock("@/components/activity/main/activity1", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity 1</Text>;
 });
 
-jest.mock("@/components/activity2", () => {
+jest.mock("@/components/activity/main/activity2", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity 2</Text>;
 });
 
-jest.mock("@/components/activity3", () => {
+jest.mock("@/components/activity/main/activity3", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity 3</Text>;
 });
 
-jest.mock("@/components/activity4", () => {
+jest.mock("@/components/activity/main/activity4", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity 4</Text>;
 });
 
-jest.mock("@/components/activity5", () => {
+jest.mock("@/components/activity/main/activity5", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity 5</Text>;
 });
 
-jest.mock("@/components/activity6", () => {
+jest.mock("@/components/activity/main/activity6", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity 6</Text>;
 });
 
-jest.mock("@/components/activity7", () => {
+jest.mock("@/components/activity/main/activity7", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return () => <Text>Activity 7</Text>;
