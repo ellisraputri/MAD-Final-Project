@@ -19,6 +19,8 @@ angles = []
 times = []
 
 fps = cap.get(cv2.CAP_PROP_FPS)
+if fps <= 0: fps = 30
+
 frame_count = 0
 
 while cap.isOpened():
@@ -37,6 +39,7 @@ while cap.isOpened():
 
         if cv2.contourArea(c) > 1000:
             [vx, vy, x, y] = cv2.fitLine(c, cv2.DIST_L2, 0, 0.01, 0.01)
+            vx, vy = float(vx), float(vy)
             angle = calculate_angle_from_line(vx, vy)
             angles.append(angle)
             times.append(frame_count / fps)
@@ -44,7 +47,6 @@ while cap.isOpened():
     frame_count += 1
 
 cap.release()
-cv2.destroyAllWindows()
 
 result = {
     "max_bend": max(angles) if angles else None

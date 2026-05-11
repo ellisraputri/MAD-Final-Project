@@ -1,7 +1,6 @@
 import librosa
 import numpy as np
 from scipy.signal import find_peaks
-import matplotlib.pyplot as plt
 import sys
 import json
 
@@ -32,11 +31,6 @@ breath_count = len(peaks)
 
 bpm = (breath_count / duration_sec) * 60
 
-# plt.plot(smooth)
-# plt.plot(peaks, smooth[peaks], "rx")
-# plt.title("Breathing Detection")
-# plt.show()
-
 smooth_list = smooth.tolist()
 peaks_list = peaks.tolist()
 peak_values = smooth[peaks].tolist()
@@ -47,11 +41,7 @@ times_list = times.tolist()
 
 result = {
     "breath_count": breath_count,
-    "bpm": bpm,
-    # "times": times_list,
-    # "smooth": smooth_list,
-    # "peaks": peaks_list,
-    # "peak_values": peak_values
+    "bpm": bpm
 }
 
 print(json.dumps(result))

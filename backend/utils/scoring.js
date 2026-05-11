@@ -95,14 +95,12 @@ export const scoreActivity1 = async (mediaList, predictions) => {
 
     mapSuccess: (result, pred) => ({
       touch_time: result.touch_time,
-      stop_time: result.stop_time,
       prediction: pred,
-      score: calculateScore(pred, result.stop_time),
+      score: calculateScore(pred, result.touch_time),
     }),
 
     mapError: (pred) => ({
       touch_time: null,
-      stop_time: null,
       prediction: pred,
       score: 0,
       error: true,

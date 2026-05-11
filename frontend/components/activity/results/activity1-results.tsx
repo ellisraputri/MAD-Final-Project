@@ -19,7 +19,7 @@ function ActivityOneResultCard(props: {
   videoUri: string | null | undefined;
   mass: number | undefined;
   timePredict: number | undefined;
-  timeStop: number | undefined;
+  timeContact: number | undefined;
   accuracy: number | undefined;
 }) {
   const theme = useAppTheme();
@@ -40,12 +40,12 @@ function ActivityOneResultCard(props: {
     return !isNaN(num) && isFinite(num) && num > 0;
   };
 
-  const condition = props.timeStop && props.timeStop > 0;
-  const gForceCondition = props.timeStop && props.timeStop > 0;
+  const condition = props.timeContact && props.timeContact > 0;
+  const gForceCondition = props.timeContact && props.timeContact > 0;
 
-  const finalVelocity = condition ? 0.3 / props.timeStop! : undefined;
+  const finalVelocity = condition ? 0.3 / props.timeContact! : undefined;
   const acceleration = condition
-    ? finalVelocity! / props.timeStop!
+    ? finalVelocity! / props.timeContact!
     : undefined;
 
   const netForce =
@@ -58,7 +58,7 @@ function ActivityOneResultCard(props: {
     : undefined;
   const [deltaV, setDeltaV] = useState(finalVelocity);
 
-  const gForce = gForceCondition ? deltaV! / props.timeStop! / 9.8 : undefined;
+  const gForce = gForceCondition ? deltaV! / props.timeContact! / 9.8 : undefined;
 
   useEffect(() => {
     if (isBounce === "bounce") {
@@ -108,7 +108,7 @@ function ActivityOneResultCard(props: {
             • Predicted: {props.timePredict?.toFixed(3)}
           </Text>
           <Text style={resultStyles.listItem}>
-            • Outcome: {props.timeStop?.toFixed(3)}
+            • Outcome: {props.timeContact?.toFixed(3)}
           </Text>
         </View>
 
@@ -123,7 +123,7 @@ function ActivityOneResultCard(props: {
           </Text>
           <Text style={resultStyles.calculationText}>
             Then, from the measurements, the time is{" "}
-            {props.timeStop?.toFixed(3)} s.
+            {props.timeContact?.toFixed(3)} s.
           </Text>
           <Text style={resultStyles.calculationText}>
             Since the toy is dropped, the initial velocity is 0 m/s.
@@ -139,7 +139,7 @@ function ActivityOneResultCard(props: {
                 fontSize={13}
               />
               <Equation
-                latex={`v_{final} = \\\\frac{0.3}{${props.timeStop?.toFixed(
+                latex={`v_{final} = \\\\frac{0.3}{${props.timeContact?.toFixed(
                   3,
                 )}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`}
                 fontSize={13}
@@ -160,7 +160,7 @@ function ActivityOneResultCard(props: {
               <Equation
                 latex={`a = \\\\frac{${finalVelocity?.toFixed(
                   3,
-                )} - 0}{${props.timeStop?.toFixed(
+                )} - 0}{${props.timeContact?.toFixed(
                   3,
                 )}} \\\\approx ${acceleration?.toFixed(3)} \\\\text{ } m/s^2`}
                 fontSize={13}
@@ -265,7 +265,7 @@ function ActivityOneResultCard(props: {
                   <Equation
                     latex={`\\\\text{g-force} = \\\\frac{${deltaV?.toFixed(
                       3,
-                    )}}{${props.timeStop?.toFixed(
+                    )}}{${props.timeContact?.toFixed(
                       3,
                     )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
                     fontSize={13}
@@ -363,7 +363,7 @@ function ActivityOneResultCard(props: {
                       <Equation
                         latex={`\\\\text{g-force} = \\\\frac{${deltaV?.toFixed(
                           3,
-                        )}}{${props.timeStop?.toFixed(
+                        )}}{${props.timeContact?.toFixed(
                           3,
                         )}} \\\\div 9.8 \\\\approx ${gForce?.toFixed(3)} \\\\text{ } g`}
                         fontSize={13}
@@ -519,7 +519,7 @@ export default function ActivityOneResultsScreen(props: {
           videoUri={data.medias?.[index]?.content}
           mass={data?.predictions[index]?.mass}
           timePredict={data.predictions?.[index]?.prediction}
-          timeStop={outcome?.stop_time}
+          timeContact={outcome?.touch_time}
           accuracy={outcome?.score}
         />
       ))}
