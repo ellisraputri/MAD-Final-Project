@@ -1,4 +1,11 @@
-import { Image, ImageSourcePropType, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  ImageSourcePropType,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import activity1Instructions from "@/data/activity1_instructions.json";
 import activity2Instructions from "@/data/activity2_instructions.json";
 import activity3Instructions from "@/data/activity3_instructions.json";
@@ -83,11 +90,13 @@ export default function InstructionScreen() {
   const data = instructionsMap[Number(id)];
 
   const mapImage = (key: string) => {
-    if(key === 'mobile'){
-      return theme.isDark? equipmentImages['darkMobile'] : equipmentImages['lightMobile'];
+    if (key === "mobile") {
+      return theme.isDark
+        ? equipmentImages["darkMobile"]
+        : equipmentImages["lightMobile"];
     }
     return equipmentImages[key];
-  }
+  };
 
   return (
     <ScrollView

@@ -16,7 +16,7 @@ function ActivityThreeResultCard(props: {
   item: number;
   videoUri: string | null;
   bendPredict: number;
-  bendCalculated: number;
+  bendCalculated: number | null;
   accuracy: number;
 }) {
   const theme = useAppTheme();
@@ -24,9 +24,10 @@ function ActivityThreeResultCard(props: {
 
   const [showVideoModal, setShowVideoModal] = useState(false);
   const degToRad = (deg: number) => (deg * Math.PI) / 180;
-  const bendRadian = degToRad(props.bendCalculated);
+  const bendRadian =
+    props.bendCalculated !== null ? degToRad(props.bendCalculated) : null;
 
-  const force = 0.05 * bendRadian;
+  const force = bendRadian !== null ? 0.05 * bendRadian : null;
 
   return (
     <View
@@ -59,7 +60,10 @@ function ActivityThreeResultCard(props: {
             • Predicted: {props.bendPredict?.toFixed(3)}
           </Text>
           <Text style={resultStyles.listItem}>
-            • Outcome: {props.bendCalculated?.toFixed(3)}
+            • Outcome:{" "}
+            {props.bendCalculated !== null
+              ? props.bendCalculated.toFixed(3)
+              : "NaN"}
           </Text>
         </View>
 
@@ -74,30 +78,47 @@ function ActivityThreeResultCard(props: {
           </Text>
           <Equation latex="k = 0.05 \\text{ } N/rad" fontSize={13} />
 
-          <Text
-            style={[resultStyles.descText, { marginTop: 15, marginBottom: 2 }]}
-          >
-            The observed bend angle:
-          </Text>
-          <Equation
-            latex={`\\\\theta = ${props.bendCalculated.toFixed(
-              3,
-            )}^{\\\\circ} \\\\approx ${bendRadian.toFixed(3)} rad`}
-            fontSize={13}
-          />
+          {props.bendCalculated !== null &&
+          bendRadian !== null &&
+          force !== null ? (
+            <>
+              <Text
+                style={[
+                  resultStyles.descText,
+                  { marginTop: 15, marginBottom: 2 },
+                ]}
+              >
+                The observed bend angle:
+              </Text>
+              <Equation
+                latex={`\\\\theta = ${props.bendCalculated.toFixed(3)}^{\\\\circ} \\\\approx ${bendRadian?.toFixed(3)} rad`}
+                fontSize={13}
+              />
 
-          <Text
-            style={[resultStyles.descText, { marginTop: 15, marginBottom: 2 }]}
-          >
-            The applied force:
-          </Text>
-          <Equation latex={`F \\\\approx k \\\\cdot \\\\theta`} fontSize={13} />
-          <Equation
-            latex={`F \\\\approx ${0.05} \\\\cdot ${bendRadian.toFixed(
-              3,
-            )} \\\\approx ${force.toFixed(3)} N`}
-            fontSize={13}
-          />
+              <Text
+                style={[
+                  resultStyles.descText,
+                  { marginTop: 15, marginBottom: 2 },
+                ]}
+              >
+                The applied force:
+              </Text>
+              <Equation
+                latex={`F \\\\approx k \\\\cdot \\\\theta`}
+                fontSize={13}
+              />
+              <Equation
+                latex={`F \\\\approx ${0.05} \\\\cdot ${bendRadian.toFixed(
+                  3,
+                )} \\\\approx ${force.toFixed(3)} N`}
+                fontSize={13}
+              />
+            </>
+          ) : (
+            <Text style={resultStyles.descText}>
+              Bend calculation unavailable.
+            </Text>
+          )}
         </Accordion>
       </View>
     </View>
@@ -210,7 +231,7 @@ export default function ActivityThreeResultsScreen(props: {
               key={index}
               item={index + 1}
               videoUri={data.medias?.[index]?.content}
-              bendCalculated={outcome.max_bend}
+              bendCalculated={outcome.max_bend ?? null}
               bendPredict={data.predictions?.[index]?.prediction}
               accuracy={outcome.score}
             />

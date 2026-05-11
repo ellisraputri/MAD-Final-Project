@@ -1,13 +1,23 @@
 import React from "react";
-import { render, fireEvent, waitFor, cleanup, act } from "@testing-library/react-native";
+import {
+  render,
+  fireEvent,
+  waitFor,
+  cleanup,
+  act,
+} from "@testing-library/react-native";
 import { Alert, Vibration } from "react-native";
 import ActivityFiveScreen from "@/components/activity/main/activity5";
 import { uploadMedia45 } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 
 // --- Mocks ---
-jest.mock("@/hooks/use-app-theme", () => ({ useAppTheme: () => ({ background: "#fff", blackText: "#000" }) }));
-jest.mock("@/context/AppContext", () => ({ useAppContext: () => ({ team: { id: "team1" } }) }));
+jest.mock("@/hooks/use-app-theme", () => ({
+  useAppTheme: () => ({ background: "#fff", blackText: "#000" }),
+}));
+jest.mock("@/context/AppContext", () => ({
+  useAppContext: () => ({ team: { id: "team1" } }),
+}));
 jest.mock("@/services/util", () => ({ estimateDistance: jest.fn(() => 1.5) }));
 
 jest.mock("expo-sensors", () => ({
@@ -43,10 +53,7 @@ jest.mock("@/components/ui/button", () => {
   const { TouchableOpacity, Text } = require("react-native");
   return function MockButton({ onPress, text, isDisabled, isLoading }) {
     return (
-      <TouchableOpacity 
-        disabled={isDisabled || isLoading} 
-        onPress={onPress}
-      >
+      <TouchableOpacity disabled={isDisabled || isLoading} onPress={onPress}>
         <Text>{isLoading ? "Loading..." : text}</Text>
       </TouchableOpacity>
     );
@@ -60,9 +67,17 @@ jest.mock("@/components/activity/submission/activity5-submission-card", () => {
     return (
       <View>
         <Text>{`Submission ${props.item}`}</Text>
-        <TextInput placeholder="Movement" value={props.movement} onChangeText={props.onChangeMovement} />
-        <TouchableOpacity onPress={props.onDelete}><Text>Delete</Text></TouchableOpacity>
-        <TouchableOpacity onPress={props.onRerecord}><Text>Rerecord</Text></TouchableOpacity>
+        <TextInput
+          placeholder="Movement"
+          value={props.movement}
+          onChangeText={props.onChangeMovement}
+        />
+        <TouchableOpacity onPress={props.onDelete}>
+          <Text>Delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={props.onRerecord}>
+          <Text>Rerecord</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -87,18 +102,20 @@ jest.mock("react-native", () => {
 
 describe("ActivityFiveScreen", () => {
   let dateNowSpy;
-  
+
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();
-    
+
     let mockTime = 1000000;
-    dateNowSpy = jest.spyOn(global.Date, 'now').mockImplementation(() => mockTime);
-    
+    dateNowSpy = jest
+      .spyOn(global.Date, "now")
+      .mockImplementation(() => mockTime);
+
     global.setMockTime = (time) => {
       mockTime = time;
     };
-    
+
     jest.spyOn(Alert, "alert").mockImplementation((title, msg, buttons) => {
       if (buttons && buttons[1] && buttons[1].text === "OK") {
         buttons[1].onPress();
@@ -115,20 +132,20 @@ describe("ActivityFiveScreen", () => {
   const performRecordingFlow = async (queries) => {
     const startTime = 1000000;
     global.setMockTime(startTime);
-    
+
     await act(async () => {
       fireEvent.press(queries.getByText(/Vibration/));
     });
-    
+
     global.setMockTime(startTime + 2000);
     await act(async () => {
       jest.advanceTimersByTime(2000);
     });
-    
+
     await act(async () => {
       fireEvent.press(queries.getByText(/Stop/));
     });
-    
+
     await act(async () => {
       fireEvent.press(queries.getByText("Confirm Submission"));
     });
@@ -143,7 +160,7 @@ describe("ActivityFiveScreen", () => {
 
     for (let i = 0; i < 3; i++) {
       await performRecordingFlow(utils);
-      
+
       if (i < 2) {
         fireEvent.press(getByText("Add Another Submission"));
       }
@@ -157,7 +174,11 @@ describe("ActivityFiveScreen", () => {
     await waitFor(() => {
       expect(uploadMedia45).toHaveBeenCalledTimes(3);
       expect(submitResult).toHaveBeenCalled();
-      expect(Alert.alert).toHaveBeenCalledWith("Success", expect.any(String), expect.any(Array));
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Success",
+        expect.any(String),
+        expect.any(Array),
+      );
     });
   });
 
@@ -172,7 +193,9 @@ describe("ActivityFiveScreen", () => {
 
     fireEvent.press(getByText("Submit"));
 
-    expect(global.alert).toHaveBeenCalledWith(expect.stringContaining("3 inputs"));
+    expect(global.alert).toHaveBeenCalledWith(
+      expect.stringContaining("3 inputs"),
+    );
   });
 
   it("alerts when submitting incomplete fields", async () => {

@@ -1,13 +1,22 @@
 import React from "react";
-import { render, fireEvent, waitFor, cleanup } from "@testing-library/react-native";
+import {
+  render,
+  fireEvent,
+  waitFor,
+  cleanup,
+} from "@testing-library/react-native";
 import { Alert } from "react-native";
 import ActivityTwoScreen from "@/components/activity/main/activity2";
 import { uploadMedia } from "@/services/media/media";
 import { submitResult } from "@/services/result/result";
 
 // --- Mocks ---
-jest.mock("@/hooks/use-app-theme", () => ({ useAppTheme: () => ({ background: "#fff", blackText: "#000" }) }));
-jest.mock("@/context/AppContext", () => ({ useAppContext: () => ({ team: { id: "team1" } }) }));
+jest.mock("@/hooks/use-app-theme", () => ({
+  useAppTheme: () => ({ background: "#fff", blackText: "#000" }),
+}));
+jest.mock("@/context/AppContext", () => ({
+  useAppContext: () => ({ team: { id: "team1" } }),
+}));
 
 jest.mock("@/components/activity/main/main-activity-style", () => ({
   createMainActivityStyles: () => ({
@@ -32,9 +41,9 @@ jest.mock("@/components/ui/audio-recording", () => {
     const handleRecord = () => {
       setResult((prev) => ({
         ...prev,
-        [type]: { uri: "audio-uri.mp3", levels: [0.5, 0.8], input: "" }
+        [type]: { uri: "audio-uri.mp3", levels: [0.5, 0.8], input: "" },
       }));
-      onPressButton(); 
+      onPressButton();
     };
     return (
       <TouchableOpacity onPress={handleRecord} testID="mock-recorder">
@@ -49,10 +58,7 @@ jest.mock("@/components/ui/button", () => {
   const { TouchableOpacity, Text } = require("react-native");
   return function MockButton({ onPress, text, isDisabled, isLoading }) {
     return (
-      <TouchableOpacity 
-        disabled={isDisabled || isLoading} 
-        onPress={onPress}
-      >
+      <TouchableOpacity disabled={isDisabled || isLoading} onPress={onPress}>
         <Text>{isLoading ? "Loading..." : text}</Text>
       </TouchableOpacity>
     );
@@ -66,9 +72,17 @@ jest.mock("@/components/activity/submission/activity2-submission-card", () => {
     return (
       <View>
         <Text>{`Submission ${props.item}`}</Text>
-        <TextInput placeholder="Prediction" value={props.input} onChangeText={props.onChangeInput} />
-        <TouchableOpacity onPress={props.onDelete}><Text>Delete</Text></TouchableOpacity>
-        <TouchableOpacity onPress={props.onRerecord}><Text>Rerecord</Text></TouchableOpacity>
+        <TextInput
+          placeholder="Prediction"
+          value={props.input}
+          onChangeText={props.onChangeInput}
+        />
+        <TouchableOpacity onPress={props.onDelete}>
+          <Text>Delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={props.onRerecord}>
+          <Text>Rerecord</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -80,9 +94,9 @@ describe("ActivityTwoScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(Alert, "alert").mockImplementation((title, msg, buttons) => {
-        if (buttons && buttons[1] && buttons[1].text === "OK") {
-            buttons[1].onPress();
-        }
+      if (buttons && buttons[1] && buttons[1].text === "OK") {
+        buttons[1].onPress();
+      }
     });
     global.alert = jest.fn();
   });
@@ -104,7 +118,7 @@ describe("ActivityTwoScreen", () => {
 
     for (let i = 0; i < 3; i++) {
       await performRecordingFlow(utils);
-      
+
       if (i < 2) {
         fireEvent.press(getByText("Add Another Submission"));
       }
@@ -118,7 +132,11 @@ describe("ActivityTwoScreen", () => {
     await waitFor(() => {
       expect(uploadMedia).toHaveBeenCalledTimes(3);
       expect(submitResult).toHaveBeenCalled();
-      expect(Alert.alert).toHaveBeenCalledWith("Success", expect.any(String), expect.any(Array));
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Success",
+        expect.any(String),
+        expect.any(Array),
+      );
     });
   });
 
@@ -134,7 +152,9 @@ describe("ActivityTwoScreen", () => {
 
     fireEvent.press(getByText("Submit"));
 
-    expect(global.alert).toHaveBeenCalledWith(expect.stringContaining("3 audios"));
+    expect(global.alert).toHaveBeenCalledWith(
+      expect.stringContaining("3 audios"),
+    );
   });
 
   it("alerts when submitting incomplete fields", async () => {
@@ -145,6 +165,8 @@ describe("ActivityTwoScreen", () => {
 
     fireEvent.press(getByText("Submit"));
 
-    expect(global.alert).toHaveBeenCalledWith("Please fill all prediction fields.");
+    expect(global.alert).toHaveBeenCalledWith(
+      "Please fill all prediction fields.",
+    );
   });
 });

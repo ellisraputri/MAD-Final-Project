@@ -109,7 +109,7 @@ describe("ActivityThreeResultsScreen", () => {
     });
 
     const { getByText } = render(
-      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />
+      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />,
     );
 
     expect(getByText("Loading...")).toBeTruthy();
@@ -125,11 +125,11 @@ describe("ActivityThreeResultsScreen", () => {
     });
 
     const { getByText } = render(
-      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />
+      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />,
     );
 
     expect(getByText("ActivityResultBaseScreen")).toBeTruthy();
-    
+
     expect(getByText("Forces to Bend Paper")).toBeTruthy();
     expect(getByText("Table Component")).toBeTruthy();
     expect(getByText("F \\\\approx k \\\\cdot \\\\theta")).toBeTruthy();
@@ -149,7 +149,7 @@ describe("ActivityThreeResultsScreen", () => {
     });
 
     const { getByText } = render(
-      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />
+      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />,
     );
 
     // Card Details
@@ -160,7 +160,9 @@ describe("ActivityThreeResultsScreen", () => {
     expect(getByText("Score (accuracy): 95.500")).toBeTruthy();
 
     expect(getByText("Calculation")).toBeTruthy();
-    expect(getByText("F \\\\approx 0.05 \\\\cdot 0.873 \\\\approx 0.044 N")).toBeTruthy();
+    expect(
+      getByText("F \\\\approx 0.05 \\\\cdot 0.873 \\\\approx 0.044 N"),
+    ).toBeTruthy();
   });
 
   it("renders 'No video' text when videoUri is null", () => {
@@ -177,7 +179,7 @@ describe("ActivityThreeResultsScreen", () => {
     });
 
     const { getByText, queryByText } = render(
-      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />
+      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />,
     );
 
     expect(getByText("No video")).toBeTruthy();
@@ -201,7 +203,7 @@ describe("ActivityThreeResultsScreen", () => {
     });
 
     const { getByText } = render(
-      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />
+      <ActivityThreeResultsScreen resultId="1" onBack={jest.fn()} />,
     );
 
     // Check first submission

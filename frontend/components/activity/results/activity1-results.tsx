@@ -43,9 +43,7 @@ function ActivityOneResultCard(props: {
   const gForceCondition = props.timeStop && props.timeStop > 0;
 
   const finalVelocity = condition ? 0.3 / props.timeStop! : undefined;
-  const acceleration = condition
-    ? finalVelocity! / props.timeStop!
-    : undefined;
+  const acceleration = condition ? finalVelocity! / props.timeStop! : undefined;
 
   const netForce =
     acceleration && props.mass ? props.mass * acceleration : undefined;

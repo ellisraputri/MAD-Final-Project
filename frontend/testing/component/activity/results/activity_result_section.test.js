@@ -3,15 +3,12 @@ import { render } from "@testing-library/react-native";
 import ResultSection from "@/components/activity/results/activity-result-section";
 
 // --- Mocks ---
-jest.mock(
-  "@/components/activity/results/activity-result-style",
-  () => ({
-    createResultStyles: jest.fn(() => ({
-      sectionTitle: {},
-      divider: {},
-    })),
-  })
-);
+jest.mock("@/components/activity/results/activity-result-style", () => ({
+  createResultStyles: jest.fn(() => ({
+    sectionTitle: {},
+    divider: {},
+  })),
+}));
 
 describe("ResultSection", () => {
   afterEach(() => {
@@ -22,7 +19,7 @@ describe("ResultSection", () => {
     const { getByText } = render(
       <ResultSection title="Theory">
         <></>
-      </ResultSection>
+      </ResultSection>,
     );
 
     expect(getByText("Theory")).toBeTruthy();
@@ -35,12 +32,10 @@ describe("ResultSection", () => {
     const { getByText } = render(
       <ResultSection title="Results">
         <Text>Custom Child Content</Text>
-      </ResultSection>
+      </ResultSection>,
     );
 
-    expect(
-      getByText("Custom Child Content")
-    ).toBeTruthy();
+    expect(getByText("Custom Child Content")).toBeTruthy();
   });
 
   it("renders both title and children", () => {
@@ -50,25 +45,21 @@ describe("ResultSection", () => {
     const { getByText } = render(
       <ResultSection title="Leaderboard">
         <Text>Ranking Content</Text>
-      </ResultSection>
+      </ResultSection>,
     );
 
     expect(getByText("Leaderboard")).toBeTruthy();
 
-    expect(
-      getByText("Ranking Content")
-    ).toBeTruthy();
+    expect(getByText("Ranking Content")).toBeTruthy();
   });
 
   it("renders without crashing when children are empty", () => {
     const { getByText } = render(
       <ResultSection title="Empty Section">
         <></>
-      </ResultSection>
+      </ResultSection>,
     );
 
-    expect(
-      getByText("Empty Section")
-    ).toBeTruthy();
+    expect(getByText("Empty Section")).toBeTruthy();
   });
 });

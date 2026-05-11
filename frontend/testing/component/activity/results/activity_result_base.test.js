@@ -26,60 +26,41 @@ jest.mock("@/data/activity_theory.json", () => ({
 
 // --- UI component mocks ---
 
-jest.mock(
-  "@/components/activity/results/activity-result-section",
-  () => {
-    const React = require("react");
-    const { View, Text } = require("react-native");
+jest.mock("@/components/activity/results/activity-result-section", () => {
+  const React = require("react");
+  const { View, Text } = require("react-native");
 
-    return function MockResultSection({ title, children }) {
-      return (
-        <View>
-          <Text>{title}</Text>
-          {children}
-        </View>
-      );
-    };
-  }
-);
+  return function MockResultSection({ title, children }) {
+    return (
+      <View>
+        <Text>{title}</Text>
+        {children}
+      </View>
+    );
+  };
+});
 
-jest.mock(
-  "@/components/ui/ranking-card",
-  () => {
-    const React = require("react");
-    const { View, Text } = require("react-native");
+jest.mock("@/components/ui/ranking-card", () => {
+  const React = require("react");
+  const { View, Text } = require("react-native");
 
-    return function MockRankingCard({
-      rank,
-      score,
-      teamName,
-      attemptNo,
-    }) {
-      return (
-        <View>
-          <Text>{`Rank: ${rank}`}</Text>
-          <Text>{`Score: ${score}`}</Text>
-          <Text>{`Team: ${teamName}`}</Text>
-          <Text>{`Attempt: ${attemptNo}`}</Text>
-        </View>
-      );
-    };
-  }
-);
+  return function MockRankingCard({ rank, score, teamName, attemptNo }) {
+    return (
+      <View>
+        <Text>{`Rank: ${rank}`}</Text>
+        <Text>{`Score: ${score}`}</Text>
+        <Text>{`Team: ${teamName}`}</Text>
+        <Text>{`Attempt: ${attemptNo}`}</Text>
+      </View>
+    );
+  };
+});
 
 jest.mock("@/components/ui/button", () => {
   const React = require("react");
-  const {
-    TouchableOpacity,
-    Text,
-  } = require("react-native");
+  const { TouchableOpacity, Text } = require("react-native");
 
-  return function MockButton({
-    onPress,
-    text,
-    isDisabled,
-    isLoading,
-  }) {
+  return function MockButton({ onPress, text, isDisabled, isLoading }) {
     return (
       <TouchableOpacity
         disabled={isDisabled}
@@ -88,33 +69,20 @@ jest.mock("@/components/ui/button", () => {
           disabled: isDisabled,
         }}
       >
-        <Text>
-          {isLoading ? "Loading..." : text}
-        </Text>
+        <Text>{isLoading ? "Loading..." : text}</Text>
       </TouchableOpacity>
     );
   };
 });
 
-jest.mock(
-  "@/components/ui/rating-popup",
-  () => {
-    const React = require("react");
-    const { Text } = require("react-native");
+jest.mock("@/components/ui/rating-popup", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
 
-    return function MockRatingPopup({
-      activityId,
-      resultId,
-      showModal,
-    }) {
-      return (
-        <Text>
-          {`RatingPopup-${activityId}-${resultId}-${showModal}`}
-        </Text>
-      );
-    };
-  }
-);
+  return function MockRatingPopup({ activityId, resultId, showModal }) {
+    return <Text>{`RatingPopup-${activityId}-${resultId}-${showModal}`}</Text>;
+  };
+});
 
 describe("ActivityResultBaseScreen", () => {
   const baseProps = {
@@ -133,16 +101,11 @@ describe("ActivityResultBaseScreen", () => {
 
   it("renders theory section", () => {
     const { getByText } = render(
-      <ActivityResultBaseScreen
-        {...baseProps}
-        result={undefined}
-      />
+      <ActivityResultBaseScreen {...baseProps} result={undefined} />,
     );
 
     expect(getByText("Theory")).toBeTruthy();
-    expect(
-      getByText("This is activity theory text")
-    ).toBeTruthy();
+    expect(getByText("This is activity theory text")).toBeTruthy();
   });
 
   it("renders children inside results section", () => {
@@ -150,12 +113,9 @@ describe("ActivityResultBaseScreen", () => {
     const { Text } = require("react-native");
 
     const { getByText } = render(
-      <ActivityResultBaseScreen
-        {...baseProps}
-        result={undefined}
-      >
+      <ActivityResultBaseScreen {...baseProps} result={undefined}>
         <Text>Custom Result Content</Text>
-      </ActivityResultBaseScreen>
+      </ActivityResultBaseScreen>,
     );
 
     expect(getByText("Results")).toBeTruthy();
@@ -164,16 +124,13 @@ describe("ActivityResultBaseScreen", () => {
 
   it("shows waiting text when result is undefined", () => {
     const { getByText } = render(
-      <ActivityResultBaseScreen
-        {...baseProps}
-        result={undefined}
-      />
+      <ActivityResultBaseScreen {...baseProps} result={undefined} />,
     );
 
     expect(
       getByText(
-        "Still compiling leaderboard data. Please wait until tomorrow."
-      )
+        "Still compiling leaderboard data. Please wait until tomorrow.",
+      ),
     ).toBeTruthy();
   });
 
@@ -185,10 +142,7 @@ describe("ActivityResultBaseScreen", () => {
     };
 
     const { getByText } = render(
-      <ActivityResultBaseScreen
-        {...baseProps}
-        result={mockResult}
-      />
+      <ActivityResultBaseScreen {...baseProps} result={mockResult} />,
     );
 
     expect(getByText("Rank: 3")).toBeTruthy();
@@ -205,7 +159,7 @@ describe("ActivityResultBaseScreen", () => {
         {...baseProps}
         onBack={onBack}
         result={undefined}
-      />
+      />,
     );
 
     fireEvent.press(getByText("Back"));
@@ -215,15 +169,10 @@ describe("ActivityResultBaseScreen", () => {
 
   it("renders rating popup when resultId exists", () => {
     const { getByText } = render(
-      <ActivityResultBaseScreen
-        {...baseProps}
-        result={undefined}
-      />
+      <ActivityResultBaseScreen {...baseProps} result={undefined} />,
     );
 
-    expect(
-      getByText("RatingPopup-activity-1-result-1-true")
-    ).toBeTruthy();
+    expect(getByText("RatingPopup-activity-1-result-1-true")).toBeTruthy();
   });
 
   it("does not render rating popup when resultId is undefined", () => {
@@ -232,12 +181,10 @@ describe("ActivityResultBaseScreen", () => {
         {...baseProps}
         resultId={undefined}
         result={undefined}
-      />
+      />,
     );
 
-    expect(
-      queryByText(/RatingPopup/i)
-    ).toBeNull();
+    expect(queryByText(/RatingPopup/i)).toBeNull();
   });
 
   it("renders theoryChildren when provided", () => {
@@ -249,11 +196,9 @@ describe("ActivityResultBaseScreen", () => {
         {...baseProps}
         result={undefined}
         theoryChildren={<Text>Extra Theory Content</Text>}
-      />
+      />,
     );
 
-    expect(
-      getByText("Extra Theory Content")
-    ).toBeTruthy();
+    expect(getByText("Extra Theory Content")).toBeTruthy();
   });
 });

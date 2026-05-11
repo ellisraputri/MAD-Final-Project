@@ -53,7 +53,7 @@ jest.mock("react-native", () => {
     Alert: { alert: jest.fn() },
     Pressable: ({ children, onPress }) =>
       React.createElement("Pressable", { onPress }, children || null),
-    Vibration: {vibrate: jest.fn(), cancel: jest.fn()}
+    Vibration: { vibrate: jest.fn(), cancel: jest.fn() },
   };
 });
 
