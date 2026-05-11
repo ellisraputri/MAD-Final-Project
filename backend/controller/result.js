@@ -153,7 +153,10 @@ export const submitResult = async (req, res) => {
       score,
       outcomes,
       medias,
-      predictions: (activityId == 2 || activityId == 4 || activityId == 5)? preds : predictions,
+      predictions:
+        activityId == 2 || activityId == 4 || activityId == 5
+          ? preds
+          : predictions,
     });
 
     const docRef = await resultRef.add(resultData);
@@ -201,12 +204,13 @@ export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
     (outcomes.length || 1);
 
   if (activityId == 6) {
-    preds = [];
-    for (const p of predictions) {
-      preds.push({
+    let newpreds = [];
+    for (const p of preds) {
+      newpreds.push({
         prediction: p.prediction,
       });
     }
+    preds = newpreds;
   }
 
   const resultData = resultModel({
@@ -220,6 +224,7 @@ export const saveTeamResult67 = async ({ teamId, activityId, results }) => {
   });
 
   await resultRef.add(resultData);
+  cacheService.del(`result.list.${teamId}.${activityId}`);
 };
 
 export const rate = async (req, res) => {

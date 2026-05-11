@@ -262,7 +262,7 @@ export default function TeamConfirmationScreen() {
 
             {/* OK Button */}
             <Button
-              onPress={handleJoinTeam}
+              onPress={() => handleJoinTeam(teamId)}
               text="OK"
               width={150}
               fontSize={16}

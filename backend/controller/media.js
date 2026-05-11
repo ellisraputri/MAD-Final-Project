@@ -33,11 +33,11 @@ export const uploadMedia = async (req, res) => {
 export const uploadToCloudinary = async (req, res) => {
   try {
     const file = req.file;
-    const isAudio = file.mimetype.startsWith("audio");
-
     if (!file) {
       return error400(res, "No file uploaded");
     }
+
+    const isAudio = file.mimetype.startsWith("audio");
 
     let streamOptions = {};
     if (isAudio) {

@@ -433,7 +433,7 @@ export default function HomeScreen() {
               </View>
 
               <TextInput
-                placeholder="Enter your team ID"
+                placeholder="Enter your team name"
                 placeholderTextColor={theme.placeholderText}
                 value={teamName}
                 onChangeText={setTeamName}

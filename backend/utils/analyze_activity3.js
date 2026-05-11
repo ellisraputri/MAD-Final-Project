@@ -33,10 +33,10 @@ export const analyzeVideo3 = (videoPath) => {
         return reject("FFmpeg failed");
       }
 
-      const pythonPath = path.join(
-        __dirname,
-        "../scripts/.venv/Scripts/python.exe",
-      );
+      const pythonPath =
+        process.env.NODE_ENV === "production"
+          ? "python3"
+          : path.join(__dirname, "../scripts/.venv/Scripts/python.exe");
       const scriptPath = path.join(__dirname, "../scripts/activity3.py");
 
       const py = spawn(pythonPath, [scriptPath, fixedPath]);

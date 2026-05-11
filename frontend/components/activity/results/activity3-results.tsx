@@ -76,7 +76,7 @@ function ActivityThreeResultCard(props: {
           <Text style={resultStyles.descText}>
             The object is thin paper. So,{" "}
           </Text>
-          <Equation latex="k = 0.05 \\text{ } N/rad" fontSize={13} />
+          <Equation latex="k = 0.05 \\text{ N/rad}" fontSize={13} />
 
           {props.bendCalculated !== null &&
           bendRadian !== null &&

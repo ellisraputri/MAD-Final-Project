@@ -45,7 +45,7 @@ function CardActivitySix(props: CardActivitySixProps) {
             }
           }}
         />
-        <Text style={styles.cardUnit}>seconds delay</Text>
+        <Text style={styles.cardUnit}>ms delay</Text>
       </View>
 
       {props.type === 3 && (

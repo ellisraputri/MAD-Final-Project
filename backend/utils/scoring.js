@@ -8,9 +8,11 @@ import { analyzeVideo3 } from "./analyze_activity3.js";
 
 const calculateScore = (pred, actual) => {
   if (actual == null || isNaN(actual)) return 0;
-  const actualSafe = actual === 0 ? 0.00001 : actual;
-  let score = 1 - Math.abs(pred - actualSafe) / actualSafe;
-  return Math.max(0, score);
+
+  const actualSafe = Math.abs(actual) < 0.00001 ? 0.00001 : Math.abs(actual);
+
+  let score = 1 - Math.abs(pred - actual) / actualSafe;
+  return Math.max(0, Math.min(1, score));
 };
 
 const getMedias = async (medias) => {
@@ -95,14 +97,12 @@ export const scoreActivity1 = async (mediaList, predictions) => {
 
     mapSuccess: (result, pred) => ({
       touch_time: result.touch_time,
-      stop_time: result.stop_time,
       prediction: pred,
-      score: calculateScore(pred, result.stop_time),
+      score: calculateScore(pred, result.touch_time),
     }),
 
     mapError: (pred) => ({
       touch_time: null,
-      stop_time: null,
       prediction: pred,
       score: 0,
       error: true,

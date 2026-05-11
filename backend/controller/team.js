@@ -117,7 +117,7 @@ export const joinTeam = async (req, res) => {
   }
 };
 
-export const getDetail = async (req, res) => {
+export const getTeamDetail = async (req, res) => {
   try {
     const teamId = req.params.id;
 
