@@ -76,7 +76,6 @@ describe("Scoring Utils", () => {
 
       analyzeVideo.mockResolvedValue({
         touch_time: 10,
-        stop_time: 12,
       });
 
       const result = await scorePredictions(
@@ -142,7 +141,6 @@ describe("Scoring Utils", () => {
     it("should score successfully", async () => {
       analyzeVideo.mockResolvedValue({
         touch_time: 10,
-        stop_time: 12,
       });
 
       downloadMedia.mockResolvedValue();
