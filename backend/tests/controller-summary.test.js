@@ -45,8 +45,7 @@ describe("Summary Controller", () => {
         ])
         .mockReturnValueOnce("today");
 
-      const response = await request(app)
-        .get("/summary/global");
+      const response = await request(app).get("/summary/global");
 
       expect(response.status).toBe(200);
 
@@ -64,8 +63,7 @@ describe("Summary Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .get("/summary/global");
+      const response = await request(app).get("/summary/global");
 
       expect(response.status).toBe(400);
     });
@@ -90,8 +88,7 @@ describe("Summary Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .get("/summary/global");
+      const response = await request(app).get("/summary/global");
 
       expect(response.status).toBe(200);
 
@@ -111,8 +108,7 @@ describe("Summary Controller", () => {
         ])
         .mockReturnValueOnce("today");
 
-      const response = await request(app)
-        .get("/summary/activity/1");
+      const response = await request(app).get("/summary/activity/1");
 
       expect(response.status).toBe(200);
     });
@@ -128,8 +124,7 @@ describe("Summary Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .get("/summary/activity/1");
+      const response = await request(app).get("/summary/activity/1");
 
       expect(response.status).toBe(400);
     });
@@ -154,8 +149,7 @@ describe("Summary Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .get("/summary/activity/1");
+      const response = await request(app).get("/summary/activity/1");
 
       expect(response.status).toBe(200);
 

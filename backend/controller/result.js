@@ -153,7 +153,10 @@ export const submitResult = async (req, res) => {
       score,
       outcomes,
       medias,
-      predictions: (activityId == 2 || activityId == 4 || activityId == 5)? preds : predictions,
+      predictions:
+        activityId == 2 || activityId == 4 || activityId == 5
+          ? preds
+          : predictions,
     });
 
     const docRef = await resultRef.add(resultData);

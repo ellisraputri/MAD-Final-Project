@@ -1,10 +1,7 @@
 import express from "express";
 import multer from "multer";
 
-import {
-  uploadMedia,
-  uploadToCloudinary,
-} from "../controller/media.js";
+import { uploadMedia, uploadToCloudinary } from "../controller/media.js";
 import {
   getResultList,
   getResultDetail,
@@ -17,10 +14,7 @@ import {
   getDetail,
   updateDetail,
 } from "../controller/student.js";
-import {
-  getGlobalRank,
-  getActivityRank,
-} from "../controller/summary.js";
+import { getGlobalRank, getActivityRank } from "../controller/summary.js";
 import {
   createTeam,
   joinTeam,
@@ -44,11 +38,7 @@ app.use((req, res, next) => {
 const upload = multer();
 
 app.post("/media", uploadMedia);
-app.post(
-  "/cloudinary",
-  upload.single("file"),
-  uploadToCloudinary
-);
+app.post("/cloudinary", upload.single("file"), uploadToCloudinary);
 
 app.get("/results", getResultList);
 app.get("/result", getResultDetail);

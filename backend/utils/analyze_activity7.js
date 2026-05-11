@@ -7,7 +7,8 @@ const __dirname = path.dirname(__filename);
 
 export const analyzeBreathing = (audioPath) => {
   return new Promise((resolve, reject) => {
-    const pythonPath = process.env.NODE_ENV === "production"
+    const pythonPath =
+      process.env.NODE_ENV === "production"
         ? "python3"
         : path.join(__dirname, "../scripts/.venv/Scripts/python.exe");
     const scriptPath = path.join(__dirname, "../scripts/activity7.py");

@@ -34,16 +34,13 @@ describe("Student Controller", () => {
 
   describe("login", () => {
     it("should login successfully", async () => {
-      const response = await request(app)
-        .get("/login");
+      const response = await request(app).get("/login");
 
       expect(response.status).toBe(200);
 
       expect(response.body.success).toBe(true);
 
-      expect(response.body.message).toContain(
-        "test@mail.com"
-      );
+      expect(response.body.message).toContain("test@mail.com");
     });
   });
 
@@ -60,12 +57,10 @@ describe("Student Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .post("/register")
-        .send({
-          firstName: "John",
-          grade: 10,
-        });
+      const response = await request(app).post("/register").send({
+        firstName: "John",
+        grade: 10,
+      });
 
       expect(response.status).toBe(200);
 
@@ -84,12 +79,10 @@ describe("Student Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .post("/register")
-        .send({
-          firstName: "John",
-          grade: 10,
-        });
+      const response = await request(app).post("/register").send({
+        firstName: "John",
+        grade: 10,
+      });
 
       expect(response.status).toBe(200);
 
@@ -103,8 +96,7 @@ describe("Student Controller", () => {
         id: "user123",
       });
 
-      const response = await request(app)
-        .get("/detail");
+      const response = await request(app).get("/detail");
 
       expect(response.status).toBe(200);
 
@@ -122,8 +114,7 @@ describe("Student Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .get("/detail");
+      const response = await request(app).get("/detail");
 
       expect(response.status).toBe(400);
     });
@@ -143,14 +134,11 @@ describe("Student Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .get("/detail");
+      const response = await request(app).get("/detail");
 
       expect(response.status).toBe(200);
 
-      expect(response.body.user.firstName).toBe(
-        "John"
-      );
+      expect(response.body.user.firstName).toBe("John");
 
       expect(cacheService.set).toHaveBeenCalled();
     });
@@ -169,12 +157,10 @@ describe("Student Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .put("/detail")
-        .send({
-          firstName: "Updated",
-          appearance: false,
-        });
+      const response = await request(app).put("/detail").send({
+        firstName: "Updated",
+        appearance: false,
+      });
 
       expect(response.status).toBe(200);
 
@@ -195,11 +181,9 @@ describe("Student Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .put("/detail")
-        .send({
-          firstName: "Updated",
-        });
+      const response = await request(app).put("/detail").send({
+        firstName: "Updated",
+      });
 
       expect(response.status).toBe(400);
     });

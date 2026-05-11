@@ -68,12 +68,10 @@ describe("Team Controller", () => {
         }
       });
 
-      const response = await request(app)
-        .post("/team/create")
-        .send({
-          name: "Alpha",
-          grade: 10,
-        });
+      const response = await request(app).post("/team/create").send({
+        name: "Alpha",
+        grade: 10,
+      });
 
       expect(response.status).toBe(200);
 
@@ -85,11 +83,9 @@ describe("Team Controller", () => {
     });
 
     it("should return 400 if name missing", async () => {
-      const response = await request(app)
-        .post("/team/create")
-        .send({
-          grade: 10,
-        });
+      const response = await request(app).post("/team/create").send({
+        grade: 10,
+      });
 
       expect(response.status).toBe(400);
     });
@@ -111,12 +107,10 @@ describe("Team Controller", () => {
         }
       });
 
-      const response = await request(app)
-        .post("/team/create")
-        .send({
-          name: "Alpha",
-          grade: 10,
-        });
+      const response = await request(app).post("/team/create").send({
+        name: "Alpha",
+        grade: 10,
+      });
 
       expect(response.status).toBe(400);
     });
@@ -156,11 +150,9 @@ describe("Team Controller", () => {
         }
       });
 
-      const response = await request(app)
-        .post("/team/join")
-        .send({
-          teamId: "team1",
-        });
+      const response = await request(app).post("/team/join").send({
+        teamId: "team1",
+      });
 
       expect(response.status).toBe(200);
 
@@ -194,11 +186,9 @@ describe("Team Controller", () => {
         }
       });
 
-      const response = await request(app)
-        .post("/team/join")
-        .send({
-          teamId: "team1",
-        });
+      const response = await request(app).post("/team/join").send({
+        teamId: "team1",
+      });
 
       expect(response.status).toBe(400);
     });
@@ -210,8 +200,7 @@ describe("Team Controller", () => {
         id: "team1",
       });
 
-      const response = await request(app)
-        .get("/team/team1");
+      const response = await request(app).get("/team/team1");
 
       expect(response.status).toBe(200);
     });
@@ -252,8 +241,7 @@ describe("Team Controller", () => {
         }
       });
 
-      const response = await request(app)
-        .get("/team/team1");
+      const response = await request(app).get("/team/team1");
 
       expect(response.status).toBe(200);
 
@@ -277,8 +265,7 @@ describe("Team Controller", () => {
         }
       });
 
-      const response = await request(app)
-        .get("/team/team1");
+      const response = await request(app).get("/team/team1");
 
       expect(response.status).toBe(400);
     });
@@ -297,13 +284,11 @@ describe("Team Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .put("/team/edit")
-        .send({
-          teamId: "team1",
-          name: "Updated",
-          logoUrl: "logo.jpg",
-        });
+      const response = await request(app).put("/team/edit").send({
+        teamId: "team1",
+        name: "Updated",
+        logoUrl: "logo.jpg",
+      });
 
       expect(response.status).toBe(200);
 
@@ -313,11 +298,9 @@ describe("Team Controller", () => {
     });
 
     it("should return 400 if team missing", async () => {
-      const response = await request(app)
-        .put("/team/edit")
-        .send({
-          name: "Updated",
-        });
+      const response = await request(app).put("/team/edit").send({
+        name: "Updated",
+      });
 
       expect(response.status).toBe(400);
     });

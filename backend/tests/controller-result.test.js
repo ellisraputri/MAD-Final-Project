@@ -47,12 +47,10 @@ describe("Result Controller", () => {
         },
       ]);
 
-      const response = await request(app)
-        .get("/results")
-        .query({
-          teamId: "team1",
-          activityId: "1",
-        });
+      const response = await request(app).get("/results").query({
+        teamId: "team1",
+        activityId: "1",
+      });
 
       expect(response.status).toBe(200);
 
@@ -62,11 +60,9 @@ describe("Result Controller", () => {
     });
 
     it("should return 400 if query incomplete", async () => {
-      const response = await request(app)
-        .get("/results")
-        .query({
-          teamId: "team1",
-        });
+      const response = await request(app).get("/results").query({
+        teamId: "team1",
+      });
 
       expect(response.status).toBe(400);
     });
@@ -102,12 +98,10 @@ describe("Result Controller", () => {
         where: where1Mock,
       });
 
-      const response = await request(app)
-        .get("/results")
-        .query({
-          teamId: "team1",
-          activityId: "1",
-        });
+      const response = await request(app).get("/results").query({
+        teamId: "team1",
+        activityId: "1",
+      });
 
       expect(response.status).toBe(200);
 
@@ -121,17 +115,15 @@ describe("Result Controller", () => {
         resultId: "r1",
       });
 
-      const response = await request(app)
-        .get("/result")
-        .query({
-          resultId: "r1",
-        });
+      const response = await request(app).get("/result").query({
+        resultId: "r1",
+      });
 
       expect(response.status).toBe(200);
     });
 
     it("should return 400 if result not found", async () => {
-        cacheService.get.mockReturnValue(null);
+      cacheService.get.mockReturnValue(null);
 
       db.collection.mockReturnValue({
         doc: jest.fn(() => ({
@@ -141,11 +133,9 @@ describe("Result Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .get("/result")
-        .query({
-          resultId: "r5",
-        });
+      const response = await request(app).get("/result").query({
+        resultId: "r5",
+      });
 
       expect(response.status).toBe(400);
     });
@@ -188,11 +178,9 @@ describe("Result Controller", () => {
         }
       });
 
-      const response = await request(app)
-        .get("/result")
-        .query({
-          resultId: "r1",
-        });
+      const response = await request(app).get("/result").query({
+        resultId: "r1",
+      });
 
       expect(response.status).toBe(200);
 
@@ -262,13 +250,11 @@ describe("Result Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .post("/rate")
-        .send({
-          resultId: "r1",
-          ratings: 5,
-          comments: "Good",
-        });
+      const response = await request(app).post("/rate").send({
+        resultId: "r1",
+        ratings: 5,
+        comments: "Good",
+      });
 
       expect(response.status).toBe(200);
 
@@ -284,11 +270,9 @@ describe("Result Controller", () => {
         })),
       });
 
-      const response = await request(app)
-        .post("/rate")
-        .send({
-          resultId: "r1",
-        });
+      const response = await request(app).post("/rate").send({
+        resultId: "r1",
+      });
 
       expect(response.status).toBe(400);
     });

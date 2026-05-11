@@ -44,12 +44,10 @@ describe("Media Controller", () => {
         doc: jest.fn(() => docMock),
       });
 
-      const response = await request(app)
-        .post("/media")
-        .send({
-          type: "image",
-          content: "hello.jpg",
-        });
+      const response = await request(app).post("/media").send({
+        type: "image",
+        content: "hello.jpg",
+      });
 
       expect(response.status).toBe(200);
 
@@ -63,11 +61,9 @@ describe("Media Controller", () => {
     });
 
     it("should return 400 if body incomplete", async () => {
-      const response = await request(app)
-        .post("/media")
-        .send({
-          type: "image",
-        });
+      const response = await request(app).post("/media").send({
+        type: "image",
+      });
 
       expect(response.status).toBe(400);
     });
@@ -80,21 +76,16 @@ describe("Media Controller", () => {
           return {
             end: () => {
               callback(null, {
-                secure_url:
-                  "https://cloudinary.com/test.jpg",
+                secure_url: "https://cloudinary.com/test.jpg",
               });
             },
           };
-        }
+        },
       );
 
       const response = await request(app)
         .post("/cloudinary")
-        .attach(
-          "file",
-          Buffer.from("fake image"),
-          "test.jpg"
-        );
+        .attach("file", Buffer.from("fake image"), "test.jpg");
 
       expect(response.status).toBe(200);
 
@@ -106,8 +97,7 @@ describe("Media Controller", () => {
     });
 
     it("should return 400 if no file uploaded", async () => {
-      const response = await request(app)
-        .post("/cloudinary");
+      const response = await request(app).post("/cloudinary");
 
       expect(response.status).toBe(400);
     });
@@ -120,16 +110,12 @@ describe("Media Controller", () => {
               callback(new Error("Cloudinary failed"));
             },
           };
-        }
+        },
       );
 
       const response = await request(app)
         .post("/cloudinary")
-        .attach(
-          "file",
-          Buffer.from("fake image"),
-          "test.jpg"
-        );
+        .attach("file", Buffer.from("fake image"), "test.jpg");
 
       expect(response.status).toBe(500);
     });

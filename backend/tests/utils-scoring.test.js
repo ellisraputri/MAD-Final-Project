@@ -46,18 +46,18 @@ jest.mock("fs", () => ({
 
 describe("Scoring Utils", () => {
   beforeEach(() => {
-  jest.resetAllMocks();
+    jest.resetAllMocks();
 
-  db.collection.mockImplementation((name) => {
-    if (name === "medias") {
-      return {
-        doc: jest.fn((id) => ({
-          id,
-        })),
-      };
-    }
+    db.collection.mockImplementation((name) => {
+      if (name === "medias") {
+        return {
+          doc: jest.fn((id) => ({
+            id,
+          })),
+        };
+      }
+    });
   });
-});
 
   const mockMediaDocs = () => {
     db.getAll.mockResolvedValue([
@@ -78,11 +78,7 @@ describe("Scoring Utils", () => {
         touch_time: 10,
       });
 
-      const result = await scorePredictions(
-        ["m1"],
-        [{ prediction: 10 }],
-        "1"
-      );
+      const result = await scorePredictions(["m1"], [{ prediction: 10 }], "1");
 
       expect(result[0].touch_time).toBe(10);
     });
@@ -94,11 +90,7 @@ describe("Scoring Utils", () => {
         max_bend: 50,
       });
 
-      const result = await scorePredictions(
-        ["m1"],
-        [{ prediction: 50 }],
-        "3"
-      );
+      const result = await scorePredictions(["m1"], [{ prediction: 50 }], "3");
 
       expect(result[0].max_bend).toBe(50);
     });
@@ -111,17 +103,13 @@ describe("Scoring Utils", () => {
         bpm: 60,
       });
 
-      const result = await scorePredictions(
-        ["m1"],
-        [{ prediction: 60 }],
-        "7"
-      );
+      const result = await scorePredictions(["m1"], [{ prediction: 60 }], "7");
 
       expect(result[0].bpm).toBe(60);
     });
 
     it("should route to activity2456 scorer", async () => {
-        db.getAll.mockResolvedValue([]);
+      db.getAll.mockResolvedValue([]);
       const result = await scorePredictions(
         [],
         [
@@ -130,7 +118,7 @@ describe("Scoring Utils", () => {
             outcome: 10,
           },
         ],
-        "4"
+        "4",
       );
 
       expect(result[0].score).toBe(1);
@@ -159,18 +147,13 @@ describe("Scoring Utils", () => {
         },
       ];
 
-      const result = await scoreActivity1(
-        mediaList,
-        predictions
-      );
+      const result = await scoreActivity1(mediaList, predictions);
 
       expect(result[0].score).toBe(1);
     });
 
     it("should handle processing error", async () => {
-      analyzeVideo.mockRejectedValue(
-        new Error("Failed")
-      );
+      analyzeVideo.mockRejectedValue(new Error("Failed"));
 
       downloadMedia.mockResolvedValue();
 
@@ -178,7 +161,7 @@ describe("Scoring Utils", () => {
 
       const result = await scoreActivity1(
         [{ content: "url" }],
-        [{ prediction: 10 }]
+        [{ prediction: 10 }],
       );
 
       expect(result[0].error).toBe(true);
@@ -197,7 +180,7 @@ describe("Scoring Utils", () => {
 
       const result = await scoreActivity3(
         [{ content: "url" }],
-        [{ prediction: 50 }]
+        [{ prediction: 50 }],
       );
 
       expect(result[0].score).toBe(1);
@@ -217,7 +200,7 @@ describe("Scoring Utils", () => {
 
       const result = await scoreActivity7(
         [{ content: "url" }],
-        [{ prediction: 60 }]
+        [{ prediction: 60 }],
       );
 
       expect(result[0].score).toBe(1);
@@ -233,7 +216,7 @@ describe("Scoring Utils", () => {
             outcome: 100,
           },
         ],
-        "4"
+        "4",
       );
 
       expect(result[0].score).toBe(1);
@@ -251,7 +234,7 @@ describe("Scoring Utils", () => {
             outcome: 80,
           },
         ],
-        2
+        2,
       );
 
       expect(result.length).toBe(2);

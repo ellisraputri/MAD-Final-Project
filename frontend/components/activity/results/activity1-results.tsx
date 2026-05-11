@@ -58,7 +58,9 @@ function ActivityOneResultCard(props: {
     : undefined;
   const [deltaV, setDeltaV] = useState(finalVelocity);
 
-  const gForce = gForceCondition ? deltaV! / props.timeContact! / 9.8 : undefined;
+  const gForce = gForceCondition
+    ? deltaV! / props.timeContact! / 9.8
+    : undefined;
 
   useEffect(() => {
     if (isBounce === "bounce") {

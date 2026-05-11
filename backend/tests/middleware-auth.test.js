@@ -63,8 +63,7 @@ describe("Authenticate Middleware", () => {
   });
 
   it("should authenticate valid token", async () => {
-    req.headers.authorization =
-      "Bearer valid_token";
+    req.headers.authorization = "Bearer valid_token";
 
     auth.verifyIdToken.mockResolvedValue({
       uid: "user123",
@@ -73,8 +72,7 @@ describe("Authenticate Middleware", () => {
 
     await authenticate(req, res, next);
 
-    expect(auth.verifyIdToken)
-      .toHaveBeenCalledWith("valid_token");
+    expect(auth.verifyIdToken).toHaveBeenCalledWith("valid_token");
 
     expect(req.user.uid).toBe("user123");
 
@@ -82,12 +80,9 @@ describe("Authenticate Middleware", () => {
   });
 
   it("should return 403 if token verification fails", async () => {
-    req.headers.authorization =
-      "Bearer invalid_token";
+    req.headers.authorization = "Bearer invalid_token";
 
-    auth.verifyIdToken.mockRejectedValue(
-      new Error("Invalid token")
-    );
+    auth.verifyIdToken.mockRejectedValue(new Error("Invalid token"));
 
     await authenticate(req, res, next);
 
