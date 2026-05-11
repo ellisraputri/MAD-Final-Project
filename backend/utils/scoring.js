@@ -8,9 +8,14 @@ import { analyzeVideo3 } from "./analyze_activity3.js";
 
 const calculateScore = (pred, actual) => {
   if (actual == null || isNaN(actual)) return 0;
-  const actualSafe = actual === 0 ? 0.00001 : actual;
-  let score = 1 - Math.abs(pred - actualSafe) / actualSafe;
-  return Math.max(0, score);
+
+  const actualSafe = Math.abs(actual) < 0.00001
+    ? 0.00001
+    : Math.abs(actual);
+
+  let score = 1 - Math.abs(pred - actual) / actualSafe;
+
+  return Math.max(0, Math.min(1, score));
 };
 
 const getMedias = async (medias) => {
