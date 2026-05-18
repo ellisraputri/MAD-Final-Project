@@ -170,6 +170,8 @@ export default function ActivityThreeScreen() {
     }
 
     setSubmitLoading(true);
+    alert("Please wait up to 5 minutes for submitting the result.");
+
     const uploads = videos.map((video, index) => {
       const file = {
         uri: video.uri,

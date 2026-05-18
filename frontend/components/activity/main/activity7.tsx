@@ -110,6 +110,8 @@ export default function ActivitySevenScreen() {
     if (!team?.id) return;
 
     setSubmitLoading(true);
+    alert("Please wait up to 5 minutes for submitting the result.");
+
     const uploads = Object.values(result).map((audio, index) => {
       const file = {
         uri: audio.uri,

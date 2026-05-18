@@ -12,10 +12,10 @@
   ],
   "tutorial": [
     "Hold the phone firmly in one hand. Activate the App vibration sensor.",
-    "Perform guided movement slowly as shown in the app. Record the vibration.",
+    "Perform guided movement slowly as shown in the video. Record the vibration.",
     "Repeat the activity with vibration feedback enabled.",
     "Review speed, smoothness, and range-of-motion data.",
     "Upload results and reflect as a group."
   ],
-  "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "video": "https://res.cloudinary.com/djgvizqh6/video/upload/v1779075545/Activity5_nwcap8.mp4"
 }

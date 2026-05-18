@@ -31,12 +31,12 @@
     }
   ],
   "tutorial": [
-    "Drop the toy without a parachute and record the fall (baseline test).",
+    "Drop the toy from the height of 60 cm without a parachute and record the fall (baseline test).",
     "Build a parachute using provided materials.",
-    "Drop the toy from the height of 30 cm and record the fall.",
+    "Drop the toy from the height of 60 cm and record the fall.",
     "Review speed and landing accuracy results in the app.",
-    "Redesign and test up to three prototypes within 20 minutes.",
+    "Redesign and test prototypes within 20 minutes.",
     "Upload videos, results, and team reflections."
   ],
-  "video": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "video": "https://res.cloudinary.com/djgvizqh6/video/upload/v1779075527/Activity1_gyf5h7.mp4"
 }
