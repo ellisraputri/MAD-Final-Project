@@ -97,8 +97,8 @@ export default function HomeScreen() {
       const teamId = userResponse.data.teamId;
       await fetchTeamDetail(teamId);
 
-      const fetches = Array.from({ length: 8 }, (_, i) => {
-        const type = i === 0 ? undefined : i.toString();
+      const fetches = Array.from({ length: 7 }, (_, i) => {
+        const type = (i + 1).toString();
         return fetchActivityRank(teamId, type);
       });
 

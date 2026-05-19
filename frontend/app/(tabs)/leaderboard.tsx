@@ -109,6 +109,7 @@ export default function LeaderboardScreen() {
     for (let i = 0; i < rankings.length; i++) {
       if (rankings[i].teamId === team.id) {
         setMyTeamBest(rankings[i]);
+        break;
       }
     }
   };
