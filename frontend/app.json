@@ -29,14 +29,14 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-light.png",
+          "image": "./assets/images/app-icon.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
-            "image": "./assets/images/splash-dark.png",
+            "image": "./assets/images/dark-app-icon.png",
             "backgroundColor": "#1E1E1E"
           },
-          "imageWidth": 220
+          "imageWidth": 240
         }
       ],
       "expo-font",
@@ -50,8 +50,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "97f902c0-5562-4069-bc27-82cd948ce034"
+        "projectId": "f06ecdcc-66f8-49fa-9e56-5997cc3aaafc"
       }
-    }
+    },
+    "owner": "ellaraputri"
   }
 }
