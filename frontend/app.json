@@ -4,7 +4,7 @@
     "slug": "stemm-lab",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/app-icon.png",
+    "icon": "./assets/images/app-open-icon.png",
     "scheme": "stemmlab",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
