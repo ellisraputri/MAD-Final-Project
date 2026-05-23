@@ -42,7 +42,7 @@ function ActivityOneResultCard(props: {
   const condition = props.timeContact && props.timeContact > 0;
   const gForceCondition = props.timeContact && props.timeContact > 0;
 
-  const finalVelocity = condition ? 0.3 / props.timeContact! : undefined;
+  const finalVelocity = condition ? 0.6 / props.timeContact! : undefined;
   const acceleration = condition
     ? finalVelocity! / props.timeContact!
     : undefined;
@@ -120,7 +120,7 @@ function ActivityOneResultCard(props: {
         {/* CALCULATION */}
         <Accordion title="Force Calculations" marginBottom={0}>
           <Text style={resultStyles.calculationText}>
-            First, we know that the height is 30 cm or 0.3 m.
+            First, we know that the height is 60 cm or 0.6 m.
           </Text>
           <Text style={resultStyles.calculationText}>
             Then, from the measurements, the time is{" "}
@@ -140,7 +140,7 @@ function ActivityOneResultCard(props: {
                 fontSize={13}
               />
               <Equation
-                latex={`v_{final} = \\\\frac{0.3}{${props.timeContact?.toFixed(
+                latex={`v_{final} = \\\\frac{0.6}{${props.timeContact?.toFixed(
                   3,
                 )}} \\\\approx ${finalVelocity?.toFixed(3)} \\\\text{ } m/s`}
                 fontSize={13}
