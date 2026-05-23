@@ -158,7 +158,7 @@ STEMM Lab is a mobile application that enables students to learn physics and med
 
 - Here are some images of this page:
 
-  <img src="docs/leaderboad.jpg" alt ="Leaderboad Page" width = "200"><br>
+  <img src="docs/leaderboard.jpg" alt ="Leaderboard Page" width = "200"><br>
 
 <br>
 </details>
