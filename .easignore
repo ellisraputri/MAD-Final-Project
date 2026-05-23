@@ -28,5 +28,9 @@ ios/build
 /backend/**
 backend/**
 
+../docs/**
+/docs/**
+docs/**
+
 ../.github/**
 /.github/**
