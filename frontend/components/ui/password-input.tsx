@@ -37,7 +37,7 @@ export default function PasswordInput({
         <Ionicons
           size={22}
           color={theme.text}
-          name={showPassword ? "eye-off" : "eye"}
+          name={showPassword ? "eye" : "eye-off"}
         />
       </TouchableOpacity>
     </View>

@@ -18,18 +18,18 @@ import { registerAndGetData } from "@/services/auth/auth";
 import PasswordInput from "@/components/ui/password-input";
 
 const gradeDropdown = [
-  { label: "1 (SD Kelas 1)", value: "1" },
-  { label: "2 (SD Kelas 2)", value: "2" },
-  { label: "3 (SD Kelas 3)", value: "3" },
-  { label: "4 (SD Kelas 4)", value: "4" },
-  { label: "5 (SD Kelas 5)", value: "5" },
-  { label: "6 (SD Kelas 6)", value: "6" },
-  { label: "7 (SMP Kelas 1)", value: "7" },
-  { label: "8 (SMP Kelas 2)", value: "8" },
-  { label: "9 (SMP Kelas 3)", value: "9" },
-  { label: "10 (SMA Kelas 1)", value: "10" },
-  { label: "11 (SMA Kelas 2)", value: "11" },
-  { label: "12 (SMA Kelas 3)", value: "12" },
+  { label: "1 (Elementary Grade 1)", value: "1" },
+  { label: "2 (Elementary Grade 2)", value: "2" },
+  { label: "3 (Elementary Grade 3)", value: "3" },
+  { label: "4 (Elementary Grade 4)", value: "4" },
+  { label: "5 (Elementary Grade 5)", value: "5" },
+  { label: "6 (Elementary Grade 6)", value: "6" },
+  { label: "7 (Junior High Grade 1)", value: "7" },
+  { label: "8 (Junior High Grade 2)", value: "8" },
+  { label: "9 (Junior High Grade 3)", value: "9" },
+  { label: "10 (Senior High Grade 1)", value: "10" },
+  { label: "11 (Senior High Grade 2)", value: "11" },
+  { label: "12 (Senior High Grade 3)", value: "12" },
 ];
 
 export default function RegisterScreen() {
