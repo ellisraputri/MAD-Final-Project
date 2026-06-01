@@ -22,6 +22,7 @@ export default function PasswordInput({
   return (
     <View style={styles.passwordContainer}>
       <TextInput
+        testID="password_input"
         placeholder={placeholder}
         placeholderTextColor={theme.placeholderText}
         secureTextEntry={!showPassword}

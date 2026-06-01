@@ -96,6 +96,7 @@ export default function LoginScreen() {
       <View style={styles.form}>
         <Text style={styles.label}>Email</Text>
         <TextInput
+          testID="email_input"
           placeholder="Enter your email"
           placeholderTextColor={theme.placeholderText}
           value={email}
