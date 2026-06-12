@@ -16,6 +16,22 @@ describe("LoginScreen", () => {
     expect(global.alert).toHaveBeenCalledWith("Fields cannot be empty");
   });
 
+  it("shows alert if email is invalid", async () => {
+    const { getByText, getByPlaceholderText } = render(<LoginScreen />);
+
+    fireEvent.changeText(
+      getByPlaceholderText("Enter your email"),
+      "testcom",
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter your password"),
+      "testcom",
+    );
+    fireEvent.press(getByText("Login"));
+
+    expect(global.alert).toHaveBeenCalledWith("Invalid email format");
+  });
+
   it("calls API and shows success message", async () => {
     loginAndGetData.mockResolvedValue({
       success: true,
@@ -57,8 +73,8 @@ describe("LoginScreen", () => {
 
     const { getByText, getByPlaceholderText } = render(<LoginScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Enter your email"), "a");
-    fireEvent.changeText(getByPlaceholderText("Enter your password"), "b");
+    fireEvent.changeText(getByPlaceholderText("Enter your email"), "test@mail.com");
+    fireEvent.changeText(getByPlaceholderText("Enter your password"), "b12345");
 
     fireEvent.press(getByText("Login"));
 

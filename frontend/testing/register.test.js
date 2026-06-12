@@ -31,6 +31,52 @@ describe("RegisterScreen", () => {
     expect(global.alert).toHaveBeenCalledWith("Fields cannot be empty");
   });
 
+  it("shows alert if email is invalid", async () => {
+    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+
+    fireEvent.changeText(
+      getByPlaceholderText("Enter your email"),
+      "testcom",
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter your password"),
+      "testcom",
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Reenter your password"),
+      "testcom",
+    );
+    fireEvent.changeText(getByPlaceholderText("Enter your first name"), "John");
+
+    fireEvent.press(getByText("Select Grade"));
+    fireEvent.press(getByText("Register"));
+
+    expect(global.alert).toHaveBeenCalledWith("Invalid email format");
+  });
+
+  it("shows alert if password is invalid", async () => {
+    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+
+    fireEvent.changeText(
+      getByPlaceholderText("Enter your email"),
+      "test@mail.com",
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter your password"),
+      "t",
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Reenter your password"),
+      "t",
+    );
+    fireEvent.changeText(getByPlaceholderText("Enter your first name"), "John");
+
+    fireEvent.press(getByText("Select Grade"));
+    fireEvent.press(getByText("Register"));
+
+    expect(global.alert).toHaveBeenCalledWith("Password must be at least 6 characters");
+  });
+
   it("updates input values", () => {
     const { getByPlaceholderText } = render(<RegisterScreen />);
 

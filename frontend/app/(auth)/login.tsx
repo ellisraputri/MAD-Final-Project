@@ -31,8 +31,14 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     if (isLoading) return;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (email === "" || password === "") {
       alert("Fields cannot be empty");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      alert("Invalid email format");
       return;
     }
     setIsLoading(true);
@@ -42,7 +48,7 @@ export default function LoginScreen() {
     setIsLoading(false);
 
     if (res.success) {
-      await getStudentDetail(); // force session validation first
+      await getStudentDetail(); 
       router.replace("/team_confirmation");
     }
   };
@@ -53,8 +59,8 @@ export default function LoginScreen() {
       contentContainerStyle={{ paddingBottom: 20 }}
       keyboardShouldPersistTaps="handled"
       enableOnAndroid={true}
-      extraScrollHeight={10} // extra space above keyboard
-      enableAutomaticScroll={true} // auto scrolls to focused input
+      extraScrollHeight={10} 
+      enableAutomaticScroll={true} 
     >
       {/* Header Image */}
       <ImageBackground

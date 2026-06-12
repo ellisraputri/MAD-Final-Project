@@ -47,12 +47,23 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     if (isLoading) return;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^.{6,}$/;
+
     if (email === "" || password === "" || firstName === "" || grade === "") {
       alert("Fields cannot be empty");
       return;
     }
     if (password !== confirmPassword) {
       alert("Password and password confirmation is not the same");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      alert("Invalid email format");
+      return;
+    }
+    if (!passwordRegex.test(password)) {
+      alert("Password must be at least 6 characters");
       return;
     }
     setIsLoading(true);
@@ -70,8 +81,8 @@ export default function RegisterScreen() {
       contentContainerStyle={{ paddingBottom: 20 }}
       keyboardShouldPersistTaps="handled"
       enableOnAndroid={true}
-      extraScrollHeight={10} // extra space above keyboard
-      enableAutomaticScroll={true} // auto scrolls to focused input
+      extraScrollHeight={10} 
+      enableAutomaticScroll={true} 
     >
       {/* Header Image */}
       <ImageBackground
