@@ -92,13 +92,13 @@ describe("SettingsScreen", () => {
   });
 
   it("cancels editing name", () => {
-    const { getByText, getByDisplayValue } = render(<SettingsScreen />);
+    const { getByText, getByDisplayValue, getAllByText } = render(<SettingsScreen />);
 
     fireEvent.press(getByText("pencil"));
 
     fireEvent.changeText(getByDisplayValue("John"), "Mike");
 
-    fireEvent.press(getByText("close"));
+    fireEvent.press(getAllByText("close")[0]);
 
     expect(getByDisplayValue("John")).toBeTruthy();
   });
