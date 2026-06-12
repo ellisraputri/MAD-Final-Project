@@ -61,11 +61,11 @@ describe("PasswordInput", () => {
       />,
     );
 
-    expect(getByText("eye")).toBeTruthy();
-
-    fireEvent.press(getByText("eye"));
-
     expect(getByText("eye-off")).toBeTruthy();
+
+    fireEvent.press(getByText("eye-off"));
+
+    expect(getByText("eye")).toBeTruthy();
   });
 
   it("matches snapshot", () => {
